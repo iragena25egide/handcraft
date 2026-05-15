@@ -63,7 +63,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Details Section */}
       <div className="px-1 space-y-1.5">
         <div className="flex justify-between items-center">
           <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
@@ -81,7 +80,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
 
-        {/* Pricing */}
         <div className="flex items-center gap-2">
           <span className="text-lg font-black text-[#0f172a]">
             RWF{product.price.toFixed(2)}
@@ -93,7 +91,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Artisan & Color Indicators */}
         <div className="flex items-center justify-between pt-2">
           <div className="flex gap-2">
             <div className="w-3.5 h-3.5 rounded-full bg-[#0f172a] ring-1 ring-offset-1 ring-gray-200" />
