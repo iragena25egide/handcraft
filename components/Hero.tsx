@@ -89,16 +89,14 @@ export default function Hero() {
         <svg
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
-          className="relative block w-full h-[150px] md:h-[200px]" // Increased height for "Big" display
+          className="relative block w-full h-[150px] md:h-[200px]"
         >
-          {/* Layer 1: The Deep Navy Base (Matches Hero Buttons/Navbar) */}
           <path
             d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,73.84-4.36,147.54,16.88,218.2,35.26,69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
             fill="#0f172a"
-            opacity="0.05" // Very subtle navy undertone
+            opacity="0.05"
           ></path>
 
-          {/* Layer 2: The Main Cream Wave (Matches the Left Decorative Wave) */}
           <path
             d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V0c63.59,3.07,131,23.17,194.67,41.17,50.13,14.17,102.83,26.5,156.72,21.34V56.44Z"
             fill="#fefce8"
