@@ -68,7 +68,6 @@ export default function CategoryGrid() {
           </button>
         </div>
 
-        {/* Responsive Grid - Smaller card heights */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat, index) => (
             <motion.div
@@ -116,7 +115,6 @@ export default function CategoryGrid() {
         </div>
       </div>
 
-      {/* IMIGONGO ZIGZAG - Positioning only at the bottom */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0">
         <svg
           viewBox="0 0 1200 120"
