@@ -398,7 +398,6 @@ export default function Navbar() {
       <div className="mt-6 flex-1 overflow-y-auto px-1 custom-scrollbar">
         <AnimatePresence mode="wait">
           {searchQuery === "" ? (
-            /* PRE-SEARCH STATE: Trending/Suggested */
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -418,7 +417,6 @@ export default function Navbar() {
               </div>
             </motion.div>
           ) : filteredProducts.length === 0 ? (
-            /* NO RESULTS STATE */
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

@@ -9,7 +9,6 @@ export default function Hero() {
 
   useEffect(() => {
     if (videoRef.current) {
-      // Maintains the premium slow-motion feel
       videoRef.current.playbackRate = 0.5;
     }
   }, []);
