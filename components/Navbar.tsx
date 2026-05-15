@@ -499,7 +499,6 @@ export default function Navbar() {
               </h1>
             </div>
 
-            {/* Center: Nav Links */}
             <div className="hidden md:flex items-center space-x-8">
               {["Shop", "Categories", "New Arrivals", "Sale", "About"].map(
                 (item) => (
@@ -514,7 +513,6 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Right: Icons + Language */}
             <div className="flex items-center gap-5">
               <div className="flex items-center gap-4">
                 <button
@@ -645,7 +643,6 @@ export default function Navbar() {
         </div>
       </BottomSheet>
 
-      {/* Drawers (Right side - Colors updated) */}
       <Drawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -667,7 +664,6 @@ export default function Navbar() {
       >
         {searchContent}
       </Drawer>
-      {/* Drawers and BottomSheet remain unchanged */}
     </>
   );
 }
