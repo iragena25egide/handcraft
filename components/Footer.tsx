@@ -63,7 +63,6 @@ export default function Footer() {
                     <ShoppingCart className="w-4 h-4" />
                   </div>
 
-                  {/* Vertical Flowing Icons (Faster, subtle version for footer) */}
                   {[
                     { Icon: "🧺", d: 0 },
                     { Icon: "👕", d: 1 },
