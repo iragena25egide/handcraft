@@ -46,12 +46,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Wishlist Button */}
         <button className="absolute top-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-[#0f172a] opacity-0 translate-y-[-10px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#0f172a] hover:text-white z-10">
           <Heart className="w-4 h-4" />
         </button>
 
-        {/* HOVER ACTION: Add to Cart Overlay */}
         <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out z-20">
           <motion.button
             whileTap={{ scale: 0.95 }}
