@@ -57,11 +57,8 @@ export default function Hero() {
             <h1 className="text-5xl md:text-4xl font-bold text-[#011137] leading-[1.1] tracking-tight mb-8">
               All African Handcrafts.with us.
             </h1>
-
-            {/* Description */}
           </motion.div>
 
-          {/* Right Content - Faded Video Effect */}
           <div className="relative h-[300px] md:h-[500px] w-full">
             <motion.div
               initial={{ opacity: 0 }}
