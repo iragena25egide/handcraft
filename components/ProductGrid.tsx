@@ -59,13 +59,10 @@ export default function ProductGrid({ category }: ProductGridProps) {
   return (
     <section className="relative py-4 bg-white overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6 lg:px-8 z-10">
-        {/* --- SECTION HEADER --- */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="flex items-center gap-4">
-            {/* Left accent bar */}
             <div className="h-16 w-2 bg-[#0f172a] shadow-[4px_0_0_0_#fefce8] hidden md:block" />
 
-            {/* FIXED FLOW ANIMATION HEADER */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
