@@ -48,7 +48,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* MIDDLE SECTION: Links */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 py-16">
           <div className="col-span-2 md:col-span-1 space-y-6">
             <div className="col-span-2 md:col-span-1 space-y-6">
@@ -58,7 +57,6 @@ export default function Footer() {
                   <div className="h-10 w-1.5 bg-[#fefce8] shadow-[2px_0_0_0_#0f172a]" />
                 </div>
 
-                {/* MINI FOOTER FLOW ANIMATION */}
                 <div className="relative h-12 w-20 flex items-end justify-center overflow-hidden bg-white/5 rounded-xl border border-[#fefce8]/10">
                   {/* Target Cart */}
                   <div className="z-20 mb-1 text-[#fefce8]/40">
