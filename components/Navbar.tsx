@@ -312,7 +312,6 @@ export default function Navbar() {
                   {item.name}
                 </p>
 
-                {/* Quantity Selector */}
                 <div className="flex items-center gap-1.5 mt-3 bg-gray-50 border border-gray-100 rounded-full w-fit p-0.5">
                   <button className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white">
                     <Minus className="w-3 h-3" />
