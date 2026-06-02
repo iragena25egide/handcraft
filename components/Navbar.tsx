@@ -299,7 +299,6 @@ export default function Navbar() {
               transition={{ duration: 0.3 }}
               className="group relative flex items-center gap-5 p-4 bg-white border border-gray-100 rounded-2xl hover:border-[#0f172a]/10 hover:shadow-lg hover:shadow-gray-200/40 transition-all duration-300"
             >
-              {/* Image Section */}
               <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 border border-gray-100">
                 <img
                   src={item.image}
