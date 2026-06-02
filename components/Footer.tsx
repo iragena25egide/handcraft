@@ -164,7 +164,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* BOTTOM SECTION: Copyright & Legal */}
         <div className="pt-8 border-t border-[#fefce8]/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[10px] uppercase font-bold opacity-40 tracking-widest">
             © {currentYear} All rights reserved. Made in Rwanda.
