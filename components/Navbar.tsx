@@ -252,7 +252,6 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Subtle Imigongo geometric accent on hover */}
               <div className="absolute right-0 bottom-0 w-8 h-8 opacity-[0.02] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
                 <svg viewBox="0 0 100 100" fill="#0f172a">
                   <path d="M0 100 L50 0 L100 100 Z" />
