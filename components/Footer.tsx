@@ -178,7 +178,6 @@ export default function Footer() {
             </span>
           </div>
 
-          {/* Payment Icons Placeholder */}
           <div className="flex items-center gap-3  transition-all duration-500">
             <div
               className="h-7 w-11 bg-[#ffcc00] rounded-md flex items-center justify-center p-1 shadow-sm overflow-hidden"
