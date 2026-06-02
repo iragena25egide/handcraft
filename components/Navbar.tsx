@@ -261,7 +261,6 @@ export default function Navbar() {
           ))}
         </AnimatePresence>
 
-        {/* Quick Checkout Link */}
         <button className="w-full mt-6 py-4 bg-[#fefce8] border border-[#0f172a]/5 text-[#0f172a] rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-[#0f172a] hover:text-white transition-all duration-500">
           Move All to Bag
         </button>
