@@ -307,7 +307,6 @@ export default function Navbar() {
                 />
               </div>
 
-              {/* Details Section */}
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-[#0f172a] truncate text-base tracking-tight">
                   {item.name}
