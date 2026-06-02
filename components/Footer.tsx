@@ -10,7 +10,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#0f172a] text-[#fefce8] relative pt-24 pb-12 overflow-hidden">
-      {/* BIG IMIGONGO ZIGZAG DIVIDER - Top of Footer */}
       <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] rotate-180">
         <svg
           viewBox="0 0 1200 120"
