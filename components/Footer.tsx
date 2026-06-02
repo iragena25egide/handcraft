@@ -222,7 +222,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Decorative Imigongo Watermark in Background */}
       <div className="absolute bottom-[-50px] right-[-50px] w-64 h-64 opacity-[0.03] pointer-events-none rotate-12">
         <svg viewBox="0 0 100 100" fill="#fefce8">
           <path d="M0 100 L50 0 L100 100 Z" />
