@@ -187,7 +187,7 @@ export default function Footer() {
                 momo
               </span>
             </div>
-            {/* Airtel Money */}
+
             <div
               className="h-7 w-11 bg-[#ff0000] rounded-md flex items-center justify-center p-1 shadow-sm overflow-hidden"
               title="Airtel Money"
