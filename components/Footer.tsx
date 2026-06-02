@@ -55,7 +55,6 @@ export default function Footer() {
                 </div>
 
                 <div className="relative h-12 w-20 flex items-end justify-center overflow-hidden bg-white/5 rounded-xl border border-[#fefce8]/10">
-                  {/* Target Cart */}
                   <div className="z-20 mb-1 text-[#fefce8]/40">
                     <ShoppingCart className="w-4 h-4" />
                   </div>
