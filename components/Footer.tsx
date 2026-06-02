@@ -24,7 +24,6 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* TOP SECTION: Newsletter - Inspired by Screenshot 2026-05-13 at 01.00.42.png */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 pb-16 border-b border-[#fefce8]/10">
           <div className="max-w-md">
             <h3 className="text-2xl md:text-3xl font-bold uppercase tracking-tighter">
