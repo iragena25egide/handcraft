@@ -181,8 +181,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ... [Content variables like wishlistContent, cartContent, searchContent remain unchanged]
-
   const filteredProducts = allProducts.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
