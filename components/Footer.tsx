@@ -209,7 +209,7 @@ export default function Footer() {
               <div className="w-3 h-3 bg-[#eb001b] rounded-full opacity-90" />
               <div className="w-3 h-3 bg-[#f79e1b] rounded-full -ml-1.5 opacity-90" />
             </div>
-            {/* Visa (Optional, added for global parity like the screenshot) */}
+
             <div
               className="h-7 w-11 bg-[#1a1f71] rounded-md flex items-center justify-center p-1 shadow-sm"
               title="Visa"
