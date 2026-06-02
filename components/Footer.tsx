@@ -201,7 +201,7 @@ export default function Footer() {
                 </span>
               </div>
             </div>
-            {/* Mastercard */}
+
             <div
               className="h-7 w-11 bg-[#231f20] rounded-md flex items-center justify-center gap-0.5 p-1 shadow-sm"
               title="Mastercard"
