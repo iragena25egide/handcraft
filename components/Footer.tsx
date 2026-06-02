@@ -51,7 +51,6 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 py-16">
           <div className="col-span-2 md:col-span-1 space-y-6">
             <div className="col-span-2 md:col-span-1 space-y-6">
-              {/* LOGO & ANIMATED FLOW */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="h-10 w-1.5 bg-[#fefce8] shadow-[2px_0_0_0_#0f172a]" />
