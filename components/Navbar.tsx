@@ -282,7 +282,6 @@ export default function Navbar() {
       </div>
     ) : (
       <div className="space-y-6 p-1">
-        {/* 1. CART ITEMS LIST */}
         <div className="flex items-center justify-between mb-5 px-1">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
             Your Selection ({cartItems.length} items)
