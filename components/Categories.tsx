@@ -78,7 +78,6 @@ export default function CategoryGrid() {
               transition={{ duration: 0.5, delay: index * 0.05 }}
               className="group relative h-[280px] md:h-[320px] rounded-2xl overflow-hidden cursor-pointer shadow-md"
             >
-              {/* Category Image */}
               <img
                 src={cat.image}
                 alt={cat.name}
