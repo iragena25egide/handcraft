@@ -12,7 +12,6 @@ const raleway = Raleway({
   display: "swap",
 });
 
-// Playfair Display – elegant serif for headings (kept from original)
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
