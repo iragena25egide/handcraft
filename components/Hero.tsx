@@ -45,10 +45,6 @@ export default function Hero() {
                   <ShoppingBag size={16} />
                 </span>
               </button>
-
-              {/* <button className="bg-white border border-gray-200 text-gray-700 px-7 py-3 rounded-full font-medium text-sm hover:bg-gray-50 transition-all">
-                Watch demo
-              </button> */}
             </div>
 
             {/* Heading */}
