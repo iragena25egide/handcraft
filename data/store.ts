@@ -46,7 +46,6 @@ export const useWishlistStore = create<WishlistState>()(
   )
 );
 
-// Cart store
 export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
