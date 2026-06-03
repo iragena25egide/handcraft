@@ -11,7 +11,6 @@ export interface Product {
 }
 
 export const products: Product[] = [
-  // ================= FASHION =================
   {
     id: 1,
     name: "Ibitenge w'Abagore",
