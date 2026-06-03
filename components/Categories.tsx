@@ -99,7 +99,6 @@ export default function CategoryGrid() {
                     {cat.name}
                   </h3>
 
-                  {/* Small description only visible on hover to save space */}
                   <p className="text-[11px] text-gray-300 leading-tight mb-4 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     {cat.description}
                   </p>
