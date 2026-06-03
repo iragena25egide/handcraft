@@ -85,7 +85,6 @@ export default function CategoryGrid() {
                 className="absolute inset-0 w-full h-full object-cover grayscale-[0.1] group-hover:scale-105 transition-transform duration-700"
               />
 
-              {/* Sophisticated Dark Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent" />
 
               <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
