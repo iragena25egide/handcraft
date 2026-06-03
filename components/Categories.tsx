@@ -88,7 +88,6 @@ export default function CategoryGrid() {
               {/* Sophisticated Dark Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent" />
 
-              {/* Content Container - Compact padding */}
               <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
                 <div className="transform transition-transform duration-500">
                   <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-tighter mb-2">
