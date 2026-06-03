@@ -120,7 +120,6 @@ export default function CategoryGrid() {
           preserveAspectRatio="none"
           className="relative block w-full h-[60px] md:h-[100px] opacity-60"
         >
-          {/* Main Zigzag path */}
           <path
             d="M0,120 L0,40 L60,100 L120,40 L180,100 L240,40 L300,100 L360,40 L420,100 L480,40 L540,100 L600,40 L660,100 L720,40 L780,100 L840,40 L900,100 L960,40 L1020,100 L1080,40 L1140,100 L1200,40 L1200,120 Z"
             fill="#0f172a"
