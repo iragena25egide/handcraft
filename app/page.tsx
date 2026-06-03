@@ -11,7 +11,6 @@ export default function Home() {
     <main className="bg-white">
       <Hero />
 
-      {/* Fashion Section */}
       <section id="fashion" className=" bg-white">
         <CategoryGrid />
       </section>
