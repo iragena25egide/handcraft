@@ -24,7 +24,6 @@ interface CartState {
   clearCart: () => void;
 }
 
-// Wishlist store
 export const useWishlistStore = create<WishlistState>()(
   persist(
     (set) => ({
