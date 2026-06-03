@@ -15,7 +15,6 @@ export default function Hero() {
 
   return (
     <section className="relative bg-white min-h-[530px] flex items-center overflow-hidden font-sans">
-      {/* NEW: Left Side Decorative Wave (Behind Text) */}
       <div className="absolute left-0 top-1/4 w-1/3 h-2/3 pointer-events-none opacity-80 z-0">
         <svg
           viewBox="0 0 500 800"
