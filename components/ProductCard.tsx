@@ -3,12 +3,32 @@
 import { motion } from "framer-motion";
 import { Heart, Star, ShoppingCart } from "lucide-react";
 import { Product } from "@/data/product";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { addItem as addCartItem } from "@/lib/store/slices/cartSlice";
+import { toggleWishlist } from "@/lib/store/slices/wishlistSlice";
+import toast from "react-hot-toast";
+import Link from "next/link";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const dispatch = useAppDispatch();
+  const wishlistItems = useAppSelector(state => state.wishlist.items);
+  
+  const inWishlist = wishlistItems.some((item) => item.id === product.id);
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(toggleWishlist(product));
+    if (inWishlist) {
+      toast.success("Removed from wishlist");
+    } else {
+      toast.success("Added to wishlist");
+    }
+  };
+
   // Logic for dynamic pricing and badges
   const hasDiscount =
     product.originalPrice && product.originalPrice > product.price;
@@ -28,11 +48,13 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       {/* Image Container */}
       <div className="relative aspect-square mb-4 overflow-hidden rounded-[24px] bg-gray-50 border border-gray-100">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-        />
+        <Link href={`/product/${product.id}`}>
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          />
+        </Link>
 
         {/* Badges - Top Left */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
@@ -46,12 +68,19 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        <button className="absolute top-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-[#0f172a] opacity-0 translate-y-[-10px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#0f172a] hover:text-white z-10">
-          <Heart className="w-4 h-4" />
+        <button 
+          onClick={handleToggleWishlist}
+          className={`absolute top-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-sm opacity-0 translate-y-[-10px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#0f172a] hover:text-white z-10 ${inWishlist ? "text-red-500 opacity-100 translate-y-0" : "text-[#0f172a]"}`}>
+          <Heart className={`w-4 h-4 ${inWishlist ? "fill-red-500 text-red-500" : ""}`} />
         </button>
 
         <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out z-20">
           <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              dispatch(addCartItem(product));
+              toast.success("Added to cart");
+            }}
             whileTap={{ scale: 0.95 }}
             className="w-full bg-[#0f172a] cursor-pointer text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:bg-black"
           >
@@ -74,9 +103,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        <h3 className="text-base font-bold text-[#0f172a] tracking-tight truncate group-hover:text-black transition-colors">
-          {product.name}
-        </h3>
+        <Link href={`/product/${product.id}`}>
+          <h3 className="text-base font-bold text-[#0f172a] tracking-tight truncate group-hover:text-black transition-colors">
+            {product.name}
+          </h3>
+        </Link>
 
         <div className="flex items-center gap-2">
           <span className="text-lg font-black text-[#0f172a]">
