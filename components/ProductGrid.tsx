@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ListFilter,
   ChevronDown,
@@ -10,7 +10,8 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import ProductCard from "./ProductCard";
-import { products, type Product } from "@/data/product";
+import { api } from "@/lib/api";
+import { type Product } from "@/data/product";
 
 interface ProductGridProps {
   category?: "fashion" | "handicraft";
@@ -29,11 +30,26 @@ const SORT_LABELS: Record<SortOption, string> = {
 export default function ProductGrid({ category }: ProductGridProps) {
   const [sortBy, setSortBy] = useState<SortOption>("default");
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // FIX: Ensure result is initialized as the Products array, not the category string
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get("/products");
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   const processedProducts = useMemo(() => {
     const result: Product[] = category
-      ? products.filter((p) => p.category === category)
+      ? products.filter((p) => p.category.toLowerCase() === category)
       : [...products];
 
     switch (sortBy) {
@@ -48,7 +64,9 @@ export default function ProductGrid({ category }: ProductGridProps) {
       default:
         return result;
     }
-  }, [category, sortBy]);
+  }, [category, sortBy, products]);
+
+  if (loading) return <div className="text-center py-20">Loading products...</div>;
 
   // Chunking logic for Imigongo dividers
   const rows: Product[][] = [];
