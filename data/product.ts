@@ -8,6 +8,7 @@ export interface Product {
   artisan: string;
   rating?: number;
   originalPrice?: number;
+  stockQuantity?: number;
 }
 
 export const products: Product[] = [
