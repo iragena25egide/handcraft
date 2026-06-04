@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { Raleway, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import StoreProvider from "@/components/StoreProvider";
+import GlobalSocketProvider from "@/components/GlobalSocketProvider";
+import { Toaster } from "react-hot-toast";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -32,10 +36,20 @@ export default function RootLayout({
       <body
         className={`${raleway.variable} ${playfair.variable} font-sans bg-white dark:bg-gray-900 transition-colors duration-300`}
       >
-        <ThemeProvider>
-          <Navbar />
-          {children}
-        </ThemeProvider>
+        <StoreProvider>
+          <GlobalSocketProvider>
+            <ThemeProvider>
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-grow">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+              <Toaster position="bottom-right" />
+            </ThemeProvider>
+          </GlobalSocketProvider>
+        </StoreProvider>
       </body>
     </html>
   );
