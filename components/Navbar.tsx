@@ -11,6 +11,7 @@ import {
   Moon,
   Tag,
   ChevronDown,
+  User,
 } from "lucide-react";
 import {
   Trash2,
@@ -20,47 +21,14 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
-import { useWishlistStore, useCartStore, type Product } from "@/data/store";
+import { type Product } from "@/data/product";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { removeWishlistItem, clearWishlist } from "@/lib/store/slices/wishlistSlice";
+import { addItem as addCartItem, removeItem as removeCartItem, incrementItem, decrementItem, clearCart } from "@/lib/store/slices/cartSlice";
+import { api } from "@/lib/api";
 import { useTheme } from "./ThemeProvider";
-
-const allProducts: Product[] = [
-  {
-    id: 1,
-    name: "Umushanana Traditional Dress",
-    price: 89.99,
-    image: "image/umukenyero.jpeg",
-  },
-  {
-    id: 2,
-    name: "Kitenge Maxi Skirt",
-    price: 54.99,
-    image: "image/2.jpeg",
-  },
-  {
-    id: 3,
-    name: "Modern Agaseke Tote Bag",
-    price: 45.99,
-    image: "image/akebo.jpeg",
-  },
-  {
-    id: 4,
-    name: "Cowrie Shell Necklace",
-    price: 34.99,
-    image: "image/4.jpeg",
-  },
-  {
-    id: 5,
-    name: "Agaseke Peace Basket",
-    price: 39.99,
-    image: "image/amata.jpeg",
-  },
-  {
-    id: 6,
-    name: "Imigongo Art Panel",
-    price: 75.99,
-    image: "image/1.jpeg",
-  },
-];
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const languages = [
   { code: "rw", name: "Kinyarwanda", flag: "🇷🇼" },
@@ -164,9 +132,15 @@ export default function Navbar() {
   const langDropdownRef = useRef<HTMLDivElement>(null);
 
   const { theme, toggleTheme } = useTheme();
-  const { items: wishlistItems, removeItem: removeWishlistItem } =
-    useWishlistStore();
-  const { items: cartItems, removeItem: removeCartItem } = useCartStore();
+  const dispatch = useAppDispatch();
+  const wishlistItems = useAppSelector(state => state.wishlist.items);
+  const cartItems = useAppSelector(state => state.cart.items);
+  const { isLoggedIn, user } = useAppSelector(state => state.user);
+  const router = useRouter();
+
+  const cartSubtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const cartShipping = cartItems.length > 0 ? 5000 : 0;
+  const cartTotal = cartSubtotal + cartShipping;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -179,6 +153,15 @@ export default function Navbar() {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    // Fetch products for search autocomplete
+    api.get("/products")
+      .then(res => setAllProducts(res.data))
+      .catch(err => console.error("Failed to load products for search", err));
   }, []);
 
   const filteredProducts = allProducts.filter((p) =>
@@ -238,13 +221,18 @@ export default function Navbar() {
               {/* Actions */}
               <div className="flex flex-col gap-2">
                 <button
-                  onClick={() => removeWishlistItem(item.id)}
+                  onClick={() => dispatch(removeWishlistItem(item.id))}
                   className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   title="Remove"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
                 <button
+                  onClick={() => {
+                    dispatch(addCartItem(item));
+                    dispatch(removeWishlistItem(item.id));
+                    toast.success("Moved to cart!");
+                  }}
                   className="p-2 bg-[#0f172a] text-white rounded-lg hover:bg-black transition-all shadow-lg shadow-gray-200"
                   title="Add to Cart"
                 >
@@ -261,7 +249,13 @@ export default function Navbar() {
           ))}
         </AnimatePresence>
 
-        <button className="w-full mt-6 py-4 bg-[#fefce8] border border-[#0f172a]/5 text-[#0f172a] rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-[#0f172a] hover:text-white transition-all duration-500">
+        <button 
+          onClick={() => {
+            wishlistItems.forEach(item => dispatch(addCartItem(item)));
+            dispatch(clearWishlist());
+            toast.success("All items moved to bag!");
+          }}
+          className="w-full mt-6 py-4 bg-[#fefce8] border border-[#0f172a]/5 text-[#0f172a] rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-[#0f172a] hover:text-white transition-all duration-500">
           Move All to Bag
         </button>
       </div>
@@ -286,6 +280,15 @@ export default function Navbar() {
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
             Your Selection ({cartItems.length} items)
           </span>
+          <button
+            onClick={() => {
+              dispatch(clearCart());
+              toast.success("Cart cleared");
+            }}
+            className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 hover:text-red-700 transition-colors"
+          >
+            Clear Cart
+          </button>
         </div>
 
         <AnimatePresence mode="popLayout">
@@ -313,11 +316,11 @@ export default function Navbar() {
                 </p>
 
                 <div className="flex items-center gap-1.5 mt-3 bg-gray-50 border border-gray-100 rounded-full w-fit p-0.5">
-                  <button className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white">
+                  <button onClick={() => dispatch(decrementItem(item.id))} className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white">
                     <Minus className="w-3 h-3" />
                   </button>
-
-                  <button className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white">
+                  <span className="text-xs font-bold text-[#0f172a] w-4 text-center">{item.quantity}</span>
+                  <button onClick={() => dispatch(incrementItem(item.id))} className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white">
                     <Plus className="w-3 h-3" />
                   </button>
                 </div>
@@ -326,7 +329,7 @@ export default function Navbar() {
               {/* Price & Remove Section */}
               <div className="flex flex-col items-end gap-5">
                 <button
-                  onClick={() => removeCartItem(item.id)}
+                  onClick={() => dispatch(removeCartItem(item.id))}
                   className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   title="Remove Item"
                 >
@@ -341,19 +344,24 @@ export default function Navbar() {
         <div className="mt-10 p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-4">
           <div className="flex justify-between text-sm">
             <span className="text-gray-500 font-medium">Subtotal</span>
+            <span className="text-[#0f172a] font-bold">RWF {cartSubtotal.toLocaleString()}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500 font-medium">Shipping (Rwanda)</span>
+            <span className="text-[#0f172a] font-bold">RWF {cartShipping.toLocaleString()}</span>
           </div>
           <div className="flex justify-between items-center pt-4 border-t border-gray-200">
             <span className="text-base font-black text-[#0f172a] uppercase tracking-wider">
               Total
             </span>
+            <span className="text-xl font-black text-[#0f172a]">RWF {cartTotal.toLocaleString()}</span>
           </div>
         </div>
 
         {/* 3. CHECKOUT BUTTON */}
-        <button className="w-full mt-6 py-4.5 bg-[#0f172a] text-white rounded-2xl font-black text-xs uppercase tracking-[0.25em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]">
+        <button 
+          onClick={() => { setIsCartOpen(false); router.push("/checkout"); }}
+          className="w-full mt-6 py-4.5 bg-[#0f172a] text-white rounded-2xl font-black text-xs uppercase tracking-[0.25em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]">
           Proceed to Checkout
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </button>
@@ -432,6 +440,12 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   key={product.id}
+                  onClick={() => {
+                    dispatch(addCartItem(product));
+                    setIsSearchOpen(false);
+                    setIsCartOpen(true);
+                    toast.success("Added to cart");
+                  }}
                   className="group flex items-center gap-4 p-3 hover:bg-[#fefce8]/50 rounded-2xl cursor-pointer border border-transparent hover:border-[#fefce8] transition-all"
                 >
                   <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-50">
@@ -522,6 +536,22 @@ export default function Navbar() {
                       {wishlistItems.length}
                     </span>
                   )}
+                </button>
+                <button
+                  onClick={() => {
+                    if (!isLoggedIn) {
+                      router.push("/login");
+                    } else if (user?.role === "SUPER_ADMIN") {
+                      router.push("/admin");
+                    } else if (user?.role === "SELLER") {
+                      router.push("/seller");
+                    } else {
+                      router.push("/profile");
+                    }
+                  }}
+                  className="text-[#0f172a] dark:text-gray-200 hover:opacity-60 transition-opacity"
+                >
+                  <User className={`w-5 h-5 ${isLoggedIn ? 'text-green-600' : ''}`} />
                 </button>
                 <button
                   onClick={() => setIsCartOpen(true)}
