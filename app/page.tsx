@@ -3,6 +3,7 @@
 import CategoryGrid from "@/components/Categories";
 import Hero from "@/components/Hero";
 import ProductGrid from "@/components/ProductGrid";
+import Testimonials from "@/components/Testimonials";
 import { motion } from "framer-motion";
 import Footer from "@/components/Footer";
 
@@ -27,6 +28,8 @@ export default function Home() {
           <ProductGrid category="handicraft" />
         </div>
       </section>
+
+      <Testimonials />
 
       <section id="bestsellers" className=" bg-white">
         <Footer />
