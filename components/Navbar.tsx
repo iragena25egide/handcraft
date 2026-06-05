@@ -27,6 +27,7 @@ import { removeWishlistItem, clearWishlist } from "@/lib/store/slices/wishlistSl
 import { addItem as addCartItem, removeItem as removeCartItem, incrementItem, decrementItem, clearCart } from "@/lib/store/slices/cartSlice";
 import { api } from "@/lib/api";
 import { useTheme } from "./ThemeProvider";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -507,13 +508,13 @@ export default function Navbar() {
             <div className="hidden md:flex items-center space-x-8">
               {["Shop", "Categories", "New Arrivals", "Sale", "About"].map(
                 (item) => (
-                  <a
+                  <Link
                     key={item}
-                    href={`#${item.toLowerCase().replace(" ", "-")}`}
+                    href={`/${item.toLowerCase().replace(" ", "-")}`}
                     className="text-[#0f172a]/70 dark:text-gray-400 hover:text-[#0f172a] dark:hover:text-white transition-colors text-sm font-semibold tracking-tight"
                   >
                     {item}
-                  </a>
+                  </Link>
                 )
               )}
             </div>
@@ -526,8 +527,8 @@ export default function Navbar() {
                 >
                   <Search className="w-5 h-5" />
                 </button>
-                <button
-                  onClick={() => setIsWishlistOpen(true)}
+                <Link
+                  href="/wishlist"
                   className="relative text-[#0f172a] dark:text-gray-200 hover:opacity-60 transition-opacity"
                 >
                   <Heart className="w-5 h-5" />
@@ -536,7 +537,7 @@ export default function Navbar() {
                       {wishlistItems.length}
                     </span>
                   )}
-                </button>
+                </Link>
                 <button
                   onClick={() => {
                     if (!isLoggedIn) {
@@ -553,8 +554,8 @@ export default function Navbar() {
                 >
                   <User className={`w-5 h-5 ${isLoggedIn ? 'text-green-600' : ''}`} />
                 </button>
-                <button
-                  onClick={() => setIsCartOpen(true)}
+                <Link
+                  href="/cart"
                   className="relative text-[#0f172a] dark:text-gray-200 hover:opacity-60 transition-opacity"
                 >
                   <ShoppingBag className="w-5 h-5" />
@@ -563,7 +564,7 @@ export default function Navbar() {
                       {cartItems.length}
                     </span>
                   )}
-                </button>
+                </Link>
                 <button
                   onClick={toggleTheme}
                   className="text-gray-400 hover:text-[#0f172a] transition-colors"
@@ -626,14 +627,14 @@ export default function Navbar() {
         <div className="flex flex-col space-y-4 py-2">
           {["Shop", "Categories", "New Arrivals", "Sale", "About"].map(
             (item) => (
-              <a
+              <Link
                 key={item}
-                href={`#${item.toLowerCase().replace(" ", "-")}`}
+                href={`/${item.toLowerCase().replace(" ", "-")}`}
                 onClick={() => setIsMenuOpen(false)}
                 className="text-[#0f172a] dark:text-white text-lg font-bold py-2 border-b border-gray-100 dark:border-gray-800"
               >
                 {item}
-              </a>
+              </Link>
             )
           )}
           {/* Language selector inside bottom sheet */}
