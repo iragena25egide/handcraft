@@ -7,7 +7,7 @@ export default function ShopPage() {
         <h1 className="text-4xl font-bold text-[#0f172a] mb-4">Our Shop</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">Discover our full collection of handcrafted items and fashion.</p>
       </div>
-      <ProductGrid />
+      <ProductGrid showSidebar={true} />
     </main>
   );
 }
