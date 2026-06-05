@@ -14,7 +14,8 @@ import { api } from "@/lib/api";
 import { type Product } from "@/data/product";
 
 interface ProductGridProps {
-  category?: "fashion" | "handicraft";
+  category?: "fashion" | "handicraft" | string;
+  showSidebar?: boolean;
 }
 
 type SortOption = "default" | "price-low" | "price-high" | "category" | "name";
@@ -27,11 +28,15 @@ const SORT_LABELS: Record<SortOption, string> = {
   name: "Product Name (A-Z)",
 };
 
-export default function ProductGrid({ category }: ProductGridProps) {
+export default function ProductGrid({ category, showSidebar = false }: ProductGridProps) {
   const [sortBy, setSortBy] = useState<SortOption>("default");
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(category ? [category.toLowerCase()] : []);
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(10000000);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -48,9 +53,13 @@ export default function ProductGrid({ category }: ProductGridProps) {
   }, []);
 
   const processedProducts = useMemo(() => {
-    const result: Product[] = category
-      ? products.filter((p) => p.category.toLowerCase() === category)
-      : [...products];
+    let result = [...products];
+
+    if (selectedCategories.length > 0) {
+      result = result.filter((p) => selectedCategories.includes(p.category.toLowerCase()));
+    }
+
+    result = result.filter((p) => p.price >= minPrice && p.price <= maxPrice);
 
     switch (sortBy) {
       case "price-low":
@@ -64,7 +73,7 @@ export default function ProductGrid({ category }: ProductGridProps) {
       default:
         return result;
     }
-  }, [category, sortBy, products]);
+  }, [selectedCategories, minPrice, maxPrice, sortBy, products]);
 
   if (loading) return <div className="text-center py-20">Loading products...</div>;
 
@@ -77,132 +86,187 @@ export default function ProductGrid({ category }: ProductGridProps) {
   return (
     <section className="relative py-4 bg-white overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6 lg:px-8 z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-2 bg-[#0f172a] shadow-[4px_0_0_0_#fefce8] hidden md:block" />
-
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="relative h-20 w-48 flex items-end justify-center overflow-hidden bg-gray-50/50 rounded-2xl border border-gray-100"
-            >
-              {/* Stationary Cart Icon */}
-              <div className="z-20 mb-2 text-[#0f172a]">
-                <ShoppingCart className="w-8 h-8" />
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          {showSidebar && (
+            <aside className="w-full lg:w-1/4 flex-shrink-0 bg-gray-50/50 p-6 rounded-[28px] border border-gray-100 sticky top-24">
+              <h2 className="text-xl font-bold text-[#0f172a] mb-6">Filter</h2>
+              
+              <div className="mb-8">
+                <h3 className="text-sm font-black text-[#0f172a] uppercase tracking-widest mb-4">Category</h3>
+                <div className="space-y-3">
+                  {Array.from(new Set(products.map(p => p.category.toLowerCase()))).map(cat => (
+                    <label key={cat} className="flex items-center gap-3 cursor-pointer group">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedCategories.includes(cat)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedCategories([...selectedCategories, cat]);
+                          } else {
+                            setSelectedCategories(selectedCategories.filter(c => c !== cat));
+                          }
+                        }}
+                        className="w-4 h-4 rounded border-gray-300 text-[#0f172a] focus:ring-[#0f172a]"
+                      />
+                      <span className="text-sm font-semibold text-gray-600 group-hover:text-[#0f172a] transition-colors capitalize">{cat}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-
-              {/* One-by-one Flowing Icons */}
-              {[
-                { Icon: "🧺", d: 0 },
-                { Icon: "👕", d: 0.8 },
-                { Icon: "🎨", d: 1.6 },
-                { Icon: "🏺", d: 2.4 },
-                { Icon: "📿", d: 3.2 },
-                { Icon: "☕", d: 4.0 },
-                { Icon: "👞", d: 4.8 },
-                { Icon: "👜", d: 5.6 },
-                { Icon: "🪑", d: 6.4 },
-                { Icon: "🕯️", d: 7.2 },
-              ].map((item, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ y: -50, opacity: 0 }}
-                  animate={{
-                    y: [-50, 25],
-                    opacity: [0, 1, 1, 0],
-                  }}
-                  transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    delay: item.d,
-                    ease: "easeIn",
-                  }}
-                  className="absolute top-2 text-xl z-10 filter grayscale brightness-0"
-                >
-                  {item.Icon}
-                </motion.span>
-              ))}
-
-              <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                <span className="text-[8px] font-black uppercase tracking-[0.4em] text-[#0f172a]">
-                  Shopping.
-                </span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Right: Custom Sort & Filter */}
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <button
-                onClick={() => setIsSortOpen(!isSortOpen)}
-                className="flex items-center gap-4 bg-white border border-gray-100 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-[#0f172a] shadow-sm hover:shadow-md transition-all cursor-pointer min-w-[240px] justify-between z-50 relative"
-              >
-                <span className="flex items-center gap-3">
-                  <ListFilter
-                    className={`w-4 h-4 transition-colors ${
-                      isSortOpen ? "text-[#0f172a]" : "text-gray-300"
-                    }`}
-                  />
-                  {SORT_LABELS[sortBy]}
-                </span>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-500 ${
-                    isSortOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-
-              <AnimatePresence>
-                {isSortOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setIsSortOpen(false)}
+              
+              <div>
+                <h3 className="text-sm font-black text-[#0f172a] uppercase tracking-widest mb-4">Price Range</h3>
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-widest">Min (RWF)</label>
+                    <input 
+                      type="number" 
+                      value={minPrice} 
+                      onChange={e => setMinPrice(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-sm font-bold text-[#0f172a] focus:ring-2 focus:ring-[#0f172a]/10 outline-none transition-all shadow-sm"
                     />
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 8, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 top-full w-full bg-white border border-gray-50 rounded-[28px] shadow-2xl p-2 z-50 overflow-hidden"
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 mb-1.5 block uppercase tracking-widest">Max (RWF)</label>
+                    <input 
+                      type="number" 
+                      value={maxPrice} 
+                      onChange={e => setMaxPrice(Number(e.target.value))}
+                      className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-sm font-bold text-[#0f172a] focus:ring-2 focus:ring-[#0f172a]/10 outline-none transition-all shadow-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            </aside>
+          )}
+
+          <div className="flex-1 w-full min-w-0">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-2 bg-[#0f172a] shadow-[4px_0_0_0_#fefce8] hidden md:block" />
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  className="relative h-20 w-48 flex items-end justify-center overflow-hidden bg-gray-50/50 rounded-2xl border border-gray-100"
+                >
+                  {/* Stationary Cart Icon */}
+                  <div className="z-20 mb-2 text-[#0f172a]">
+                    <ShoppingCart className="w-8 h-8" />
+                  </div>
+
+                  {/* One-by-one Flowing Icons */}
+                  {[
+                    { Icon: "🧺", d: 0 },
+                    { Icon: "👕", d: 0.8 },
+                    { Icon: "🎨", d: 1.6 },
+                    { Icon: "🏺", d: 2.4 },
+                    { Icon: "📿", d: 3.2 },
+                    { Icon: "☕", d: 4.0 },
+                    { Icon: "👞", d: 4.8 },
+                    { Icon: "👜", d: 5.6 },
+                    { Icon: "🪑", d: 6.4 },
+                    { Icon: "🕯️", d: 7.2 },
+                  ].map((item, i) => (
+                    <motion.span
+                      key={i}
+                      initial={{ y: -50, opacity: 0 }}
+                      animate={{
+                        y: [-50, 25],
+                        opacity: [0, 1, 1, 0],
+                      }}
+                      transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        delay: item.d,
+                        ease: "easeIn",
+                      }}
+                      className="absolute top-2 text-xl z-10 filter grayscale brightness-0"
                     >
-                      <div className="flex flex-col gap-1">
-                        {(Object.keys(SORT_LABELS) as SortOption[]).map(
-                          (option) => (
-                            <button
-                              key={option}
-                              onClick={() => {
-                                setSortBy(option);
-                                setIsSortOpen(false);
-                              }}
-                              className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer ${
-                                sortBy === option
-                                  ? "bg-[#fefce8] text-[#0f172a]"
-                                  : "text-gray-500 hover:bg-gray-50"
-                              }`}
-                            >
-                              {SORT_LABELS[option]}
-                              {sortBy === option && (
-                                <Check className="w-3.5 h-3.5" />
-                              )}
-                            </button>
-                          )
-                        )}
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
+                      {item.Icon}
+                    </motion.span>
+                  ))}
+
+                  <div className="absolute inset-0 flex items-center justify-center opacity-40">
+                    <span className="text-[8px] font-black uppercase tracking-[0.4em] text-[#0f172a]">
+                      Shopping.
+                    </span>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Right: Custom Sort & Filter */}
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <button
+                    onClick={() => setIsSortOpen(!isSortOpen)}
+                    className="flex items-center gap-4 bg-white border border-gray-100 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-[#0f172a] shadow-sm hover:shadow-md transition-all cursor-pointer min-w-[240px] justify-between z-50 relative"
+                  >
+                    <span className="flex items-center gap-3">
+                      <ListFilter
+                        className={`w-4 h-4 transition-colors ${
+                          isSortOpen ? "text-[#0f172a]" : "text-gray-300"
+                        }`}
+                      />
+                      {SORT_LABELS[sortBy]}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-500 ${
+                        isSortOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {isSortOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-40"
+                          onClick={() => setIsSortOpen(false)}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 8, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          className="absolute right-0 top-full w-full bg-white border border-gray-50 rounded-[28px] shadow-2xl p-2 z-50 overflow-hidden"
+                        >
+                          <div className="flex flex-col gap-1">
+                            {(Object.keys(SORT_LABELS) as SortOption[]).map(
+                              (option) => (
+                                <button
+                                  key={option}
+                                  onClick={() => {
+                                    setSortBy(option);
+                                    setIsSortOpen(false);
+                                  }}
+                                  className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer ${
+                                    sortBy === option
+                                      ? "bg-[#fefce8] text-[#0f172a]"
+                                      : "text-gray-500 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  {SORT_LABELS[option]}
+                                  {sortBy === option && (
+                                    <Check className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              )
+                            )}
+                          </div>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <button className="p-3.5 bg-[#0f172a] text-white rounded-2xl shadow-xl hover:bg-black transition-all cursor-pointer group">
+                  <SlidersHorizontal className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
+                </button>
+              </div>
             </div>
 
-            <button className="p-3.5 bg-[#0f172a] text-white rounded-2xl shadow-xl hover:bg-black transition-all cursor-pointer group">
-              <SlidersHorizontal className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
-            </button>
-          </div>
-        </div>
-
-        {/* --- PRODUCT GRID ROWS --- */}
-        {rows.map((row, rowIndex) => (
+            {/* --- PRODUCT GRID ROWS --- */}
+            {rows.map((row, rowIndex) => (
           <div key={`row-${rowIndex}`}>
             <motion.div
               layout
@@ -229,6 +293,8 @@ export default function ProductGrid({ category }: ProductGridProps) {
             )}
           </div>
         ))}
+          </div>
+        </div>
       </div>
     </section>
   );
