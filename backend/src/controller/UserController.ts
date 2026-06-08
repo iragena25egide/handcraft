@@ -3,6 +3,7 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { AuthRequest } from "../middleware/auth";
 
 export class UserController {
   private userRepository = AppDataSource.getRepository(User);
@@ -68,6 +69,56 @@ export class UserController {
       });
     } catch (error) {
       res.status(500).json({ message: "Error logging in", error });
+    }
+  }
+  async getAllUsers(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN") {
+        return res.status(403).json({ message: "Forbidden: Super Admin only" });
+      }
+      
+      const users = await this.userRepository.find();
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching users", error });
+    }
+  }
+
+  async updateUserRole(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN") {
+        return res.status(403).json({ message: "Forbidden: Super Admin only" });
+      }
+
+      const id = parseInt(req.params.id);
+      const { role } = req.body;
+      const user = await this.userRepository.findOne({ where: { id } });
+      
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      user.role = role;
+      const results = await this.userRepository.save(user);
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating user role", error });
+    }
+  }
+
+  async deleteUser(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN") {
+        return res.status(403).json({ message: "Forbidden: Super Admin only" });
+      }
+
+      const id = parseInt(req.params.id);
+      const user = await this.userRepository.findOne({ where: { id } });
+      
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      await this.userRepository.softDelete(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting user", error });
     }
   }
 }

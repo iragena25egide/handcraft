@@ -29,14 +29,13 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   };
 
+  const price = Number(product.price);
+  const originalPrice = product.originalPrice ? Number(product.originalPrice) : null;
+
   // Logic for dynamic pricing and badges
-  const hasDiscount =
-    product.originalPrice && product.originalPrice > product.price;
+  const hasDiscount = originalPrice && originalPrice > price;
   const discountPercent = hasDiscount
-    ? Math.round(
-        ((product.originalPrice! - product.price) / product.originalPrice!) *
-          100
-      )
+    ? Math.round(((originalPrice! - price) / originalPrice!) * 100)
     : 0;
 
   return (
@@ -111,11 +110,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center gap-2">
           <span className="text-lg font-black text-[#0f172a]">
-            RWF{product.price.toFixed(2)}
+            RWF{price.toFixed(2)}
           </span>
           {hasDiscount && (
             <span className="text-sm text-gray-400 line-through font-medium">
-              RWF{product.originalPrice?.toFixed(2)}
+              RWF{originalPrice?.toFixed(2)}
             </span>
           )}
         </div>

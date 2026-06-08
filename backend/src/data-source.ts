@@ -15,7 +15,8 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || "postgres",
   password: process.env.DB_PASSWORD || "postgres",
   database: process.env.DB_NAME || "handcraft",
-  synchronize: true, // auto-sync schema (dev only)
+  synchronize: true,
+  uuidExtension: "pgcrypto",
   logging: false,
   entities: [User, Product, Order, OrderItem],
   migrations: [],

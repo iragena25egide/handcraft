@@ -117,4 +117,65 @@ export class OrderController {
       res.status(500).json({ message: "Error fetching orders", error });
     }
   }
+  async getAllOrders(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN" && req.user?.role !== "SELLER") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      let query = this.orderRepository.createQueryBuilder("order")
+        .leftJoinAndSelect("order.user", "user")
+        .leftJoinAndSelect("order.items", "items")
+        .leftJoinAndSelect("items.product", "product")
+        .leftJoinAndSelect("product.seller", "seller")
+        .orderBy("order.createdAt", "DESC");
+
+      if (req.user.role === "SELLER") {
+        query = query.where("seller.id = :sellerId", { sellerId: req.user.id });
+      }
+
+      const orders = await query.getMany();
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching all orders", error });
+    }
+  }
+
+  async updateOrderStatus(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN" && req.user?.role !== "SELLER") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const id = req.params.id;
+      const { status } = req.body;
+      const order = await this.orderRepository.findOne({ where: { id } });
+      
+      if (!order) return res.status(404).json({ message: "Order not found" });
+
+      order.status = status;
+      const results = await this.orderRepository.save(order);
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating order", error });
+    }
+  }
+
+  async deleteOrder(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN" && req.user?.role !== "SELLER") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const id = req.params.id;
+      const order = await this.orderRepository.findOne({ where: { id } });
+      
+      if (!order) return res.status(404).json({ message: "Order not found" });
+
+      await this.orderRepository.softDelete(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting order", error });
+    }
+  }
 }

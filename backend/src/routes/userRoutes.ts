@@ -15,4 +15,8 @@ router.get("/me", verifyToken, (req: AuthRequest, res) => {
   res.json(req.user);
 });
 
+router.get("/", verifyToken, (req: AuthRequest, res) => userController.getAllUsers(req, res));
+router.put("/:id/role", verifyToken, (req: AuthRequest, res) => userController.updateUserRole(req, res));
+router.delete("/:id", verifyToken, (req: AuthRequest, res) => userController.deleteUser(req, res));
+
 export default router;

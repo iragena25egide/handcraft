@@ -15,6 +15,25 @@ export class ProductController {
     }
   }
 
+  async getTrashedProducts(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const products = await this.productRepository
+        .createQueryBuilder("product")
+        .withDeleted()
+        .where("product.deletedAt IS NOT NULL")
+        .leftJoinAndSelect("product.seller", "seller")
+        .getMany();
+        
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching trashed products", error });
+    }
+  }
+
   async getProductById(req: Request, res: Response) {
     try {
       const id = parseInt(req.params.id);
@@ -95,10 +114,24 @@ export class ProductController {
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      await this.productRepository.delete(id);
+      await this.productRepository.softDelete(id);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Error deleting product", error });
+    }
+  }
+
+  async restoreProduct(req: AuthRequest, res: Response) {
+    try {
+      if (req.user?.role !== "SUPER_ADMIN") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const id = parseInt(req.params.id);
+      await this.productRepository.restore(id);
+      res.status(200).json({ message: "Product restored successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error restoring product", error });
     }
   }
 }
