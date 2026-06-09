@@ -5,11 +5,11 @@ import { verifyToken, isSuperAdmin } from "../middleware/auth";
 const router = Router();
 const reportController = new ReportController();
 
-router.get("/sales", verifyToken, isSuperAdmin, (req, res) =>
-  reportController.getSalesRevenue(req, res)
+router.get("/sales", verifyToken, (req, res) =>
+  reportController.getSalesRevenue(req as any, res)
 );
-router.get("/low-stock", verifyToken, isSuperAdmin, (req, res) =>
-  reportController.getLowStockProducts(req, res)
+router.get("/low-stock", verifyToken, (req, res) =>
+  reportController.getLowStockProducts(req as any, res)
 );
 
 router.get("/pdf", verifyToken, (req, res) =>
