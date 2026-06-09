@@ -18,9 +18,11 @@ export const createProductSchema = Joi.object({
   price: Joi.number().min(0).required(),
   originalPrice: Joi.number().min(0).optional(),
   artisan: Joi.string().required(),
-  image: Joi.string().uri().required(),
+  image: Joi.string().allow("").optional(),
   category: Joi.string().required(),
-  stockQuantity: Joi.number().integer().min(0).required()
+  stockQuantity: Joi.number().integer().min(0).required(),
+  sellerId: Joi.string().allow("").optional(),
+  images: Joi.any().optional()
 });
 
 export const updateProductSchema = Joi.object({
@@ -29,9 +31,11 @@ export const updateProductSchema = Joi.object({
   price: Joi.number().min(0).optional(),
   originalPrice: Joi.number().min(0).optional(),
   artisan: Joi.string().optional(),
-  image: Joi.string().uri().optional(),
+  image: Joi.string().allow("").optional(),
   category: Joi.string().optional(),
-  stockQuantity: Joi.number().integer().min(0).optional()
+  stockQuantity: Joi.number().integer().min(0).optional(),
+  sellerId: Joi.string().allow("").optional(),
+  images: Joi.any().optional()
 });
 
 export const createOrderSchema = Joi.object({
