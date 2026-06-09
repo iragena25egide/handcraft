@@ -3,6 +3,7 @@ import { ProductController } from "../controller/ProductController";
 import { verifyToken, isSeller } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import { createProductSchema, updateProductSchema } from "../validations";
+import { upload } from "../middleware/upload";
 
 const router = Router();
 const productController = new ProductController();
@@ -16,6 +17,7 @@ router.post(
   "/",
   verifyToken,
   isSeller,
+  upload.array("images", 3),
   validate(createProductSchema),
   (req, res) => productController.createProduct(req, res)
 );
@@ -28,6 +30,7 @@ router.put(
   "/:id",
   verifyToken,
   isSeller,
+  upload.array("images", 3),
   validate(updateProductSchema),
   (req, res) => productController.updateProduct(req, res)
 );
