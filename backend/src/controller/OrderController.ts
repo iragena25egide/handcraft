@@ -3,11 +3,13 @@ import { AppDataSource } from "../data-source";
 import { Order } from "../entity/Order";
 import { OrderItem } from "../entity/OrderItem";
 import { Product } from "../entity/Product";
+import { Notification } from "../entity/Notification";
 import { AuthRequest } from "../middleware/auth";
 import { getIo } from "../socket";
 
 export class OrderController {
   private orderRepository = AppDataSource.getRepository(Order);
+  private notificationRepository = AppDataSource.getRepository(Notification);
 
   async createOrder(req: AuthRequest, res: Response) {
     // Start a transaction to ensure database integrity during stock decrement
@@ -78,15 +80,31 @@ export class OrderController {
 
       await queryRunner.commitTransaction();
 
-      // Emit realtime notifications
+      // Save and emit realtime notifications
       try {
         const io = getIo();
-        io.to("room:admin").emit("new_order", { message: "A new order was placed!", orderId: savedOrder.id, total: savedOrder.total });
-        sellerIdsToNotify.forEach(sellerId => {
-          io.to(`room:seller_${sellerId}`).emit("new_order", { message: "One of your products was ordered!", orderId: savedOrder.id });
+        
+        // Notify Super Admin
+        const adminNotif = this.notificationRepository.create({
+          title: "New Order Placed",
+          message: `A new order (#${savedOrder.id}) was placed totaling $${savedOrder.total.toFixed(2)}`,
+          userId: null // null means SUPER_ADMIN
         });
+        await this.notificationRepository.save(adminNotif);
+        io.to("room:admin").emit("new_order", { message: "A new order was placed!", orderId: savedOrder.id, total: savedOrder.total });
+        
+        // Notify specific Sellers
+        for (const sellerId of Array.from(sellerIdsToNotify)) {
+          const sellerNotif = this.notificationRepository.create({
+            title: "Product Ordered",
+            message: `One of your products was ordered! (Order #${savedOrder.id})`,
+            userId: sellerId
+          });
+          await this.notificationRepository.save(sellerNotif);
+          io.to(`room:seller_${sellerId}`).emit("new_order", { message: "One of your products was ordered!", orderId: savedOrder.id });
+        }
       } catch (e) {
-        console.error("Socket emit failed", e);
+        console.error("Socket or Notification emit failed", e);
       }
 
       res.status(201).json(savedOrder);
