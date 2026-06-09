@@ -24,8 +24,11 @@ export class Product {
   @Column()
   artisan: string;
 
-  @Column()
+  @Column({ nullable: true })
   image: string;
+
+  @Column({ type: "simple-json", nullable: true })
+  images: string[];
 
   @Column()
   category: string;
