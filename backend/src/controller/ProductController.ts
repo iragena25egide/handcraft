@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { Product } from "../entity/Product";
+import { Notification } from "../entity/Notification";
 import { AuthRequest } from "../middleware/auth";
+import { getIo } from "../socket";
 
 export class ProductController {
   private productRepository = AppDataSource.getRepository(Product);
+  private notificationRepository = AppDataSource.getRepository(Notification);
 
   async getAllProducts(req: Request, res: Response) {
     try {
@@ -51,15 +54,52 @@ export class ProductController {
   async createProduct(req: AuthRequest, res: Response) {
     try {
       // The user is attached by the verifyToken middleware
-      const seller = req.user;
+      let seller = req.user;
       
       if (!seller) {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
+      if (seller.role === "SUPER_ADMIN" && req.body.sellerId) {
+        seller = { id: parseInt(req.body.sellerId) } as any;
+      }
+
       const productData = { ...req.body, seller };
+      
+      if (req.files && Array.isArray(req.files)) {
+        productData.images = req.files.map((file: any) => {
+          return file.path && file.path.startsWith("http") 
+            ? file.path 
+            : `/uploads/${file.filename}`;
+        });
+        if (productData.images.length > 0) {
+          productData.image = productData.images[0]; // Set first image as main
+        }
+      }
+
+      if (productData.price) productData.price = parseFloat(productData.price);
+      if (productData.originalPrice) productData.originalPrice = parseFloat(productData.originalPrice);
+      if (productData.stockQuantity) productData.stockQuantity = parseInt(productData.stockQuantity, 10);
       const product = this.productRepository.create(productData);
       const results = await this.productRepository.save(product);
+
+      if (req.user?.role === "SELLER") {
+        try {
+          const notification = this.notificationRepository.create({
+            title: "New Product Added",
+            message: `Seller ${req.user.name} added a new product: ${productData.name}`
+          });
+          await this.notificationRepository.save(notification);
+
+          getIo().to("room:admin").emit("notification", {
+            title: notification.title,
+            message: notification.message
+          });
+        } catch (e) {
+          console.error("Socket error", e);
+        }
+      }
+
       res.status(201).json(results);
     } catch (error) {
       res.status(500).json({ message: "Error creating product", error });
@@ -95,8 +135,50 @@ export class ProductController {
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      this.productRepository.merge(product, req.body);
+      const updateData = { ...req.body };
+      
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        // If files are uploaded, append to or replace existing images
+        const newImages = req.files.map((file: any) => {
+          return file.path && file.path.startsWith("http") 
+            ? file.path 
+            : `/uploads/${file.filename}`;
+        });
+        // We'll replace them completely for simplicity here, but you could append
+        updateData.images = newImages;
+        if (updateData.images.length > 0) {
+          updateData.image = updateData.images[0];
+        }
+      }
+
+      if (updateData.price) updateData.price = parseFloat(updateData.price);
+      if (updateData.originalPrice) updateData.originalPrice = parseFloat(updateData.originalPrice);
+      if (updateData.stockQuantity) updateData.stockQuantity = parseInt(updateData.stockQuantity, 10);
+      
+      if (req.user?.role === "SUPER_ADMIN" && updateData.sellerId) {
+        updateData.seller = { id: parseInt(updateData.sellerId) } as any;
+      }
+
+      this.productRepository.merge(product, updateData);
       const results = await this.productRepository.save(product);
+
+      if (req.user?.role === "SELLER") {
+        try {
+          const notification = this.notificationRepository.create({
+            title: "Product Updated",
+            message: `Seller ${req.user.name} updated product: ${product.name}`
+          });
+          await this.notificationRepository.save(notification);
+
+          getIo().to("room:admin").emit("notification", {
+            title: notification.title,
+            message: notification.message
+          });
+        } catch (e) {
+          console.error("Socket error", e);
+        }
+      }
+
       res.json(results);
     } catch (error) {
       res.status(500).json({ message: "Error updating product", error });
@@ -115,6 +197,24 @@ export class ProductController {
       }
 
       await this.productRepository.softDelete(id);
+
+      if (req.user?.role === "SELLER") {
+        try {
+          const notification = this.notificationRepository.create({
+            title: "Product Deleted",
+            message: `Seller ${req.user.name} moved product to trash: ${product.name}`
+          });
+          await this.notificationRepository.save(notification);
+
+          getIo().to("room:admin").emit("notification", {
+            title: notification.title,
+            message: notification.message
+          });
+        } catch (e) {
+          console.error("Socket error", e);
+        }
+      }
+
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Error deleting product", error });
