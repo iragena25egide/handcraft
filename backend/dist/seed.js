@@ -41,10 +41,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const data_source_1 = require("./data-source");
 const Product_1 = require("./entity/Product");
+const User_1 = require("./entity/User");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const sampleProducts = [
@@ -130,18 +135,18 @@ const sampleProducts = [
         description: "Intricate silver sculpture of the majestic Rwandan Silverback Gorilla. A stunning centerpiece for any collection.",
         image: "https://images.unsplash.com/photo-1543850756-3ebae2f60d69?auto=format&fit=crop&q=80",
         stockQuantity: 3,
-    }
+    },
 ];
 data_source_1.AppDataSource.initialize()
     .then(() => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Database connected for seeding...");
     const productRepository = data_source_1.AppDataSource.getRepository(Product_1.Product);
     console.log("Clearing existing products (optional, uncomment to enable)...");
-    // await productRepository.clear(); // Uncomment if you want to wipe products before seeding
     let seededCount = 0;
     for (const item of sampleProducts) {
-        // Check if product with same name exists to avoid duplicates
-        const existingProduct = yield productRepository.findOneBy({ name: item.name });
+        const existingProduct = yield productRepository.findOneBy({
+            name: item.name,
+        });
         if (!existingProduct) {
             const product = new Product_1.Product();
             product.name = item.name;
@@ -150,8 +155,11 @@ data_source_1.AppDataSource.initialize()
             product.category = item.category;
             product.image = item.image;
             product.stockQuantity = item.stockQuantity;
-            // Optionally attach an artisan string if the model supports it, currently we rely on relations for seller
-            // product.artisan = item.artisan; 
+            product.artisan = item.artisan;
+            if (item.originalPrice)
+                product.originalPrice = item.originalPrice;
+            if (item.rating)
+                product.rating = item.rating;
             yield productRepository.save(product);
             console.log(`Seeded: ${product.name}`);
             seededCount++;
@@ -160,7 +168,23 @@ data_source_1.AppDataSource.initialize()
             console.log(`Skipped (already exists): ${item.name}`);
         }
     }
-    console.log(`\n✅ Seeding complete! ${seededCount} new products added.`);
+    console.log(`\n Seeding complete! ${seededCount} new products added.`);
+    // Seed Super Admin
+    const userRepository = data_source_1.AppDataSource.getRepository(User_1.User);
+    const adminEmail = "admin@handicraft.co.rw";
+    const existingAdmin = yield userRepository.findOneBy({ email: adminEmail });
+    if (!existingAdmin) {
+        const adminUser = new User_1.User();
+        adminUser.name = "Super Admin";
+        adminUser.email = adminEmail;
+        adminUser.password = yield bcryptjs_1.default.hash("Admin@h2026", 10);
+        adminUser.role = User_1.UserRole.SUPER_ADMIN;
+        yield userRepository.save(adminUser);
+        console.log("Super Admin account seeded successfully!");
+    }
+    else {
+        console.log("Super Admin account already exists.");
+    }
     process.exit(0);
 }))
     .catch((error) => {

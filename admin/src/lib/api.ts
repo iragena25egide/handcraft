@@ -4,9 +4,13 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("admin_token");
   
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
     ...options.headers,
   };
+
+  // Only set Content-Type to JSON if body is NOT FormData
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
@@ -17,9 +21,19 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     headers,
   });
 
+  if (response.status === 401) {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_user");
+    window.location.href = "/login";
+  }
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Request failed with status ${response.status}`);
+    let errorMessage = errorData.message || `Request failed with status ${response.status}`;
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+      errorMessage += ": " + errorData.errors.join(", ");
+    }
+    throw new Error(errorMessage);
   }
 
   // Handle 204 No Content for deletes

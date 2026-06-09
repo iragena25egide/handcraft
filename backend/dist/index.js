@@ -7,6 +7,7 @@ require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
 const cors_1 = __importDefault(require("cors"));
+const path_1 = __importDefault(require("path"));
 const data_source_1 = require("./data-source");
 const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
@@ -19,7 +20,8 @@ const port = process.env.PORT || 5000;
 (0, socket_1.initSocket)(server);
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-// Basic health check route
+// Serve uploaded files as static assets
+app.use("/uploads", express_1.default.static(path_1.default.join(__dirname, "../../uploads")));
 app.get("/api/health", (req, res) => {
     res.json({ status: "OK", message: "Backend is running!" });
 });

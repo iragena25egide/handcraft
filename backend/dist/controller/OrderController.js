@@ -119,5 +119,69 @@ class OrderController {
             }
         });
     }
+    getAllOrders(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            try {
+                if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== "SUPER_ADMIN" && ((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) !== "SELLER") {
+                    return res.status(403).json({ message: "Forbidden" });
+                }
+                let query = this.orderRepository.createQueryBuilder("order")
+                    .leftJoinAndSelect("order.user", "user")
+                    .leftJoinAndSelect("order.items", "items")
+                    .leftJoinAndSelect("items.product", "product")
+                    .leftJoinAndSelect("product.seller", "seller")
+                    .orderBy("order.createdAt", "DESC");
+                if (req.user.role === "SELLER") {
+                    query = query.where("seller.id = :sellerId", { sellerId: req.user.id });
+                }
+                const orders = yield query.getMany();
+                res.json(orders);
+            }
+            catch (error) {
+                res.status(500).json({ message: "Error fetching all orders", error });
+            }
+        });
+    }
+    updateOrderStatus(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            try {
+                if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== "SUPER_ADMIN" && ((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) !== "SELLER") {
+                    return res.status(403).json({ message: "Forbidden" });
+                }
+                const id = req.params.id;
+                const { status } = req.body;
+                const order = yield this.orderRepository.findOne({ where: { id } });
+                if (!order)
+                    return res.status(404).json({ message: "Order not found" });
+                order.status = status;
+                const results = yield this.orderRepository.save(order);
+                res.json(results);
+            }
+            catch (error) {
+                res.status(500).json({ message: "Error updating order", error });
+            }
+        });
+    }
+    deleteOrder(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            try {
+                if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== "SUPER_ADMIN" && ((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) !== "SELLER") {
+                    return res.status(403).json({ message: "Forbidden" });
+                }
+                const id = req.params.id;
+                const order = yield this.orderRepository.findOne({ where: { id } });
+                if (!order)
+                    return res.status(404).json({ message: "Order not found" });
+                yield this.orderRepository.softDelete(id);
+                res.status(204).send();
+            }
+            catch (error) {
+                res.status(500).json({ message: "Error deleting order", error });
+            }
+        });
+    }
 }
 exports.OrderController = OrderController;

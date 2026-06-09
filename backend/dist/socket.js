@@ -11,28 +11,32 @@ let io;
 const initSocket = (server) => {
     io = new socket_io_1.Server(server, {
         cors: {
-            origin: "*", // allow all origins for now, in prod you should restrict to your frontend URL
-            methods: ["GET", "POST"]
-        }
+            origin: "*",
+            methods: ["GET", "POST"],
+        },
     });
     io.on("connection", (socket) => {
         console.log("New socket connection:", socket.id);
-        // Clients will emit "authenticate" with their token
         socket.on("authenticate", (token) => {
             try {
                 const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
                 if (decoded.role === "SUPER_ADMIN") {
                     socket.join("room:admin");
                     console.log(`Socket ${socket.id} joined room:admin`);
+                    io.to("room:admin").emit("active_staff", { message: `Super Admin ${decoded.id} is online` });
                 }
                 else if (decoded.role === "SELLER") {
                     socket.join(`room:seller_${decoded.id}`);
                     console.log(`Socket ${socket.id} joined room:seller_${decoded.id}`);
+                    io.to("room:admin").emit("active_staff", { message: `Seller ${decoded.id} is online` });
                 }
                 socket.emit("authenticated", { success: true });
             }
             catch (error) {
-                socket.emit("authenticated", { success: false, message: "Invalid token" });
+                socket.emit("authenticated", {
+                    success: false,
+                    message: "Invalid token",
+                });
             }
         });
         socket.on("disconnect", () => {

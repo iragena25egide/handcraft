@@ -72,11 +72,67 @@ class UserController {
                     id: user.id,
                     name: user.name,
                     email: user.email,
+                    role: user.role,
                     token,
                 });
             }
             catch (error) {
                 res.status(500).json({ message: "Error logging in", error });
+            }
+        });
+    }
+    getAllUsers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== "SUPER_ADMIN") {
+                    return res.status(403).json({ message: "Forbidden: Super Admin only" });
+                }
+                const users = yield this.userRepository.find();
+                res.json(users);
+            }
+            catch (error) {
+                res.status(500).json({ message: "Error fetching users", error });
+            }
+        });
+    }
+    updateUserRole(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== "SUPER_ADMIN") {
+                    return res.status(403).json({ message: "Forbidden: Super Admin only" });
+                }
+                const id = parseInt(req.params.id);
+                const { role } = req.body;
+                const user = yield this.userRepository.findOne({ where: { id } });
+                if (!user)
+                    return res.status(404).json({ message: "User not found" });
+                user.role = role;
+                const results = yield this.userRepository.save(user);
+                res.json(results);
+            }
+            catch (error) {
+                res.status(500).json({ message: "Error updating user role", error });
+            }
+        });
+    }
+    deleteUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                if (((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) !== "SUPER_ADMIN") {
+                    return res.status(403).json({ message: "Forbidden: Super Admin only" });
+                }
+                const id = parseInt(req.params.id);
+                const user = yield this.userRepository.findOne({ where: { id } });
+                if (!user)
+                    return res.status(404).json({ message: "User not found" });
+                yield this.userRepository.softDelete(id);
+                res.status(204).send();
+            }
+            catch (error) {
+                res.status(500).json({ message: "Error deleting user", error });
             }
         });
     }

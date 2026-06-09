@@ -49,7 +49,8 @@ exports.AppDataSource = new typeorm_1.DataSource({
     username: process.env.DB_USER || "postgres",
     password: process.env.DB_PASSWORD || "postgres",
     database: process.env.DB_NAME || "handcraft",
-    synchronize: true, // auto-sync schema (dev only)
+    synchronize: true,
+    uuidExtension: "pgcrypto",
     logging: false,
     entities: [User_1.User, Product_1.Product, Order_1.Order, OrderItem_1.OrderItem],
     migrations: [],

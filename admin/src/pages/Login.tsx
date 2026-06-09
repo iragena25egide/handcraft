@@ -1,142 +1,244 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, Sparkles, ArrowRight } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:5000/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      
       const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-      
-      // Store token
+      if (!response.ok) throw new Error(data.message || "Login failed");
       localStorage.setItem("admin_token", data.token);
       localStorage.setItem("admin_user", JSON.stringify(data));
-      
-      // Navigate to dashboard
       navigate("/");
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
-      {/* Top Navigation */}
-      <header className="bg-[#0A0F1C] text-white py-4 px-8 flex justify-between items-center shadow-md">
-        <div className="flex items-center gap-3">
-          <div className="bg-white/10 p-1.5 rounded text-sm font-bold tracking-wider">RC</div>
-          <span className="font-bold text-lg tracking-tight">All African Handcraft</span>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center pt-16 px-4">
-        <div className="w-full max-w-[400px]">
-          <Link to="/" className="inline-flex items-center text-sm text-slate-500 hover:text-slate-800 mb-8 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Shop
-          </Link>
-
-          <div className="flex flex-col items-center mb-8">
-            <div className="bg-[#0A0F1C] text-white w-12 h-12 rounded-xl flex items-center justify-center font-bold text-xl mb-6 shadow-sm">
-              RC
-            </div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Sign in to your account</h1>
+    <div
+      className="imigongo-bg"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+        fontFamily: "'Inter', sans-serif",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 440,
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {/* Card */}
+        <div
+          style={{
+            background: "#FFFFFF",
+            border: "1px solid #E2E4F6",
+            borderRadius: 28,
+            padding: "48px 40px",
+            boxShadow: "0 24px 80px rgba(0,0,0,0.1)",
+          }}
+        >
+          {/* Logo */}
+          <div style={{ textAlign: "center", marginBottom: 36 }}>
+            <div></div>
+            <h1
+              style={{
+                color: "#1A1A2E",
+                fontSize: 26,
+                fontWeight: 900,
+                letterSpacing: "-0.5px",
+                marginBottom: 6,
+              }}
+            >
+              Welcome back
+            </h1>
+            <p style={{ color: "#5A5B7A", fontSize: 14, fontWeight: 400 }}>
+              Sign in to the Handcraft portal
+            </p>
           </div>
 
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-            {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-100">
-                {error}
-              </div>
-            )}
-            
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-[#F1F5F9] border border-transparent rounded-xl py-3 pl-10 pr-4 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:bg-white transition-all"
-                    placeholder="iragenaegide205@gmail.com"
-                  />
-                </div>
-              </div>
+          {/* Error */}
+          {error && (
+            <div
+              style={{
+                background: "rgba(255,118,117,0.15)",
+                border: "1px solid rgba(255,118,117,0.35)",
+                borderRadius: 12,
+                padding: "12px 16px",
+                marginBottom: 24,
+                color: "#ff7675",
+                fontSize: 13,
+                fontWeight: 600,
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </div>
+          )}
 
-              <div className="space-y-2">
-                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                  Password
-                </label>
-                <div className="relative flex items-center">
-                  <Lock className="absolute left-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-10 pr-10 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
-                    placeholder="••••••••••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 p-1 text-slate-400 hover:text-slate-600 focus:outline-none"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full bg-[#0A0F1C] hover:bg-slate-800 text-white py-6 rounded-xl text-[13px] font-bold uppercase tracking-wider shadow-lg shadow-slate-900/20 transition-all"
+          <form
+            onSubmit={handleLogin}
+            style={{ display: "flex", flexDirection: "column", gap: 18 }}
+          >
+            {/* Email */}
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: "#8B8FA8",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  marginBottom: 8,
+                }}
               >
-                Sign In
-              </Button>
-            </form>
-
-            <div className="mt-8 relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-100"></div>
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="bg-white px-4 text-slate-500 font-medium">Default Admin Login</span>
+                Email Address
+              </label>
+              <div style={{ position: "relative" }}>
+                <Mail
+                  style={{
+                    position: "absolute",
+                    left: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 16,
+                    height: 16,
+                    color: "#AAADCC",
+                  }}
+                />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@handicraft.co.rw"
+                  className="admin-input"
+                  style={{ paddingLeft: 42 }}
+                />
               </div>
             </div>
 
-            <div className="mt-6 text-center text-sm text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-100">
-              <p>Email: <span className="font-bold text-slate-900">admin@handicraft.co.rw</span></p>
-              <p>Password: <span className="font-bold text-slate-900">Admin@h2026</span></p>
-              <p className="mt-2 text-xs italic">No need to create an account, just sign in directly.</p>
+            {/* Password */}
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: "#8B8FA8",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  marginBottom: 8,
+                }}
+              >
+                Password
+              </label>
+              <div style={{ position: "relative" }}>
+                <Lock
+                  style={{
+                    position: "absolute",
+                    left: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 16,
+                    height: 16,
+                    color: "#AAADCC",
+                  }}
+                />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="admin-input"
+                  style={{ paddingLeft: 42, paddingRight: 42 }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#AAADCC",
+                    padding: 0,
+                  }}
+                >
+                  {showPassword ? (
+                    <EyeOff style={{ width: 16, height: 16 }} />
+                  ) : (
+                    <Eye style={{ width: 16, height: 16 }} />
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                marginTop: 8,
+                background: loading ? "#E2E4F6" : "#1A1A2E",
+                color: loading ? "#8B8FA8" : "#fff",
+                border: "none",
+                borderRadius: 14,
+                padding: "14px 0",
+                fontSize: 15,
+                fontWeight: 800,
+                cursor: loading ? "not-allowed" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                transition: "all 0.2s ease",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
+              {loading ? (
+                "Signing in…"
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight style={{ width: 16, height: 16 }} />
+                </>
+              )}
+            </button>
+          </form>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

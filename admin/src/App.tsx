@@ -5,6 +5,7 @@ import Products from "./pages/Products"
 import Orders from "./pages/Orders"
 import Users from "./pages/Users"
 import Reports from "./pages/Reports"
+import Notifications from "./pages/Notifications"
 import Trash from "./pages/Trash"
 import Login from "./pages/Login"
 import { Toaster } from "@/components/ui/sonner"
@@ -20,6 +21,7 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/users" element={<Users />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="/trash" element={<Trash />} />
         </Route>
       </Routes>

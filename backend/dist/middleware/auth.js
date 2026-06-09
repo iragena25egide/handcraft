@@ -52,14 +52,14 @@ const optionalAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
             req.user = user;
         }
     }
-    catch (error) {
-        // Ignore invalid tokens for optional auth
-    }
+    catch (error) { }
     next();
 });
 exports.optionalAuth = optionalAuth;
 const isSeller = (req, res, next) => {
-    if (req.user && (req.user.role === User_1.UserRole.SELLER || req.user.role === User_1.UserRole.SUPER_ADMIN)) {
+    if (req.user &&
+        (req.user.role === User_1.UserRole.SELLER ||
+            req.user.role === User_1.UserRole.SUPER_ADMIN)) {
         next();
     }
     else {

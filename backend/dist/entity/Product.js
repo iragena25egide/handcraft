@@ -44,9 +44,13 @@ __decorate([
     __metadata("design:type", String)
 ], Product.prototype, "artisan", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Product.prototype, "image", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "simple-json", nullable: true }),
+    __metadata("design:type", Array)
+], Product.prototype, "images", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -63,6 +67,10 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Product.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], Product.prototype, "deletedAt", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)()
 ], Product);

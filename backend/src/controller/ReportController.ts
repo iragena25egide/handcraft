@@ -10,28 +10,56 @@ export class ReportController {
   private orderRepository = AppDataSource.getRepository(Order);
   private productRepository = AppDataSource.getRepository(Product);
 
-  async getSalesRevenue(req: Request, res: Response) {
+  async getSalesRevenue(req: AuthRequest, res: Response) {
     try {
-      const orders = await this.orderRepository.find({ where: { status: "Processing" } });
-      const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total), 0);
+      const user = req.user;
+      if (!user) return res.status(403).json({ message: "Forbidden" });
 
-      res.json({
-        totalOrders: orders.length,
-        totalRevenue: totalRevenue
-      });
+      if (user.role === "SELLER") {
+        const orders = await this.orderRepository.find({ 
+          where: { status: "Processing" },
+          relations: ["items", "items.product", "items.product.seller"] 
+        });
+        
+        let totalRevenue = 0;
+        let totalOrders = 0;
+        
+        orders.forEach(order => {
+          let hasSellerItem = false;
+          order.items.forEach(item => {
+            if (item.product?.seller?.id === user.id) {
+              totalRevenue += Number(item.priceAtPurchase) * item.quantity;
+              hasSellerItem = true;
+            }
+          });
+          if (hasSellerItem) totalOrders++;
+        });
+
+        res.json({ totalOrders, totalRevenue });
+      } else {
+        const orders = await this.orderRepository.find({ where: { status: "Processing" } });
+        const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total), 0);
+        res.json({ totalOrders: orders.length, totalRevenue });
+      }
     } catch (error) {
       res.status(500).json({ message: "Error calculating revenue", error });
     }
   }
 
-  async getLowStockProducts(req: Request, res: Response) {
+  async getLowStockProducts(req: AuthRequest, res: Response) {
     try {
-      // Find products with stock quantity less than 5
-      const lowStockProducts = await this.productRepository
-        .createQueryBuilder("product")
-        .where("product.stockQuantity < :threshold", { threshold: 5 })
-        .getMany();
+      const user = req.user;
+      if (!user) return res.status(403).json({ message: "Forbidden" });
 
+      let query = this.productRepository.createQueryBuilder("product")
+        .where("product.stockQuantity < :threshold", { threshold: 5 });
+
+      if (user.role === "SELLER") {
+        query = query.leftJoin("product.seller", "seller")
+                     .andWhere("seller.id = :sellerId", { sellerId: user.id });
+      }
+
+      const lowStockProducts = await query.getMany();
       res.json(lowStockProducts);
     } catch (error) {
       res.status(500).json({ message: "Error fetching low stock products", error });
