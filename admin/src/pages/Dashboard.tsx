@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Package, ShoppingCart, Users, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, BACKEND_URL } from "../lib/api"
 import { io } from "socket.io-client"
 import { toast } from "sonner"
 

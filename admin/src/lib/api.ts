@@ -4,8 +4,8 @@ const API_BASE_URL = `${BACKEND_URL}/api`;
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("admin_token");
   
-  const headers: HeadersInit = {
-    ...options.headers,
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string>),
   };
 
   // Only set Content-Type to JSON if body is NOT FormData

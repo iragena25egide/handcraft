@@ -18,7 +18,7 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   </div>
 )
 
-const ProductFormFields = ({ form, setForm, files, setFiles, previews, setPreviews, userRole, sellers, handleFileChange }: any) => (
+const ProductFormFields = ({ form, setForm, setFiles, previews, setPreviews, userRole, sellers, handleFileChange }: any) => (
   <>
     {userRole === "SUPER_ADMIN" && (
       <Field label="Assign Seller">
