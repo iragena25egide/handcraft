@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, BACKEND_URL } from "@/lib/api"
 import { Trash2, Edit, Plus, X, AlertTriangle, Package, Image as ImageIcon, Eye } from "lucide-react"
 import { toast } from "sonner"
 
 const emptyForm = { name: "", description: "", price: 0, originalPrice: 0, artisan: "", stockQuantity: 0, category: "", sellerId: "" }
 
 const getImageUrl = (src: string) => {
-  if (!src) return "";
-  return src.startsWith("http") || src.startsWith("blob:") ? src : `http://localhost:5000${src}`;
+  if (!src) return "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&q=80";
+  return src.startsWith("http") || src.startsWith("blob:") ? src : `${BACKEND_URL}${src}`;
 };
 
 /* Reusable field row */

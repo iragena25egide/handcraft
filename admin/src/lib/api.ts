@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:5000/api";
+export const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = `${BACKEND_URL}/api`;
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("admin_token");

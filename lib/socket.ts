@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import Cookies from "js-cookie";
+import { BACKEND_URL } from "./api";
 
 let socket: Socket | null = null;
 
@@ -10,7 +11,7 @@ export const initSocketClient = (): Socket | null => {
   if (!token) return null;
 
   if (!socket) {
-    socket = io("http://localhost:5000"); // update with dynamic API URL if needed
+    socket = io(BACKEND_URL);
 
     socket.on("connect", () => {
       socket?.emit("authenticate", token);

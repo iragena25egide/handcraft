@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, BACKEND_URL } from "../lib/api"
 import {
   Table,
   TableBody,
@@ -39,7 +39,7 @@ export default function Reports() {
     const token = localStorage.getItem("admin_token")
     if (token) {
       // Download using fetch with Bearer token instead of query param
-      fetch("http://localhost:5000/api/reports/pdf", {
+      fetch(`${BACKEND_URL}/api/reports/pdf`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

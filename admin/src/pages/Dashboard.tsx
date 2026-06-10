@@ -47,7 +47,7 @@ export default function Dashboard() {
 
     const token = localStorage.getItem("admin_token")
     if (token) {
-      const socket = io("http://localhost:5000", { auth: { token } })
+      const socket = io(BACKEND_URL, { auth: { token } })
       socket.on("active_staff", (data: { message: string }) => {
         toast.info(data.message, {
           duration: 5000, position: "top-right",

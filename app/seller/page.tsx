@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { clearSession } from "@/lib/store/slices/userSlice";
-import { api } from "@/lib/api";
+import { api, BACKEND_URL } from "@/lib/api";
 import toast from "react-hot-toast";
 import { Store, LogOut, PackagePlus, Trash2, Edit, Download } from "lucide-react";
 import { type Product } from "@/data/product";
@@ -250,7 +250,7 @@ export default function SellerDashboard() {
               return sorted.map((product: any) => (
                 <div key={product.id} className={`p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 hover:bg-gray-50 transition ${product.deletedAt ? 'opacity-60' : ''}`}>
                   <div className="w-16 h-16 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
-                    <img src={product.image?.startsWith("http") || product.image?.startsWith("blob:") ? product.image : `http://localhost:5000${product.image}`} alt={product.name} className={`w-full h-full object-cover ${product.deletedAt ? 'grayscale' : ''}`} />
+                    <img src={product.image?.startsWith("http") || product.image?.startsWith("blob:") ? product.image : `${BACKEND_URL}${product.image}`} alt={product.name} className={`w-full h-full object-cover ${product.deletedAt ? 'grayscale' : ''}`} />
                   </div>
                   <div className="flex-1 text-center sm:text-left">
                     <h3 className={`font-bold text-gray-900 ${product.deletedAt ? 'line-through text-gray-500' : ''}`}>{product.name}</h3>
