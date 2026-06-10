@@ -11,15 +11,8 @@ dotenv.config();
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  ...(process.env.DATABASE_URL 
-    ? { 
-        url: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false }
-      }
-    : {
-        url: "postgresql://postgres:HdtwwIpVklARmfrCdFPTPpwaOfMUFnDv@acela.proxy.rlwy.net:48360/railway",
-        ssl: { rejectUnauthorized: false }
-      }),
+  url: "postgresql://postgres:HdtwwIpVklARmfrCdFPTPpwaOfMUFnDv@acela.proxy.rlwy.net:48360/railway",
+  ssl: { rejectUnauthorized: false },
   synchronize: true,
   uuidExtension: "pgcrypto",
   logging: false,
