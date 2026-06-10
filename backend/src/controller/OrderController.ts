@@ -18,7 +18,7 @@ export class OrderController {
     await queryRunner.startTransaction();
 
     try {
-      const { items, guestName, guestPhone } = req.body;
+      const { items, guestName, guestPhone, guestEmail, shippingAddress, shippingCity, shippingZipCode } = req.body;
       const user = req.user;
 
       if (!user && (!guestName || !guestPhone)) {
@@ -71,10 +71,16 @@ export class OrderController {
       } else {
         order.guestName = guestName;
         order.guestPhone = guestPhone;
+        order.guestEmail = guestEmail;
       }
       order.total = total;
       order.status = "Processing";
       order.items = orderItemsToSave;
+      
+      // Save shipping address
+      if (shippingAddress) order.shippingAddress = shippingAddress;
+      if (shippingCity) order.shippingCity = shippingCity;
+      if (shippingZipCode) order.shippingZipCode = shippingZipCode;
 
       const savedOrder = await queryRunner.manager.save(Order, order);
 

@@ -1,8 +1,10 @@
+export type CategoryType = "imyenda" | "imitako" | "ibyo mubukwe" | "ibyo murugo" | "nibindi";
+
 export interface Product {
   id: number;
   name: string;
   price: number;
-  category: "fashion" | "handicraft";
+  category: CategoryType;
   image: string;
   description: string;
   artisan: string;
@@ -17,7 +19,7 @@ export const products: Product[] = [
     name: "Ibitenge w'Abagore",
     price: 85000,
     originalPrice: 100000,
-    category: "fashion",
+    category: "imyenda",
     image: "image/2.jpeg",
     description:
       "Umushanana mwiza wa Kinyarwanda uboshywe neza kandi ubereye ibirori gakondo.",
@@ -28,7 +30,7 @@ export const products: Product[] = [
     id: 2,
     name: "Agaseke",
     price: 35000,
-    category: "fashion",
+    category: "imyenda",
     image: "image/4.jpeg",
     description:
       "Ijipo ikozwe mu gitambaro cya Kitenge gifite amabara meza kandi kiramba.",
@@ -39,7 +41,7 @@ export const products: Product[] = [
     id: 3,
     name: "Ishati ya Kitenge y'Abagabo",
     price: 40000,
-    category: "fashion",
+    category: "imyenda",
     image: "imgage/boss.jpeg",
     description:
       "Ishati nziza y'abagabo ikozwe muri Kitenge igezweho kandi yoroshye.",
@@ -50,7 +52,7 @@ export const products: Product[] = [
     id: 4,
     name: "Ikoti rya Kitenge",
     price: 75000,
-    category: "fashion",
+    category: "imyenda",
     image: "image/gentle.jpeg",
     description:
       "Ikoti rigezweho rihuza umuco nyarwanda n'imyambarire ya moderne.",
@@ -61,7 +63,7 @@ export const products: Product[] = [
     id: 5,
     name: "Inkweto z'Imigongo",
     price: 30000,
-    category: "fashion",
+    category: "imyenda",
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
     description:
       "Inkweto nziza zifite imitako y'Imigongo ikorwa n'abanyabugeni b'u Rwanda.",
@@ -72,7 +74,7 @@ export const products: Product[] = [
     id: 6,
     name: "Agaseke Hand Bag",
     price: 45000,
-    category: "fashion",
+    category: "imyenda",
     image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600",
     description:
       "Isakoshi nziza ikozwe mu buryo bwa Agaseke gakondo k'u Rwanda.",
@@ -83,7 +85,7 @@ export const products: Product[] = [
     id: 7,
     name: "Igitambaro cya Kinyarwanda",
     price: 18000,
-    category: "fashion",
+    category: "imyenda",
     image: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=600",
     description:
       "Igitambaro cyoroshye kandi cyiza gifite ibirango by'umuco nyarwanda.",
@@ -94,7 +96,7 @@ export const products: Product[] = [
     id: 8,
     name: "Umukufi w'Amasaro",
     price: 15000,
-    category: "fashion",
+    category: "imyenda",
     image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600",
     description: "Umukufi w'amasaro meza akoze mu buryo bwa gakondo nyarwanda.",
     artisan: "Kigali Beads",
@@ -107,7 +109,7 @@ export const products: Product[] = [
     name: "Agaseke k'Amahoro",
     price: 25000,
     originalPrice: 32000,
-    category: "handicraft",
+    category: "ibyo mubukwe",
     image: "image/4.jpeg",
     description:
       "Agaseke gakondo gakozwe n'intoki, ikimenyetso cy'amahoro n'ubumwe.",
@@ -118,7 +120,7 @@ export const products: Product[] = [
     id: 10,
     name: "Igishushanyo cy'Imigongo",
     price: 60000,
-    category: "handicraft",
+    category: "imitako",
     image: "image/imigongo.jpeg",
     description:
       "Ubukorikori bw'Imigongo bukozwe mu buryo gakondo bw'u Rwanda.",
@@ -129,7 +131,7 @@ export const products: Product[] = [
     id: 11,
     name: "Ingoma Nyarwanda",
     price: 95000,
-    category: "handicraft",
+    category: "nibindi",
     image: "image/ingoma.jpeg",
     description: "Ingoma nziza ikoreshwa mu mbyino n'umuco nyarwanda.",
     artisan: "Cultural Drums Rwanda",
@@ -139,7 +141,7 @@ export const products: Product[] = [
     id: 12,
     name: "Agacuma k'Amata",
     price: 28000,
-    category: "handicraft",
+    category: "ibyo murugo",
     image: "image/akebo.jpeg",
     description:
       "Agacuma gakondo gakoreshwaga mu kubikamo amata mu Rwanda rwo hambere.",
@@ -150,7 +152,7 @@ export const products: Product[] = [
     id: 13,
     name: "Ikibindi cy'Ibikoresho",
     price: 22000,
-    category: "handicraft",
+    category: "ibyo murugo",
     image: "image/igisabo.jpeg",
     description: "Ikibindi cyiza gikozwe mu mibereshi n'imigwegwe gakondo.",
     artisan: "Rwanda Basket Makers",
@@ -160,7 +162,7 @@ export const products: Product[] = [
     id: 14,
     name: "Akabindi k'Ikawa",
     price: 35000,
-    category: "handicraft",
+    category: "ibyo murugo",
     image: "image/3.jpeg",
     description:
       "Akabindi gakozwe mu ibumba kabugenewe gutekesha ikawa nyarwanda.",
@@ -171,7 +173,7 @@ export const products: Product[] = [
     id: 15,
     name: "Igikoresho cy'Umuziki Inanga",
     price: 120000,
-    category: "handicraft",
+    category: "nibindi",
     image: "image/ingoma.jpeg",
     description: "Inanga gakondo y'u Rwanda ikozwe mu giti cyiza kandi iramba.",
     artisan: "Rwanda Music Crafts",
@@ -181,7 +183,7 @@ export const products: Product[] = [
     id: 16,
     name: "Icyibo cy'Amasaro",
     price: 30000,
-    category: "handicraft",
+    category: "imitako",
     image: "image/akebo.jpeg",
     description: "Icyibo cyiza cyubakishijwe amasaro n'imigwegwe gakondo.",
     artisan: "Kigali Women Cooperative",
@@ -191,7 +193,7 @@ export const products: Product[] = [
     id: 17,
     name: "Ifoto y'Inyambo",
     price: 50000,
-    category: "handicraft",
+    category: "imitako",
     image: "image/inyambo.jpeg",
     description: "Igishushanyo cy'Inyambo, inka z'umuco nyarwanda.",
     artisan: "Royal Arts Rwanda",
@@ -201,9 +203,9 @@ export const products: Product[] = [
     id: 18,
     name: "Agatadowa k'Icyuma",
     price: 18000,
-    category: "handicraft",
+    category: "ibyo murugo",
     image: "image/imigongo.jpeg",
-    description: "Igishushanyo cy'Inyambo, inka z'umuco nyarwanda.",
+    description: "Agatadowa gakondo gakoreshwa mu kumurika mu nzu.",
     artisan: "Royal Arts Rwanda",
     rating: 4.9,
   },

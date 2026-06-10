@@ -22,6 +22,18 @@ export class Order {
   @Column({ nullable: true })
   guestPhone: string;
 
+  @Column({ nullable: true })
+  guestEmail: string;
+
+  @Column({ nullable: true })
+  shippingAddress: string;
+
+  @Column({ nullable: true })
+  shippingCity: string;
+
+  @Column({ nullable: true })
+  shippingZipCode: string;
+
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true })
   items: OrderItem[];
 

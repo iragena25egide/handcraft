@@ -3,15 +3,18 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
+  const searchParams = useSearchParams();
   const [orderNumber, setOrderNumber] = useState("");
 
   useEffect(() => {
-    // Generate a random order number
-    setOrderNumber(`RC-${Math.floor(100000 + Math.random() * 900000)}`);
+    // Get the real order ID from URL params or generate fallback
+    const orderId = searchParams.get("orderId");
+    setOrderNumber(orderId || `RC-${Math.floor(100000 + Math.random() * 900000)}`);
     
     // Fire confetti
     const duration = 3 * 1000;
@@ -38,7 +41,7 @@ export default function CheckoutSuccessPage() {
       }
     };
     frame();
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -72,6 +75,12 @@ export default function CheckoutSuccessPage() {
 
         <div className="space-y-4">
           <Link 
+            href="/profile"
+            className="w-full py-4.5 bg-white border-2 border-gray-100 text-[#0f172a] rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-gray-50 transition-all duration-300 group mb-3"
+          >
+            Track Order
+          </Link>
+          <Link 
             href="/"
             className="w-full py-4.5 bg-[#0f172a] text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group"
           >
@@ -81,5 +90,13 @@ export default function CheckoutSuccessPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }

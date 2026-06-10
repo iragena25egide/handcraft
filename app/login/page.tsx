@@ -45,7 +45,12 @@ export default function LoginPage() {
       }
       router.push("/profile");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Authentication failed");
+      const data = error.response?.data;
+      if (data?.errors && Array.isArray(data.errors)) {
+        toast.error(data.errors[0]);
+      } else {
+        toast.error(data?.message || "Authentication failed");
+      }
     }
   };
 

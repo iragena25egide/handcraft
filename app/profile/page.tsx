@@ -127,7 +127,7 @@ export default function ProfilePage() {
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 pb-4 border-b border-gray-50">
                           <div>
                             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Order {order.id}</p>
-                            <p className="text-sm font-medium text-[#0f172a]">{order.date}</p>
+                            <p className="text-sm font-medium text-[#0f172a]">{new Date(order.createdAt).toLocaleDateString()}</p>
                           </div>
                           <div className="flex items-center gap-4">
                             <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-bold uppercase tracking-widest rounded-full">
@@ -139,7 +139,7 @@ export default function ProfilePage() {
                         <div className="flex gap-4 overflow-x-auto pb-2">
                           {order.items.map((item: any) => (
                             <div key={item.id} className="flex-shrink-0 w-16 h-16 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
-                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                              <img src={item.product?.image || "/placeholder.png"} alt={item.product?.name || "Product"} className="w-full h-full object-cover" />
                             </div>
                           ))}
                         </div>

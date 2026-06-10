@@ -96,7 +96,7 @@ export default function Orders() {
                       {order.user?.email && <p style={{ fontSize: 12, color: "#8B8FA8", marginTop: 1 }}>{order.user.email}</p>}
                     </td>
                     <td><span className={`badge ${STATUS_STYLES[order.status] || "badge-pending"}`}>{order.status}</span></td>
-                    <td><p style={{ fontWeight: 800, color: "#1A1A2E", fontSize: 15 }}>${Number(order.total).toFixed(2)}</p></td>
+                    <td><p style={{ fontWeight: 800, color: "#1A1A2E", fontSize: 15 }}>RWF {Number(order.total).toLocaleString()}</p></td>
                     <td><p style={{ fontSize: 13, color: "#8B8FA8" }}>{new Date(order.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p></td>
                     <td style={{ textAlign: "right" }}>
                       <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>

@@ -42,6 +42,7 @@ export default function RootLayout({
               <div className="flex flex-col min-h-screen">
                 <Navbar />
                 <main className="flex-grow">{children}</main>
+                <Footer />
               </div>
               <Toaster position="bottom-right" />
             </ThemeProvider>

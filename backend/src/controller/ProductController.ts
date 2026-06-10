@@ -11,7 +11,27 @@ export class ProductController {
 
   async getAllProducts(req: Request, res: Response) {
     try {
-      const products = await this.productRepository.find({ relations: ["seller"] });
+      const { filter, status } = req.query;
+      let query = this.productRepository
+        .createQueryBuilder("product")
+        .leftJoinAndSelect("product.seller", "seller")
+        .orderBy("product.createdAt", "DESC");
+
+      if (status === "trash") {
+        query = query.withDeleted().andWhere("product.deletedAt IS NOT NULL");
+      } else if (status === "all") {
+        query = query.withDeleted();
+      }
+
+      if (filter === "sale") {
+        query = query.andWhere("product.originalPrice > 0");
+      } else if (filter === "new") {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        query = query.andWhere("product.createdAt >= :date", { date: thirtyDaysAgo });
+      }
+
+      const products = await query.getMany();
       res.json(products);
     } catch (error) {
       res.status(500).json({ message: "Error fetching products", error });
@@ -109,15 +129,24 @@ export class ProductController {
   async getSellerProducts(req: AuthRequest, res: Response) {
     try {
       const sellerId = parseInt(req.params.sellerId);
+      const { status } = req.query;
       
       if (req.user?.id !== sellerId && req.user?.role !== "SUPER_ADMIN") {
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      const products = await this.productRepository.find({
-        where: { seller: { id: sellerId } },
-        order: { createdAt: "DESC" }
-      });
+      let query = this.productRepository.createQueryBuilder("product")
+        .leftJoinAndSelect("product.seller", "seller")
+        .where("seller.id = :sellerId", { sellerId })
+        .orderBy("product.createdAt", "DESC");
+
+      if (status === "trash") {
+        query = query.withDeleted().andWhere("product.deletedAt IS NOT NULL");
+      } else if (status === "all") {
+        query = query.withDeleted();
+      }
+
+      const products = await query.getMany();
       res.json(products);
     } catch (error) {
       res.status(500).json({ message: "Error fetching seller products", error });
@@ -223,11 +252,19 @@ export class ProductController {
 
   async restoreProduct(req: AuthRequest, res: Response) {
     try {
-      if (req.user?.role !== "SUPER_ADMIN") {
+      const id = parseInt(req.params.id);
+      const product = await this.productRepository.findOne({ 
+        where: { id }, 
+        relations: ["seller"],
+        withDeleted: true
+      });
+      
+      if (!product) return res.status(404).json({ message: "Product not found" });
+
+      if (product.seller?.id !== req.user?.id && req.user?.role !== "SUPER_ADMIN") {
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      const id = parseInt(req.params.id);
       await this.productRepository.restore(id);
       res.status(200).json({ message: "Product restored successfully" });
     } catch (error) {

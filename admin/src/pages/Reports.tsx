@@ -38,7 +38,24 @@ export default function Reports() {
   const handleDownloadPDF = () => {
     const token = localStorage.getItem("admin_token")
     if (token) {
-      window.open(`http://localhost:5000/api/reports/pdf?token=${token}`, "_blank")
+      // Download using fetch with Bearer token instead of query param
+      fetch("http://localhost:5000/api/reports/pdf", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement("a")
+          a.href = url
+          a.download = `report-${Date.now()}.pdf`
+          document.body.appendChild(a)
+          a.click()
+          a.remove()
+          window.URL.revokeObjectURL(url)
+        })
+        .catch(err => console.error("Failed to download PDF:", err))
     }
   }
 
@@ -63,7 +80,7 @@ export default function Reports() {
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Processing Revenue</h3>
-            <div className="text-4xl font-extrabold text-slate-900 mt-1">${sales.totalRevenue.toFixed(2)}</div>
+            <div className="text-4xl font-extrabold text-slate-900 mt-1">RWF {sales.totalRevenue.toLocaleString()}</div>
             <p className="text-sm text-slate-500 mt-1">From {sales.totalOrders} processing orders</p>
           </div>
         </div>

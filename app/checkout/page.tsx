@@ -51,14 +51,19 @@ export default function CheckoutPage() {
           quantity: item.quantity
         })),
         guestName: `${formData.firstName} ${formData.lastName}`,
-        guestPhone: formData.phone
+        guestPhone: formData.phone,
+        guestEmail: formData.email,
+        shippingAddress: formData.address,
+        shippingCity: formData.city,
+        shippingZipCode: formData.zipCode
       };
 
-      await api.post("/orders", orderData);
+      const response = await api.post("/orders", orderData);
       
       dispatch(clearCart());
       toast.success("Order placed successfully!");
-      router.push("/checkout/success");
+      // Pass the real order ID to success page
+      router.push(`/checkout/success?orderId=${response.data.id}`);
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to process order. Please try again.");
       setIsProcessing(false);

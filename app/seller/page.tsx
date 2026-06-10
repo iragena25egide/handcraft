@@ -18,17 +18,19 @@ export default function SellerDashboard() {
     name: "",
     description: "",
     price: "",
-    category: "Home & Living",
+    category: "imyenda",
     artisan: user?.name || "Local Artisan",
     image: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&q=80",
     stockQuantity: "10"
   });
   const [myProducts, setMyProducts] = useState<Product[]>([]);
+  const [filterStatus, setFilterStatus] = useState("active");
+  const [sortBy, setSortBy] = useState("newest");
 
   const fetchMyProducts = async () => {
     if (user?.id) {
       try {
-        const res = await api.get(`/products/seller/${user.id}`);
+        const res = await api.get(`/products/seller/${user.id}?status=${filterStatus}`);
         setMyProducts(res.data);
       } catch (err) {
         console.error("Failed to load products");
@@ -42,7 +44,7 @@ export default function SellerDashboard() {
     } else {
       fetchMyProducts();
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, user, router, filterStatus]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,13 +155,18 @@ export default function SellerDashboard() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Category</label>
-                  <input
-                    type="text"
+                  <select
                     required
                     value={formData.category}
                     onChange={e => setFormData({...formData, category: e.target.value})}
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0f172a] outline-none"
-                  />
+                  >
+                    <option value="imyenda">Imyenda</option>
+                    <option value="imitako">Imitako</option>
+                    <option value="ibyo mubukwe">Ibyo mubukwe</option>
+                    <option value="ibyo murugo">Ibyo murugo</option>
+                    <option value="nibindi">Nibindi</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Initial Stock Quantity</label>
@@ -206,38 +213,80 @@ export default function SellerDashboard() {
 
         {/* My Products List */}
         <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100 flex items-center gap-2 bg-gray-50">
-            <Store className="w-5 h-5 text-[#0f172a]" />
-            <h2 className="text-lg font-bold text-gray-900">My Products</h2>
+          <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50 flex-wrap gap-4">
+            <div className="flex items-center gap-2">
+              <Store className="w-5 h-5 text-[#0f172a]" />
+              <h2 className="text-lg font-bold text-gray-900">My Products</h2>
+            </div>
+            <div className="flex items-center gap-4">
+              <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0f172a]" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <option value="active">Active</option>
+                <option value="trash">In Trash</option>
+                <option value="all">All Products</option>
+              </select>
+              <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0f172a]" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+                <option value="newest">Newest First</option>
+                <option value="price_asc">Price (Low to High)</option>
+                <option value="price_desc">Price (High to Low)</option>
+                <option value="stock_asc">Stock (Low to High)</option>
+                <option value="stock_desc">Stock (High to Low)</option>
+              </select>
+            </div>
           </div>
           <div className="divide-y divide-gray-100">
-            {myProducts.length === 0 ? (
-              <p className="p-6 text-gray-500 text-center">You haven't added any products yet.</p>
-            ) : (
-              myProducts.map(product => (
-                <div key={product.id} className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 hover:bg-gray-50 transition">
+            {(() => {
+              let sorted = [...myProducts];
+              switch (sortBy) {
+                case "price_asc": sorted.sort((a, b) => a.price - b.price); break;
+                case "price_desc": sorted.sort((a, b) => b.price - a.price); break;
+                case "stock_asc": sorted.sort((a, b) => (a.stockQuantity || 0) - (b.stockQuantity || 0)); break;
+                case "stock_desc": sorted.sort((a, b) => (b.stockQuantity || 0) - (a.stockQuantity || 0)); break;
+              }
+              
+              if (sorted.length === 0) {
+                return <p className="p-6 text-gray-500 text-center">No products found.</p>;
+              }
+              
+              return sorted.map((product: any) => (
+                <div key={product.id} className={`p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 hover:bg-gray-50 transition ${product.deletedAt ? 'opacity-60' : ''}`}>
                   <div className="w-16 h-16 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                    <img src={product.image?.startsWith("http") || product.image?.startsWith("blob:") ? product.image : `http://localhost:5000${product.image}`} alt={product.name} className={`w-full h-full object-cover ${product.deletedAt ? 'grayscale' : ''}`} />
                   </div>
                   <div className="flex-1 text-center sm:text-left">
-                    <h3 className="font-bold text-gray-900">{product.name}</h3>
+                    <h3 className={`font-bold text-gray-900 ${product.deletedAt ? 'line-through text-gray-500' : ''}`}>{product.name}</h3>
                     <p className="text-sm text-gray-500">{product.category} • Stock: {product.stockQuantity ?? 0}</p>
+                    {product.deletedAt && <span className="inline-block mt-1 px-2 py-0.5 bg-red-100 text-red-600 text-[10px] uppercase font-bold rounded">Trashed</span>}
                   </div>
                   <div className="font-bold text-gray-900 px-4">
                     RWF {product.price.toLocaleString()}
                   </div>
                   <div className="flex gap-2">
-                    <button 
-                      onClick={() => handleDelete(product.id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
-                      title="Delete Product"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
+                    {product.deletedAt ? (
+                      <button 
+                        onClick={async () => {
+                          try {
+                            await api.post(`/products/${product.id}/restore`);
+                            toast.success("Product restored");
+                            fetchMyProducts();
+                          } catch { toast.error("Failed to restore product"); }
+                        }}
+                        className="px-4 py-2 bg-gray-200 text-gray-800 hover:bg-gray-300 rounded-lg text-sm font-bold transition"
+                      >
+                        Restore
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleDelete(product.id)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                        title="Delete Product"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    )}
                   </div>
                 </div>
-              ))
-            )}
+              ));
+            })()}
           </div>
         </div>
       </div>

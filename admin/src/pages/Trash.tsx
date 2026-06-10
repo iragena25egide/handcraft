@@ -82,7 +82,7 @@ export default function Trash() {
                     <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg object-cover shadow-sm border border-slate-100 opacity-50 grayscale" />
                   </TableCell>
                   <TableCell className="font-semibold text-slate-800 line-through text-opacity-60">{product.name}</TableCell>
-                  <TableCell className="text-slate-600 font-medium">${Number(product.price).toFixed(2)}</TableCell>
+                  <TableCell className="text-slate-600 font-medium">RWF {Number(product.price).toLocaleString()}</TableCell>
                   <TableCell>
                     <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold uppercase tracking-wider">
                       {product.category}

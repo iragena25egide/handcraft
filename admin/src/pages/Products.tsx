@@ -43,26 +43,29 @@ const ProductFormFields = ({ form, setForm, files, setFiles, previews, setPrevie
 
     <div className="admin-modal-grid-2">
       <Field label="Selling Price (RWF) *">
-        <input className="admin-input" type="number" min="0" step="1" value={form.price}
-          onChange={e => setForm({ ...form, price: parseFloat(e.target.value) })} />
+        <input className="admin-input" type="number" min="0" step="1" value={Number.isNaN(form.price) ? "" : form.price}
+          onChange={e => setForm({ ...form, price: e.target.value ? parseFloat(e.target.value) : 0 })} />
       </Field>
       <Field label="Original Price (RWF)">
-        <input className="admin-input" type="number" min="0" step="1" value={form.originalPrice}
-          onChange={e => setForm({ ...form, originalPrice: parseFloat(e.target.value) })} />
+        <input className="admin-input" type="number" min="0" step="1" value={Number.isNaN(form.originalPrice) ? "" : form.originalPrice}
+          onChange={e => setForm({ ...form, originalPrice: e.target.value ? parseFloat(e.target.value) : 0 })} />
       </Field>
     </div>
 
     <div className="admin-modal-grid-2">
       <Field label="Stock Qty *">
-        <input className="admin-input" type="number" min="0" value={form.stockQuantity}
-          onChange={e => setForm({ ...form, stockQuantity: parseInt(e.target.value) })} />
+        <input className="admin-input" type="number" min="0" value={Number.isNaN(form.stockQuantity) ? "" : form.stockQuantity}
+          onChange={e => setForm({ ...form, stockQuantity: e.target.value ? parseInt(e.target.value) : 0 })} />
       </Field>
       <Field label="Category">
         <select className="admin-select" value={form.category}
           onChange={e => setForm({ ...form, category: e.target.value })}>
           <option value="">Select…</option>
-          <option>Pottery</option><option>Weaving</option><option>Woodwork</option>
-          <option>Jewelry</option><option>Art</option><option>Other</option>
+          <option value="imyenda">Imyenda</option>
+          <option value="imitako">Imitako</option>
+          <option value="ibyo mubukwe">Ibyo mubukwe</option>
+          <option value="ibyo murugo">Ibyo murugo</option>
+          <option value="nibindi">Nibindi</option>
         </select>
       </Field>
     </div>
@@ -115,6 +118,9 @@ export default function Products() {
   const [userRole, setUserRole] = useState("")
   const [sellers, setSellers] = useState<any[]>([])
 
+  const [filterStatus, setFilterStatus] = useState("active")
+  const [sortBy, setSortBy] = useState("newest")
+
   useEffect(() => { 
     const userData = localStorage.getItem("admin_user")
     if (userData) {
@@ -125,7 +131,7 @@ export default function Products() {
       }
     }
     fetchProducts() 
-  }, [])
+  }, [filterStatus])
 
   const fetchSellers = async () => {
     try {
@@ -137,10 +143,10 @@ export default function Products() {
   const fetchProducts = async () => {
     try {
       const userData = localStorage.getItem("admin_user")
-      let url = "/products"
+      let url = `/products?status=${filterStatus}`
       if (userData) {
         const user = JSON.parse(userData)
-        if (user.role === "SELLER") url = `/products/seller/${user.id}`
+        if (user.role === "SELLER") url = `/products/seller/${user.id}?status=${filterStatus}`
       }
       const data = await apiFetch(url)
       setProducts(data)
@@ -222,11 +228,31 @@ export default function Products() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* ── Page Header ── */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      {/* ── Page Header & Filters ── */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
         <div>
           <h1 className="page-header-title">Products</h1>
           <p className="page-header-crumb" style={{ marginTop: 4 }}>Workspace / Products</p>
+          <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+            <div>
+              <label className="admin-label">Status</label>
+              <select className="admin-select" style={{ width: 140, padding: "8px 12px", minHeight: 36 }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <option value="active">Active</option>
+                <option value="trash">In Trash</option>
+                <option value="all">All Products</option>
+              </select>
+            </div>
+            <div>
+              <label className="admin-label">Sort By</label>
+              <select className="admin-select" style={{ width: 180, padding: "8px 12px", minHeight: 36 }} value={sortBy} onChange={e => setSortBy(e.target.value)}>
+                <option value="newest">Newest First</option>
+                <option value="price_asc">Price (Low to High)</option>
+                <option value="price_desc">Price (High to Low)</option>
+                <option value="stock_asc">Stock (Low to High)</option>
+                <option value="stock_desc">Stock (High to Low)</option>
+              </select>
+            </div>
+          </div>
         </div>
         <button className="btn-primary" onClick={() => setIsAdding(true)}>
           <Plus style={{ width: 15, height: 15 }} /> Add Product
@@ -258,40 +284,67 @@ export default function Products() {
                   <td />
                 </tr>
               ))
-              : products.length === 0
-                ? <tr><td colSpan={6}><div style={{ textAlign: "center", padding: "60px 0", color: "#8B8FA8" }}><Package style={{ width: 40, height: 40, margin: "0 auto 12px", opacity: 0.3 }} /><p style={{ fontWeight: 600 }}>No products found</p></div></td></tr>
-                : products.map(product => (
-                  <tr key={product.id} className="admin-table-row">
-                    <td>
-                      {product.image
-                        ? <img src={getImageUrl(product.image)} alt={product.name} style={{ width: 44, height: 44, borderRadius: 10, objectFit: "cover", border: "1.5px solid #E2E4F6" }} />
-                        : <div style={{ width: 44, height: 44, borderRadius: 10, background: "#F0F2FF", display: "flex", alignItems: "center", justifyContent: "center" }}><Package style={{ width: 18, height: 18, color: "#8B8FA8" }} /></div>
-                      }
-                    </td>
-                    <td>
-                      <p style={{ fontWeight: 700, color: "#1A1A2E" }}>{product.name}</p>
-                      {product.artisan && <p style={{ fontSize: 12, color: "#8B8FA8", marginTop: 2 }}>by {product.artisan}</p>}
-                    </td>
-                    <td>
-                      <p style={{ fontWeight: 800, color: "#6C5CE7", fontSize: 15 }}>RWF {Number(product.price).toLocaleString()}</p>
-                      {product.originalPrice > 0 && <p style={{ fontSize: 11, color: "#AAADCC", textDecoration: "line-through" }}>RWF {Number(product.originalPrice).toLocaleString()}</p>}
-                    </td>
-                    <td><span className="badge badge-seller">{product.category || "—"}</span></td>
-                    <td>
-                      <span style={{ fontWeight: 700, color: product.stockQuantity < 5 ? "#FF7675" : "#1A1A2E" }}>
-                        {product.stockQuantity}
-                        {product.stockQuantity < 5 && <span className="badge badge-low" style={{ marginLeft: 8 }}>Low</span>}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: "right" }}>
-                      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-                        <button className="btn-icon-view" onClick={() => setViewingProduct(product)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#6C5CE7" }}><Eye style={{ width: 16, height: 16 }} /></button>
-                        <button className="btn-icon-edit" onClick={() => openEdit(product)}><Edit style={{ width: 14, height: 14 }} /></button>
-                        <button className="btn-icon-delete" onClick={() => setDeletingProduct(product)}><Trash2 style={{ width: 14, height: 14 }} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+              : (() => {
+                  let sorted = [...products];
+                  switch (sortBy) {
+                    case "price_asc": sorted.sort((a, b) => a.price - b.price); break;
+                    case "price_desc": sorted.sort((a, b) => b.price - a.price); break;
+                    case "stock_asc": sorted.sort((a, b) => a.stockQuantity - b.stockQuantity); break;
+                    case "stock_desc": sorted.sort((a, b) => b.stockQuantity - a.stockQuantity); break;
+                  }
+                  if (sorted.length === 0) return <tr><td colSpan={6}><div style={{ textAlign: "center", padding: "60px 0", color: "#8B8FA8" }}><Package style={{ width: 40, height: 40, margin: "0 auto 12px", opacity: 0.3 }} /><p style={{ fontWeight: 600 }}>No products found</p></div></td></tr>;
+                  
+                  return sorted.map(product => (
+                    <tr key={product.id} className="admin-table-row" style={{ opacity: product.deletedAt ? 0.6 : 1 }}>
+                      <td>
+                        {product.image
+                          ? <img src={getImageUrl(product.image)} alt={product.name} style={{ width: 44, height: 44, borderRadius: 10, objectFit: "cover", border: "1.5px solid #E2E4F6", filter: product.deletedAt ? "grayscale(100%)" : "none" }} />
+                          : <div style={{ width: 44, height: 44, borderRadius: 10, background: "#F0F2FF", display: "flex", alignItems: "center", justifyContent: "center" }}><Package style={{ width: 18, height: 18, color: "#8B8FA8" }} /></div>
+                        }
+                      </td>
+                      <td>
+                        <p style={{ fontWeight: 700, color: product.deletedAt ? "#AAADCC" : "#1A1A2E", textDecoration: product.deletedAt ? "line-through" : "none" }}>{product.name}</p>
+                        {product.deletedAt && <span className="badge badge-low" style={{ marginTop: 4, display: "inline-block", padding: "2px 6px", fontSize: 10 }}>Trashed</span>}
+                        {product.artisan && <p style={{ fontSize: 12, color: "#8B8FA8", marginTop: 2 }}>by {product.artisan}</p>}
+                      </td>
+                      <td>
+                        <p style={{ fontWeight: 800, color: "#6C5CE7", fontSize: 15 }}>RWF {Number(product.price).toLocaleString()}</p>
+                        {product.originalPrice > 0 && <p style={{ fontSize: 11, color: "#AAADCC", textDecoration: "line-through" }}>RWF {Number(product.originalPrice).toLocaleString()}</p>}
+                      </td>
+                      <td><span className="badge badge-seller">{product.category || "—"}</span></td>
+                      <td>
+                        <span style={{ fontWeight: 700, color: product.stockQuantity < 5 ? "#FF7675" : "#1A1A2E" }}>
+                          {product.stockQuantity}
+                          {product.stockQuantity < 5 && <span className="badge badge-low" style={{ marginLeft: 8 }}>Low</span>}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                          <button className="btn-icon-view" onClick={() => setViewingProduct(product)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#6C5CE7" }}><Eye style={{ width: 16, height: 16 }} /></button>
+                          {product.deletedAt ? (
+                            <button 
+                              onClick={async () => {
+                                try {
+                                  await apiFetch(`/products/${product.id}/restore`, { method: "POST" })
+                                  toast.success("Product restored")
+                                  fetchProducts()
+                                } catch { toast.error("Failed to restore product") }
+                              }}
+                              style={{ background: "#E2E4F6", color: "#6C5CE7", border: "none", borderRadius: 8, padding: "4px 12px", cursor: "pointer", fontSize: 12, fontWeight: 700 }}
+                            >
+                              Restore
+                            </button>
+                          ) : (
+                            <>
+                              <button className="btn-icon-edit" onClick={() => openEdit(product)}><Edit style={{ width: 14, height: 14 }} /></button>
+                              <button className="btn-icon-delete" onClick={() => setDeletingProduct(product)}><Trash2 style={{ width: 14, height: 14 }} /></button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ));
+              })()
             }
           </tbody>
         </table>

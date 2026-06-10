@@ -2,53 +2,68 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
-const categories = [
+const baseCategories = [
   {
     id: 1,
-    name: "Agaseke Baskets",
-    count: 48,
-    description: "Traditional hand-woven peace baskets",
-    image: "image/akebo.jpeg",
+    name: "Imyenda",
+    slug: "imyenda",
+    description: "Imyenda n'ibikoresho by'ubwiza (Clothing & Fashion)",
+    image: "image/2.jpeg",
   },
   {
     id: 2,
-    name: "Imigongo Art",
-    count: 86,
-    description: "Authentic geometric cow dung art",
+    name: "Imitako",
+    slug: "imitako",
+    description: "Imitako n'ubugeni nyarwanda (Decorations & Art)",
     image: "image/imigongo.jpeg",
   },
   {
     id: 3,
-    name: "Kitenge Fashion",
-    count: 32,
-    description: "Modern clothes in vibrant African prints",
-    image: "image/2.jpeg",
+    name: "Ibyo Mubukwe",
+    slug: "ibyo mubukwe",
+    description: "Agaseke n'ibindi by'ibirori (Wedding & Ceremonial)",
+    image: "image/4.jpeg",
   },
   {
     id: 4,
-    name: "Umushanana",
-    count: 64,
-    description: "Elegant traditional ceremonial wear",
-    image: "image/boss.jpeg",
+    name: "Ibyo Murugo",
+    slug: "ibyo murugo",
+    description: "Ibikoresho byo mu nzu (Home Goods & Pottery)",
+    image: "image/akebo.jpeg",
   },
   {
     id: 5,
-    name: "Wood Carvings",
-    count: 28,
-    description: "Hand-sculpted masks and figurines",
-    image: "image/amata.jpeg",
-  },
-  {
-    id: 6,
-    name: "Handmade Pottery",
-    count: 24,
-    description: "Earthy ceramics inspired by tradition",
-    image: "image/inyambo.jpeg",
+    name: "Nibindi",
+    slug: "nibindi",
+    description: "Ibindi bikoresho gakondo (Other Traditional Items)",
+    image: "image/ingoma.jpeg",
   },
 ];
 
 export default function CategoryGrid() {
+  const router = useRouter();
+  const [categories, setCategories] = useState(baseCategories.map(c => ({ ...c, count: 0 })));
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const response = await api.get("/products");
+        const products = response.data || [];
+        setCategories(baseCategories.map((cat) => {
+          const count = products.filter((p: any) => p.category === cat.slug).length;
+          return { ...cat, count };
+        }));
+      } catch (error) {
+        console.error("Failed to fetch products for categories");
+      }
+    };
+    fetchCounts();
+  }, []);
+
   return (
     <section className="relative pt-12 pb-24 bg-white overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-6 lg:px-8 z-10">
@@ -63,7 +78,7 @@ export default function CategoryGrid() {
               Curated Rwandan craftsmanship for the modern home.
             </p>
           </div>
-          <button className="text-[#0f172a] font-bold text-xs tracking-widest cursor-pointer flex items-center gap-2 hover:opacity-70 transition-opacity uppercase">
+          <button onClick={() => router.push('/shop')} className="text-[#0f172a] font-bold text-xs tracking-widest cursor-pointer flex items-center gap-2 hover:opacity-70 transition-opacity uppercase">
             View All <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -72,6 +87,7 @@ export default function CategoryGrid() {
           {categories.map((cat, index) => (
             <motion.div
               key={cat.id}
+              onClick={() => router.push(`/shop?category=${cat.slug}`)}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

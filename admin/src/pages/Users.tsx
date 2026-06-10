@@ -53,7 +53,9 @@ export default function Users() {
       setIsAdding(false)
       setAddForm({ name: "", email: "", password: "", role: "SELLER" })
       toast.success("Account created successfully")
-    } catch { toast.error("Failed to create account") }
+    } catch (err: any) { 
+      toast.error(err.message || "Failed to create account") 
+    }
   }
 
   const buyers = users.filter(u => u.role === "BUYER")

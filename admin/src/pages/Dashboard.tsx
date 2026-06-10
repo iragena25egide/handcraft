@@ -61,7 +61,7 @@ export default function Dashboard() {
   const statCards = [
     {
       label: "Total Revenue",
-      value: `$${stats.revenue.toFixed(2)}`,
+      value: `RWF ${stats.revenue.toLocaleString()}`,
       icon: DollarSign,
       colorClass: "stat-card-purple",
       iconClass: "icon-badge-purple",
@@ -165,7 +165,7 @@ export default function Dashboard() {
         </div>
         <div style={{ background: "rgba(255,255,255,0.15)", borderRadius: 16, padding: "16px 24px", textAlign: "center", backdropFilter: "blur(10px)" }}>
           <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>Total Revenue</p>
-          <p style={{ color: "#fff", fontSize: 28, fontWeight: 900, letterSpacing: "-0.5px" }}>${stats.revenue.toFixed(0)}</p>
+          <p style={{ color: "#fff", fontSize: 28, fontWeight: 900, letterSpacing: "-0.5px" }}>RWF {stats.revenue.toLocaleString()}</p>
         </div>
       </div>
     </div>

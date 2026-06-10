@@ -46,5 +46,9 @@ export const createOrderSchema = Joi.object({
     })
   ).min(1).required(),
   guestName: Joi.string().optional(),
-  guestPhone: Joi.string().optional()
+  guestPhone: Joi.string().optional(),
+  guestEmail: Joi.string().email().optional(),
+  shippingAddress: Joi.string().optional(),
+  shippingCity: Joi.string().optional(),
+  shippingZipCode: Joi.string().optional()
 });

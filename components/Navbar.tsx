@@ -13,18 +13,21 @@ import {
   ChevronDown,
   User,
 } from "lucide-react";
-import {
-  Trash2,
-  Plus,
-  Minus,
-  ShoppingBag,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { type Product } from "@/data/product";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { removeWishlistItem, clearWishlist } from "@/lib/store/slices/wishlistSlice";
-import { addItem as addCartItem, removeItem as removeCartItem, incrementItem, decrementItem, clearCart } from "@/lib/store/slices/cartSlice";
+import {
+  removeWishlistItem,
+  clearWishlist,
+} from "@/lib/store/slices/wishlistSlice";
+import {
+  addItem as addCartItem,
+  removeItem as removeCartItem,
+  incrementItem,
+  decrementItem,
+  clearCart,
+} from "@/lib/store/slices/cartSlice";
+import { clearSession } from "@/lib/store/slices/userSlice";
 import { api } from "@/lib/api";
 import { useTheme } from "./ThemeProvider";
 import Link from "next/link";
@@ -128,18 +131,23 @@ export default function Navbar() {
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isUserOpen, setIsUserOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentLang, setCurrentLang] = useState(languages[1]);
   const langDropdownRef = useRef<HTMLDivElement>(null);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
 
   const { theme, toggleTheme } = useTheme();
   const dispatch = useAppDispatch();
-  const wishlistItems = useAppSelector(state => state.wishlist.items);
-  const cartItems = useAppSelector(state => state.cart.items);
-  const { isLoggedIn, user } = useAppSelector(state => state.user);
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const cartItems = useAppSelector((state) => state.cart.items);
+  const { isLoggedIn, user } = useAppSelector((state) => state.user);
   const router = useRouter();
 
-  const cartSubtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const cartSubtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
   const cartShipping = cartItems.length > 0 ? 5000 : 0;
   const cartTotal = cartSubtotal + cartShipping;
 
@@ -151,6 +159,12 @@ export default function Navbar() {
       ) {
         setIsLangOpen(false);
       }
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -160,13 +174,14 @@ export default function Navbar() {
 
   useEffect(() => {
     // Fetch products for search autocomplete
-    api.get("/products")
-      .then(res => setAllProducts(res.data))
-      .catch(err => console.error("Failed to load products for search", err));
+    api
+      .get("/products")
+      .then((res) => setAllProducts(res.data))
+      .catch((err) => console.error("Failed to load products for search", err));
   }, []);
 
   const filteredProducts = allProducts.filter((p) =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const wishlistContent =
@@ -215,7 +230,7 @@ export default function Navbar() {
                   {item.name}
                 </p>
                 <p className="text-base font-black text-[#0f172a] mt-1">
-                  ${item.price.toFixed(2)}
+                  ${Number(item.price).toFixed(2)}
                 </p>
               </div>
 
@@ -250,13 +265,14 @@ export default function Navbar() {
           ))}
         </AnimatePresence>
 
-        <button 
+        <button
           onClick={() => {
-            wishlistItems.forEach(item => dispatch(addCartItem(item)));
+            wishlistItems.forEach((item) => dispatch(addCartItem(item)));
             dispatch(clearWishlist());
             toast.success("All items moved to bag!");
           }}
-          className="w-full mt-6 py-4 bg-[#fefce8] border border-[#0f172a]/5 text-[#0f172a] rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-[#0f172a] hover:text-white transition-all duration-500">
+          className="w-full mt-6 py-4 bg-[#fefce8] border border-[#0f172a]/5 text-[#0f172a] rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-[#0f172a] hover:text-white transition-all duration-500"
+        >
           Move All to Bag
         </button>
       </div>
@@ -317,11 +333,19 @@ export default function Navbar() {
                 </p>
 
                 <div className="flex items-center gap-1.5 mt-3 bg-gray-50 border border-gray-100 rounded-full w-fit p-0.5">
-                  <button onClick={() => dispatch(decrementItem(item.id))} className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white">
+                  <button
+                    onClick={() => dispatch(decrementItem(item.id))}
+                    className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white"
+                  >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="text-xs font-bold text-[#0f172a] w-4 text-center">{item.quantity}</span>
-                  <button onClick={() => dispatch(incrementItem(item.id))} className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white">
+                  <span className="text-xs font-bold text-[#0f172a] w-4 text-center">
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => dispatch(incrementItem(item.id))}
+                    className="p-1.5 text-gray-400 hover:text-[#0f172a] rounded-full hover:bg-white"
+                  >
                     <Plus className="w-3 h-3" />
                   </button>
                 </div>
@@ -345,24 +369,34 @@ export default function Navbar() {
         <div className="mt-10 p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-4">
           <div className="flex justify-between text-sm">
             <span className="text-gray-500 font-medium">Subtotal</span>
-            <span className="text-[#0f172a] font-bold">RWF {cartSubtotal.toLocaleString()}</span>
+            <span className="text-[#0f172a] font-bold">
+              RWF {cartSubtotal.toLocaleString()}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500 font-medium">Shipping (Rwanda)</span>
-            <span className="text-[#0f172a] font-bold">RWF {cartShipping.toLocaleString()}</span>
+            <span className="text-[#0f172a] font-bold">
+              RWF {cartShipping.toLocaleString()}
+            </span>
           </div>
           <div className="flex justify-between items-center pt-4 border-t border-gray-200">
             <span className="text-base font-black text-[#0f172a] uppercase tracking-wider">
               Total
             </span>
-            <span className="text-xl font-black text-[#0f172a]">RWF {cartTotal.toLocaleString()}</span>
+            <span className="text-xl font-black text-[#0f172a]">
+              RWF {cartTotal.toLocaleString()}
+            </span>
           </div>
         </div>
 
         {/* 3. CHECKOUT BUTTON */}
-        <button 
-          onClick={() => { setIsCartOpen(false); router.push("/checkout"); }}
-          className="w-full mt-6 py-4.5 bg-[#0f172a] text-white rounded-2xl font-black text-xs uppercase tracking-[0.25em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]">
+        <button
+          onClick={() => {
+            setIsCartOpen(false);
+            router.push("/checkout");
+          }}
+          className="w-full mt-6 py-4.5 bg-[#0f172a] text-white rounded-2xl font-black text-xs uppercase tracking-[0.25em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]"
+        >
           Proceed to Checkout
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </button>
@@ -381,6 +415,14 @@ export default function Navbar() {
           placeholder="Search for handicraft, fashion..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && searchQuery.trim()) {
+              setIsSearchOpen(false);
+              router.push(
+                `/search?q=${encodeURIComponent(searchQuery.trim())}`,
+              );
+            }
+          }}
           className="w-full pl-12 pr-4 py-5 bg-gray-50 border-none rounded-[20px] text-sm font-medium focus:ring-2 focus:ring-[#0f172a]/5 focus:bg-white transition-all outline-none text-[#0f172a] placeholder:text-gray-400 shadow-inner"
           autoFocus
         />
@@ -496,27 +538,27 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Left: Logo + Name */}
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-[#0f172a] rounded-md flex items-center justify-center shadow-lg">
-                <span className="text-white text-xs font-bold">RC</span>
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-[#0f172a] rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform">
+                <span className="text-white font-black text-xl tracking-tighter">
+                  H
+                </span>
               </div>
-              <h1 className="text-lg font-bold text-[#0f172a] dark:text-white tracking-tight">
+              <span className="text-xl font-black tracking-tight text-[#0f172a] dark:text-white hidden sm:block">
                 All African Handcraft
-              </h1>
-            </div>
+              </span>
+            </Link>
 
             <div className="hidden md:flex items-center space-x-8">
-              {["Shop", "Categories", "New Arrivals", "Sale", "About"].map(
-                (item) => (
-                  <Link
-                    key={item}
-                    href={`/${item.toLowerCase().replace(" ", "-")}`}
-                    className="text-[#0f172a]/70 dark:text-gray-400 hover:text-[#0f172a] dark:hover:text-white transition-colors text-sm font-semibold tracking-tight"
-                  >
-                    {item}
-                  </Link>
-                )
-              )}
+              {["Shop", "Categories", "New Arrivals", "Sale"].map((item) => (
+                <Link
+                  key={item}
+                  href={`/${item.toLowerCase().replace(" ", "-")}`}
+                  className="text-[#0f172a]/70 dark:text-gray-400 hover:text-[#0f172a] dark:hover:text-white transition-colors text-sm font-semibold tracking-tight"
+                >
+                  {item}
+                </Link>
+              ))}
             </div>
 
             <div className="flex items-center gap-5">
@@ -552,7 +594,9 @@ export default function Navbar() {
                   }}
                   className="text-[#0f172a] dark:text-gray-200 hover:opacity-60 transition-opacity"
                 >
-                  <User className={`w-5 h-5 ${isLoggedIn ? 'text-green-600' : ''}`} />
+                  <User
+                    className={`w-5 h-5 ${isLoggedIn ? "text-green-600" : ""}`}
+                  />
                 </button>
                 <Link
                   href="/cart"
@@ -583,7 +627,7 @@ export default function Navbar() {
                   onClick={() => setIsLangOpen(!isLangOpen)}
                   className="flex items-center gap-1.5 text-[#0f172a] dark:text-gray-200 hover:opacity-70 text-xs font-bold"
                 >
-                  <span>{currentLang.code.toUpperCase()}</span>
+                  <span className="text-sm">{currentLang.flag}</span>
                   <ChevronDown className="w-3 h-3 text-gray-400" />
                 </button>
                 <AnimatePresence>
@@ -612,6 +656,54 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
 
+              {/* User Dropdown */}
+              {isLoggedIn && user && (
+                <div className="relative hidden md:block" ref={userDropdownRef}>
+                  <button
+                    onClick={() => setIsUserOpen(!isUserOpen)}
+                    className="flex items-center gap-1.5 text-[#0f172a] dark:text-gray-200 hover:opacity-70 text-xs font-bold bg-gray-50 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-100 dark:border-gray-700"
+                  >
+                    <span>{user.name}</span>
+                    <ChevronDown className="w-3 h-3 text-gray-400" />
+                  </button>
+                  <AnimatePresence>
+                    {isUserOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur-xl dark:bg-gray-800/90 rounded-lg shadow-xl z-50 border border-gray-100 dark:border-gray-700 overflow-hidden"
+                      >
+                        <button
+                          onClick={() => {
+                            setIsUserOpen(false);
+                            if (user?.role === "SUPER_ADMIN")
+                              router.push("/admin");
+                            else if (user?.role === "SELLER")
+                              router.push("/seller");
+                            else router.push("/profile");
+                          }}
+                          className="flex items-center w-full px-4 py-3 text-left hover:bg-[#0f172a] hover:text-white transition-colors text-sm font-medium"
+                        >
+                          Back to my account
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsUserOpen(false);
+                            dispatch(clearSession());
+                            router.push("/login");
+                            toast.success("Logged out successfully");
+                          }}
+                          className="flex items-center w-full px-4 py-3 text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm font-medium border-t border-gray-100 dark:border-gray-700"
+                        >
+                          Logout
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(true)}
@@ -625,18 +717,16 @@ export default function Navbar() {
       </nav>
       <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <div className="flex flex-col space-y-4 py-2">
-          {["Shop", "Categories", "New Arrivals", "Sale", "About"].map(
-            (item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase().replace(" ", "-")}`}
-                onClick={() => setIsMenuOpen(false)}
-                className="text-[#0f172a] dark:text-white text-lg font-bold py-2 border-b border-gray-100 dark:border-gray-800"
-              >
-                {item}
-              </Link>
-            )
-          )}
+          {["Shop", "Categories", "New Arrivals", "Sale"].map((item) => (
+            <Link
+              key={item}
+              href={`/${item.toLowerCase().replace(" ", "-")}`}
+              onClick={() => setIsMenuOpen(false)}
+              className="text-[#0f172a] dark:text-white text-lg font-bold py-2 border-b border-gray-100 dark:border-gray-800"
+            >
+              {item}
+            </Link>
+          ))}
           {/* Language selector inside bottom sheet */}
           <div className="pt-2">
             <p className="text-xs text-gray-500 mb-2 uppercase font-bold tracking-widest">

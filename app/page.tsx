@@ -3,9 +3,7 @@
 import CategoryGrid from "@/components/Categories";
 import Hero from "@/components/Hero";
 import ProductGrid from "@/components/ProductGrid";
-import Testimonials from "@/components/Testimonials";
 import { motion } from "framer-motion";
-import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -25,14 +23,9 @@ export default function Home() {
             className="text-center mb-12"
           ></motion.div>
 
-          <ProductGrid category="handicraft" />
+          {/* List all products without filtering by category */}
+          <ProductGrid />
         </div>
-      </section>
-
-      <Testimonials />
-
-      <section id="bestsellers" className=" bg-white">
-        <Footer />
       </section>
     </main>
   );

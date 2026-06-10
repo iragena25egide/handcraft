@@ -1,102 +1,133 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ShoppingBag } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { products } from "@/data/product";
+
+const HERO_IMAGES = [
+  "/image/2.jpeg",
+  "/image/3.jpeg",
+  "/image/4.jpeg",
+  "/image/africa.jpeg",
+];
 
 export default function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Select a featured product from the database
+  const featuredProduct = products.find(p => p.id === 1) || products[0];
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.5;
-    }
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 8000);
+
+    return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="relative bg-white min-h-[530px] flex items-center overflow-hidden font-sans">
-      <div className="absolute left-0 top-1/4 w-1/3 h-2/3 pointer-events-none opacity-80 z-0">
-        <svg
-          viewBox="0 0 500 800"
-          className="w-full h-full object-cover"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,0 C150,200 100,400 250,600 C350,750 200,800 0,800 Z"
-            fill="#fefce8"
-          />
-        </svg>
-      </div>
+    <section className="relative w-full min-h-[600px] md:min-h-[700px] flex items-center justify-center font-sans overflow-hidden rounded-b-[40px] bg-black">
+      {/* Background Image Carousel */}
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={currentImageIndex}
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
+          style={{
+            backgroundImage: `url('${HERO_IMAGES[currentImageIndex]}')`,
+          }}
+        />
+      </AnimatePresence>
 
-      <div className="relative w-full max-w-7xl mx-auto px-6 lg:px-8 z-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="z-20"
+      {/* Dark overlays for readability */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-0" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
+
+      <div className="relative w-full max-w-7xl mx-auto px-6 lg:px-8 z-20 flex flex-col md:flex-row justify-between items-center gap-12">
+        {/* Left Content */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex-1 max-w-2xl text-white"
+        >
+          {/* Flags Badge */}
+          <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-full py-2 pr-6 pl-2 mb-8 shadow-xl">
+            <div className="flex -space-x-2">
+              <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center bg-blue-600 overflow-hidden text-sm">
+                🇷🇼
+              </div>
+            </div>
+            <span className="text-sm font-semibold tracking-tight">
+              100% Authentic Rwandan Handcrafts.
+            </span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-5xl md:text-6xl font-black leading-[1.1] tracking-tight mb-6 drop-shadow-lg">
+            All African Handcraft —<br />
+            Delivered to Your Doorstep!
+          </h1>
+
+          {/* Subheading */}
+          <p className="text-lg md:text-xl font-medium text-white/90 mb-10 max-w-xl leading-relaxed drop-shadow-md">
+            The premier marketplace connecting curated Rwandan and African
+            artisans with buyers looking for authentic, handcrafted products.
+          </p>
+
+          {/* Call to Action */}
+          <Link
+            href="/shop"
+            className="inline-flex items-center gap-4 bg-white text-black px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform group shadow-2xl"
           >
-            {/* Buttons - Matching Screenshot 2026-05-12 at 19.21.52.jpg */}
-            <div className="flex items-center gap-4 mb-10">
-              <button className="bg-[#011137] text-white px-7 py-3 rounded-2xl cursor-pointer font-medium text-sm flex items-center gap-2  transition-all">
-                Start Shopping
-                <span className="text-lg">
-                  <ShoppingBag size={16} />
-                </span>
-              </button>
+            <span className="pl-2">Explore Products</span>
+            <div className="w-8 h-8 rounded-full bg-[#46270e] flex items-center justify-center text-white group-hover:rotate-[-45deg] transition-transform">
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* Right Floating Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="hidden md:block w-full max-w-[320px]"
+        >
+          <Link
+            href={`/product/${featuredProduct.id}`}
+            className="block group relative p-6 rounded-[32px] bg-gradient-to-br from-white/20 to-black/40 backdrop-blur-md border border-white/20 shadow-2xl overflow-hidden"
+          >
+            {/* Glossy highlight */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/30 pointer-events-none" />
+
+            {/* Image Box */}
+            <div className="relative w-full aspect-square bg-white rounded-2xl mb-5 flex items-center justify-center shadow-inner overflow-hidden">
+              {/* Featured Product Image */}
+              <img
+                src={featuredProduct.image.startsWith('http') ? featuredProduct.image : `/${featuredProduct.image.replace(/^\//, '')}`}
+                alt={featuredProduct.name}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
             </div>
 
-            {/* Heading */}
-            <h1 className="text-5xl md:text-4xl font-bold text-[#011137] leading-[1.1] tracking-tight mb-8">
-              All African Handcrafts.with us.
-            </h1>
-          </motion.div>
-
-          <div className="relative h-[300px] md:h-[500px] w-full">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.5 }}
-              className="absolute inset-0 md:-right-20 w-[100%] md:w-[130%] h-full pointer-events-none"
-            >
-              {/* Mask to blend video into the white background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/20 to-transparent z-10" />
-
-              <video
-                ref={videoRef}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover grayscale-[0.1]"
-              >
-                <source src="image/video.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute mt-20 bottom-0 left-0 w-full overflow-hidden leading-[0] z-10">
-        <svg
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-          className="relative block w-full h-[150px] md:h-[200px]"
-        >
-          <path
-            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,73.84-4.36,147.54,16.88,218.2,35.26,69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
-            fill="#0f172a"
-            opacity="0.05"
-          ></path>
-
-          <path
-            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V0c63.59,3.07,131,23.17,194.67,41.17,50.13,14.17,102.83,26.5,156.72,21.34V56.44Z"
-            fill="#fefce8"
-            opacity="0.8"
-          ></path>
-        </svg>
+            {/* Text Content */}
+            <div className="relative z-10 flex items-center justify-between mb-2">
+              <h3 className="text-lg font-bold text-white tracking-tight line-clamp-1 pr-2">
+                {featuredProduct.name}
+              </h3>
+              <ArrowRight className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform flex-shrink-0" />
+            </div>
+            <p className="relative z-10 text-xs font-medium text-white/70 leading-relaxed line-clamp-2">
+              {featuredProduct.description}
+            </p>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
