@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/:path*` : "http://127.0.0.1:5000/api/:path*", // Proxy to Backend
+        destination: process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/:path*` : "https://handcraft-backend-0znu.onrender.com/api/:path*", // Proxy to Backend
       },
     ];
   },
