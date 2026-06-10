@@ -17,11 +17,8 @@ export const AppDataSource = new DataSource({
         ssl: { rejectUnauthorized: false }
       }
     : {
-        host: process.env.DB_HOST || "localhost",
-        port: parseInt(process.env.DB_PORT || "5432"),
-        username: process.env.DB_USER || "postgres",
-        password: process.env.DB_PASSWORD || "postgres",
-        database: process.env.DB_NAME || "handcraft",
+        url: "postgresql://postgres:HdtwwIpVklARmfrCdFPTPpwaOfMUFnDv@acela.proxy.rlwy.net:48360/railway",
+        ssl: { rejectUnauthorized: false }
       }),
   synchronize: true,
   uuidExtension: "pgcrypto",
