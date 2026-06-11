@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { apiFetch, BACKEND_URL } from "../lib/api"
+import { useEffect, useState } from "react";
+import { apiFetch, BACKEND_URL } from "../lib/api";
 import {
   Table,
   TableBody,
@@ -7,57 +7,56 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { FileText, TrendingUp, AlertTriangle, Download } from "lucide-react"
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { FileText, TrendingUp, AlertTriangle, Download } from "lucide-react";
 
 export default function Reports() {
-  const [sales, setSales] = useState({ totalOrders: 0, totalRevenue: 0 })
-  const [lowStock, setLowStock] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [sales, setSales] = useState({ totalOrders: 0, totalRevenue: 0 });
+  const [lowStock, setLowStock] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchReports()
-  }, [])
+    fetchReports();
+  }, []);
 
   const fetchReports = async () => {
     try {
       const [salesData, stockData] = await Promise.all([
         apiFetch("/reports/sales"),
-        apiFetch("/reports/low-stock")
-      ])
-      setSales(salesData)
-      setLowStock(stockData)
+        apiFetch("/reports/low-stock"),
+      ]);
+      setSales(salesData);
+      setLowStock(stockData);
     } catch (error) {
-      console.error("Error fetching reports:", error)
+      console.error("Error fetching reports:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDownloadPDF = () => {
-    const token = localStorage.getItem("admin_token")
+    const token = localStorage.getItem("admin_token");
     if (token) {
-      // Download using fetch with Bearer token instead of query param
       fetch(`${BACKEND_URL}/api/reports/pdf`, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
-        .then(response => response.blob())
-        .then(blob => {
-          const url = window.URL.createObjectURL(blob)
-          const a = document.createElement("a")
-          a.href = url
-          a.download = `report-${Date.now()}.pdf`
-          document.body.appendChild(a)
-          a.click()
-          a.remove()
-          window.URL.revokeObjectURL(url)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `report-${Date.now()}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
         })
-        .catch(err => console.error("Failed to download PDF:", err))
+        .catch((err) => console.error("Failed to download PDF:", err));
     }
-  }
+  };
 
   return (
     <div className="space-y-8">
@@ -66,9 +65,14 @@ export default function Reports() {
           <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
             <FileText className="w-8 h-8 text-blue-500" /> Reports Center
           </h2>
-          <p className="text-slate-500 text-sm mt-1">Analytics, low stock alerts, and downloadable reports.</p>
+          <p className="text-slate-500 text-sm mt-1">
+            Analytics, low stock alerts, and downloadable reports.
+          </p>
         </div>
-        <Button onClick={handleDownloadPDF} className="bg-blue-600 text-white hover:bg-blue-700 transition-all rounded-xl shadow-md flex items-center gap-2 px-6">
+        <Button
+          onClick={handleDownloadPDF}
+          className="bg-blue-600 text-white hover:bg-blue-700 transition-all rounded-xl shadow-md flex items-center gap-2 px-6"
+        >
           <Download className="w-4 h-4" /> Download PDF Report
         </Button>
       </div>
@@ -79,9 +83,15 @@ export default function Reports() {
             <TrendingUp className="w-8 h-8 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Processing Revenue</h3>
-            <div className="text-4xl font-extrabold text-slate-900 mt-1">RWF {sales.totalRevenue.toLocaleString()}</div>
-            <p className="text-sm text-slate-500 mt-1">From {sales.totalOrders} processing orders</p>
+            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+              Processing Revenue
+            </h3>
+            <div className="text-4xl font-extrabold text-slate-900 mt-1">
+              RWF {sales.totalRevenue.toLocaleString()}
+            </div>
+            <p className="text-sm text-slate-500 mt-1">
+              From {sales.totalOrders} processing orders
+            </p>
           </div>
         </div>
 
@@ -90,42 +100,75 @@ export default function Reports() {
             <AlertTriangle className="w-8 h-8 text-orange-600" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Low Stock Items</h3>
-            <div className="text-4xl font-extrabold text-slate-900 mt-1">{lowStock.length}</div>
-            <p className="text-sm text-slate-500 mt-1">Products needing restock (below 5)</p>
+            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+              Low Stock Items
+            </h3>
+            <div className="text-4xl font-extrabold text-slate-900 mt-1">
+              {lowStock.length}
+            </div>
+            <p className="text-sm text-slate-500 mt-1">
+              Products needing restock (below 5)
+            </p>
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-          <h3 className="text-lg font-bold text-slate-800">Low Stock Products (<span className="text-orange-500">{"<"} 5</span>)</h3>
+          <h3 className="text-lg font-bold text-slate-800">
+            Low Stock Products (<span className="text-orange-500">{"<"} 5</span>
+            )
+          </h3>
         </div>
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent border-b-slate-100">
-              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4">Image</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4">Name</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4">Category</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4 text-right">Current Stock</TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4">
+                Image
+              </TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4">
+                Name
+              </TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4">
+                Category
+              </TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase tracking-wider text-xs py-4 text-right">
+                Current Stock
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-10">Loading...</TableCell>
+                <TableCell colSpan={4} className="text-center py-10">
+                  Loading...
+                </TableCell>
               </TableRow>
             ) : lowStock.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-10 text-slate-500">All products are sufficiently stocked.</TableCell>
+                <TableCell
+                  colSpan={4}
+                  className="text-center py-10 text-slate-500"
+                >
+                  All products are sufficiently stocked.
+                </TableCell>
               </TableRow>
             ) : (
               lowStock.map((product) => (
-                <TableRow key={product.id} className="hover:bg-slate-50 transition-colors border-b-slate-50">
+                <TableRow
+                  key={product.id}
+                  className="hover:bg-slate-50 transition-colors border-b-slate-50"
+                >
                   <TableCell className="py-3">
-                    <img src={product.image} alt={product.name} className="w-10 h-10 rounded-lg object-cover shadow-sm border border-slate-100" />
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-10 h-10 rounded-lg object-cover shadow-sm border border-slate-100"
+                    />
                   </TableCell>
-                  <TableCell className="font-semibold text-slate-800">{product.name}</TableCell>
+                  <TableCell className="font-semibold text-slate-800">
+                    {product.name}
+                  </TableCell>
                   <TableCell>
                     <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold uppercase tracking-wider">
                       {product.category}
@@ -143,5 +186,5 @@ export default function Reports() {
         </Table>
       </div>
     </div>
-  )
+  );
 }
