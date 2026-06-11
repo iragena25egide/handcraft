@@ -943,7 +943,6 @@ export default function Products() {
         </div>
       )}
 
-      {/* ══ VIEW MODAL ══ */}
       {viewingProduct && (
         <div
           className="admin-modal-overlay"
