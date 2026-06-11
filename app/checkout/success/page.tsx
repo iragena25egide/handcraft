@@ -17,7 +17,6 @@ function CheckoutSuccessContent() {
       orderId || `RC-${Math.floor(100000 + Math.random() * 900000)}`,
     );
 
-    // Fire confetti
     const duration = 3 * 1000;
     const end = Date.now() + duration;
 
