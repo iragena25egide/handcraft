@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // This runs only on the client, after hydration
     const stored = localStorage.getItem("theme") as Theme | null;
     const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      "(prefers-color-scheme: dark)",
     ).matches;
     const initial = stored || (prefersDark ? "dark" : "light");
     setTheme(initial);
@@ -32,7 +32,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
-  // Prevent hydration mismatch: only render after mounted
   if (!mounted) {
     return null;
   }
