@@ -362,7 +362,6 @@ export default function Products() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* ── Page Header & Filters ── */}
       <div
         style={{
           display: "flex",
