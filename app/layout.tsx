@@ -33,6 +33,27 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var stored = localStorage.getItem('theme');
+                  var hour = new Date().getHours();
+                  var isNightTime = hour >= 22 || hour < 6;
+                  var theme = stored || (isNightTime ? 'dark' : 'light');
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${raleway.variable} ${playfair.variable} font-sans bg-white dark:bg-gray-900 transition-colors duration-300`}
       >
