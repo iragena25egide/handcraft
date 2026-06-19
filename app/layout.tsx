@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Raleway, Playfair_Display } from "next/font/google";
+import { Outfit, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,11 +7,12 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import StoreProvider from "@/components/StoreProvider";
 import GlobalSocketProvider from "@/components/GlobalSocketProvider";
 import { Toaster } from "react-hot-toast";
+import Script from "next/script";
 
-const raleway = Raleway({
+const outfit = Outfit({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-raleway",
+  variable: "--font-raleway", // Keeping the variable name so we don't have to change tailwind.config.ts
   display: "swap",
 });
 
@@ -33,8 +34,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
+      <body
+        className={`${outfit.variable} ${playfair.variable} font-sans text-sm bg-white dark:bg-gray-900 transition-colors duration-300`}
+      >
+        <Script
+          id="theme-script"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -53,10 +58,6 @@ export default function RootLayout({
             `,
           }}
         />
-      </head>
-      <body
-        className={`${raleway.variable} ${playfair.variable} font-sans bg-white dark:bg-gray-900 transition-colors duration-300`}
-      >
         <StoreProvider>
           <GlobalSocketProvider>
             <ThemeProvider>
