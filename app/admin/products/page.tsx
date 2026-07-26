@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
-import { Plus, Edit, Trash2, Search, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit, Trash2, Search, Image as ImageIcon, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
@@ -30,6 +30,8 @@ export default function AdminProductsPage() {
     description: "Handcrafted item",
     image: ""
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -50,18 +52,38 @@ export default function AdminProductsPage() {
     e.preventDefault();
     const toastId = toast.loading("Creating product...");
     try {
-      await api.post("/products", {
-        ...formData,
-        price: parseFloat(formData.price),
-        stockQuantity: parseInt(formData.stockQuantity)
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("category", formData.category);
+      data.append("price", formData.price);
+      data.append("stockQuantity", formData.stockQuantity);
+      data.append("artisan", formData.artisan);
+      data.append("description", formData.description);
+      
+      if (imageFile) {
+        data.append("images", imageFile);
+      }
+
+      await api.post("/products", data, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
       toast.success("Product created successfully", { id: toastId });
       setIsModalOpen(false);
       fetchProducts();
       // Reset form
       setFormData({ name: "", category: "handicraft", price: "", stockQuantity: "", artisan: "", description: "Handcrafted item", image: "" });
+      setImageFile(null);
+      setImagePreview(null);
     } catch (error) {
       toast.error("Failed to create product", { id: toastId });
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -226,8 +248,28 @@ export default function AdminProductsPage() {
                 <input required type="text" value={formData.artisan} onChange={e => setFormData({...formData, artisan: e.target.value})} className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
-                <input required type="url" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} placeholder="https://example.com/image.jpg" className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Product Image</label>
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg">
+                  <div className="space-y-1 text-center flex flex-col items-center">
+                    {imagePreview ? (
+                      <div className="relative mb-4">
+                        <img src={imagePreview} alt="Preview" className="mx-auto h-32 w-auto rounded-lg object-cover" />
+                        <button type="button" onClick={() => { setImageFile(null); setImagePreview(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    )}
+                    <div className="flex text-sm text-gray-600 dark:text-gray-400 justify-center w-full">
+                      <label htmlFor="file-upload" className="relative cursor-pointer bg-white dark:bg-gray-800 rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none">
+                        <span>{imagePreview ? 'Change image' : 'Upload a file'}</span>
+                        <input id="file-upload" name="file-upload" type="file" className="sr-only" accept="image/*" onChange={handleImageChange} />
+                      </label>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF up to 10MB</p>
+                  </div>
+                </div>
               </div>
               <div className="pt-4 flex justify-end gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium">Cancel</button>
