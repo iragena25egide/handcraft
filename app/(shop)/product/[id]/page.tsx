@@ -5,19 +5,18 @@ import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { type Product } from "@/data/product";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { addItem as addCartItem } from "@/lib/store/slices/cartSlice";
 import { toggleWishlist } from "@/lib/store/slices/wishlistSlice";
 import { motion } from "framer-motion";
+import RequestModal from "@/components/RequestModal";
 import {
   ArrowLeft,
   Heart,
   ShoppingBag,
   Star,
   Truck,
+  Store,
   Shield,
   RotateCcw,
-  Minus,
-  Plus,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -27,9 +26,9 @@ export default function ProductDetailsPage() {
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
 
-  const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const productId = Number(params?.id);
 
@@ -66,15 +65,6 @@ export default function ProductDetailsPage() {
   }
 
   const inWishlist = wishlistItems.some((item) => item.id === product.id);
-  const hasDiscount =
-    product.originalPrice && product.originalPrice > product.price;
-
-  const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      dispatch(addCartItem(product));
-    }
-    toast.success(`${quantity}x ${product.name} added to cart`);
-  };
 
   const handleToggleWishlist = () => {
     dispatch(toggleWishlist(product));
@@ -153,49 +143,19 @@ export default function ProductDetailsPage() {
               </span>
             </div>
 
-            <div className="flex items-end gap-4 mb-8">
-              <span className="text-4xl font-black text-[#0f172a]">
-                RWF {product.price.toLocaleString()}
-              </span>
-              {hasDiscount && (
-                <span className="text-xl text-gray-400 line-through font-medium mb-1">
-                  RWF {product.originalPrice?.toLocaleString()}
-                </span>
-              )}
-            </div>
-
             <p className="text-gray-500 leading-relaxed mb-10 text-lg">
               {product.description}
             </p>
 
             <div className="border-t border-gray-100 pt-8 mb-8">
               <div className="flex flex-col sm:flex-row gap-4">
-                {/* Quantity Selector */}
-                <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-2xl p-2 w-full sm:w-40">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 text-gray-400 hover:text-[#0f172a] hover:bg-white rounded-xl transition-colors"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="font-bold text-[#0f172a] text-lg w-12 text-center">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 text-gray-400 hover:text-[#0f172a] hover:bg-white rounded-xl transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Add to Cart Button */}
+                {/* Request Button */}
                 <button
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-[#0f172a] text-white py-4 px-8 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]"
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full bg-[#0f172a] text-white py-4 px-8 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]"
                 >
-                  <ShoppingBag className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
-                  Add to Cart
+                  <Store className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
+                  Request Info
                 </button>
               </div>
             </div>
@@ -230,6 +190,12 @@ export default function ProductDetailsPage() {
           </motion.div>
         </div>
       </main>
+
+      <RequestModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        product={product} 
+      />
     </div>
   );
 }
