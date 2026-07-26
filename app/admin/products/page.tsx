@@ -14,6 +14,7 @@ interface Product {
   stockQuantity: number;
   image: string;
   artisan: string;
+  description?: string;
 }
 
 export default function AdminProductsPage() {
@@ -32,6 +33,8 @@ export default function AdminProductsPage() {
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
   const fetchProducts = async () => {
     try {
@@ -48,9 +51,9 @@ export default function AdminProductsPage() {
     fetchProducts();
   }, []);
 
-  const handleCreateProduct = async (e: React.FormEvent) => {
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const toastId = toast.loading("Creating product...");
+    const toastId = toast.loading(editingProduct ? "Updating product..." : "Creating product...");
     try {
       const data = new FormData();
       data.append("name", formData.name);
@@ -62,20 +65,31 @@ export default function AdminProductsPage() {
       
       if (imageFile) {
         data.append("images", imageFile);
+      } else if (formData.image) {
+        data.append("image", formData.image);
       }
 
-      await api.post("/products", data, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-      toast.success("Product created successfully", { id: toastId });
+      if (editingProduct) {
+        await api.put(`/products/${editingProduct.id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        toast.success("Product updated successfully", { id: toastId });
+      } else {
+        await api.post("/products", data, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        toast.success("Product created successfully", { id: toastId });
+      }
+
       setIsModalOpen(false);
+      setEditingProduct(null);
       fetchProducts();
       // Reset form
       setFormData({ name: "", category: "handicraft", price: "", stockQuantity: "", artisan: "", description: "Handcrafted item", image: "" });
       setImageFile(null);
       setImagePreview(null);
     } catch (error) {
-      toast.error("Failed to create product", { id: toastId });
+      toast.error(editingProduct ? "Failed to update product" : "Failed to create product", { id: toastId });
     }
   };
 
@@ -87,14 +101,19 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleDeleteProduct = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+  const handleDeleteProduct = (id: number) => {
+    setProductToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
     
     const toastId = toast.loading("Deleting product...");
     try {
-      await api.delete(`/products/${id}`);
+      await api.delete(`/products/${productToDelete}`);
       toast.success("Product deleted", { id: toastId });
       fetchProducts();
+      setProductToDelete(null);
     } catch (error) {
       toast.error("Failed to delete product", { id: toastId });
     }
@@ -113,7 +132,13 @@ export default function AdminProductsPage() {
           <p className="text-gray-500 dark:text-gray-400 text-sm">Manage your store's inventory</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setEditingProduct(null);
+            setFormData({ name: "", category: "handicraft", price: "", stockQuantity: "", artisan: "", description: "Handcrafted item", image: "" });
+            setImageFile(null);
+            setImagePreview(null);
+            setIsModalOpen(true);
+          }}
           className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold text-sm"
         >
           <Plus className="w-4 h-4" /> Add Product
@@ -187,7 +212,25 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 text-gray-400 hover:text-blue-500 transition" title="Edit">
+                        <button 
+                          onClick={() => {
+                            setEditingProduct(product);
+                            setFormData({
+                              name: product.name,
+                              category: product.category,
+                              price: product.price.toString(),
+                              stockQuantity: product.stockQuantity.toString(),
+                              artisan: product.artisan,
+                              description: product.description || "Handcrafted item",
+                              image: product.image
+                            });
+                            setImageFile(null);
+                            setImagePreview(product.image);
+                            setIsModalOpen(true);
+                          }}
+                          className="p-2 text-gray-400 hover:text-blue-500 transition" 
+                          title="Edit"
+                        >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button 
@@ -207,15 +250,15 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
-      {/* Create Product Modal */}
+    {/* Create/Edit Product Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add New Product</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{editingProduct ? "Edit Product" : "Add New Product"}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-500">&times;</button>
             </div>
-            <form onSubmit={handleCreateProduct} className="p-6 space-y-4">
+            <form onSubmit={handleSaveProduct} className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Product Name</label>
                 <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
@@ -273,9 +316,25 @@ export default function AdminProductsPage() {
               </div>
               <div className="pt-4 flex justify-end gap-3">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold">Save Product</button>
+                <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold">{editingProduct ? "Update Product" : "Save Product"}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Delete Confirmation Modal */}
+      {productToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl p-6 text-center">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Trash2 className="w-8 h-8 text-red-600 dark:text-red-500" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Delete Product?</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">Are you sure you want to delete this product? This action cannot be undone.</p>
+            <div className="flex gap-3 justify-center">
+              <button onClick={() => setProductToDelete(null)} className="px-4 py-2 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 font-medium w-full transition">Cancel</button>
+              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold w-full transition">Yes, Delete</button>
+            </div>
           </div>
         </div>
       )}
