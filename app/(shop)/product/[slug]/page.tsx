@@ -54,7 +54,34 @@ export default function ProductDetailsPage() {
     if (slug) fetchProduct();
   }, [slug]);
 
-  if (loading) return <div className="text-center py-20">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="border-b border-gray-100 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center">
+            <div className="w-24 h-4 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+            <div className="space-y-6">
+              <div className="aspect-square bg-gray-100 rounded-3xl animate-pulse"></div>
+            </div>
+            <div className="flex flex-col pt-8">
+              <div className="w-20 h-6 bg-gray-200 rounded-full animate-pulse mb-6"></div>
+              <div className="w-3/4 h-10 bg-gray-200 rounded animate-pulse mb-4"></div>
+              <div className="w-1/4 h-8 bg-gray-200 rounded animate-pulse mb-8"></div>
+              <div className="w-full h-24 bg-gray-200 rounded animate-pulse mb-8"></div>
+              <div className="space-y-4">
+                <div className="w-full h-12 bg-gray-200 rounded-xl animate-pulse"></div>
+                <div className="w-full h-12 bg-gray-200 rounded-xl animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
