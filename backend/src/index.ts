@@ -8,6 +8,7 @@ import productRoutes from "./routes/productRoutes";
 import userRoutes from "./routes/userRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import reportRoutes from "./routes/reportRoutes";
+import requestRoutes from "./routes/requestRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import { initSocket } from "./socket";
 
@@ -37,6 +38,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/requests", requestRoutes);
 
 console.log("=== STARTING BACKEND ===");
 console.log("TypeORM Options being used:");

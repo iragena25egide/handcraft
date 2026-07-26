@@ -9,6 +9,7 @@ import {
   Trash2,
   Bell,
   X,
+  Inbox,
 } from "lucide-react";
 
 const baseItems = [
@@ -20,6 +21,7 @@ const baseItems = [
     desc: "Manage listings",
   },
   { title: "Orders", url: "/orders", icon: ShoppingCart, desc: "Track orders" },
+  { title: "Requests", url: "/requests", icon: Inbox, desc: "Product inquiries" },
 ];
 
 const adminItems = [
