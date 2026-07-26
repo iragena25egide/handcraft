@@ -83,33 +83,11 @@ export default function AdminDashboard() {
   if (loading) return <div className="p-10 text-center">Loading dashboard...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-red-100 text-red-600 rounded-xl">
-              <LayoutDashboard className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-gray-900">Super Admin Dashboard</h1>
-              <p className="text-gray-500 text-sm">Manage the entire platform</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleDownloadReport}
-              className="flex items-center gap-2 px-4 py-2 bg-[#0f172a] text-white hover:bg-black rounded-lg font-bold transition"
-            >
-              <Download className="w-4 h-4" /> Download Report
-            </button>
-            <button
-              onClick={() => { dispatch(clearSession()); router.push("/"); }}
-              className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg font-bold transition"
-            >
-              <LogOut className="w-4 h-4" /> Sign Out
-            </button>
-          </div>
-        </div>
+    <div className="max-w-7xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-2xl font-black text-gray-900 dark:text-white">Dashboard Overview</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">Welcome back! Here's what's happening today.</p>
+      </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
@@ -167,7 +145,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
  
