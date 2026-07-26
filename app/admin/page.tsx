@@ -96,7 +96,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Total Revenue</p>
-              <p className="text-3xl font-black text-gray-900">${sales.totalRevenue.toFixed(2)}</p>
+              <p className="text-3xl font-black text-gray-900">RWF {sales.totalRevenue.toFixed(2)}</p>
             </div>
           </div>
 

@@ -28,6 +28,8 @@ import {
   clearCart,
 } from "@/lib/store/slices/cartSlice";
 import { clearSession } from "@/lib/store/slices/userSlice";
+import { setLanguage } from "@/lib/store/slices/languageSlice";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import { api } from "@/lib/api";
 import { useTheme } from "./ThemeProvider";
 import Link from "next/link";
@@ -35,10 +37,11 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const languages = [
-  { code: "rw", name: "Kinyarwanda", flag: "🇷🇼" },
-  { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "fr", name: "Français", flag: "🇫🇷" },
+  { code: "en", name: "English", shortName: "Eng", flag: "🇬🇧" },
+  { code: "rw", name: "Kinyarwanda", shortName: "Kiny", flag: "🇷🇼" },
 ];
+
+
 
 // Drawer component (Unchanged)
 function Drawer({
@@ -133,16 +136,19 @@ export default function Navbar() {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentLang, setCurrentLang] = useState(languages[1]);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
   const { theme, toggleTheme } = useTheme();
   const dispatch = useAppDispatch();
-  const wishlistItems = useAppSelector((state) => state.wishlist.items);
-  const cartItems = useAppSelector((state) => state.cart.items);
-  const { isLoggedIn, user } = useAppSelector((state) => state.user);
   const router = useRouter();
+
+  const { items: cartItems } = useAppSelector((state) => state.cart);
+  const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
+  const { isLoggedIn, user } = useAppSelector((state) => state.user);
+
+  const { t, currentLang } = useTranslation();
+  const currentLangObj = languages.find((l) => l.code === currentLang) || languages[0];
 
   const cartSubtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -230,7 +236,7 @@ export default function Navbar() {
                   {item.name}
                 </p>
                 <p className="text-base font-black text-[#0f172a] mt-1">
-                  ${Number(item.price).toFixed(2)}
+                  RWF {Number(item.price).toFixed(2)}
                 </p>
               </div>
 
@@ -505,7 +511,7 @@ export default function Navbar() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-black text-[#0f172a] text-sm">
-                      ${product.price}
+                      RWF {product.price}
                     </span>
                     <div className="p-2 bg-white rounded-lg opacity-0 group-hover:opacity-100 transition-all shadow-sm">
                       <ArrowRight className="w-4 h-4 text-[#0f172a]" />
@@ -523,12 +529,15 @@ export default function Navbar() {
   return (
     <>
       {/* Top Announcement Bar */}
-      <div className="bg-[#0f172a] text-white text-[10px] py-1.5 px-4 text-center tracking-widest uppercase font-semibold relative z-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
-          <Tag className="w-3 h-3" />
+      <div className="bg-[#0f172a] text-white text-[10px] sm:text-xs py-2 px-4 text-center tracking-widest uppercase font-semibold relative z-50">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-2">
+            <Tag className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span>{t.navbar.freeShipping}</span>
+          </div>
+          <span className="hidden sm:inline">|</span>
           <span>
-            Free shipping on orders over $75 | Use code{" "}
-            <strong>MADE IN RWANDA</strong> for 20% off
+            {t.navbar.useCode} <span className="text-[#c89f72] font-black tracking-widest mx-1">MADE IN RWANDA</span> {t.navbar.forOff}
           </span>
         </div>
       </div>
@@ -536,33 +545,34 @@ export default function Navbar() {
       {/* Main Navbar – Enhanced Glass Effect */}
       <nav className="sticky top-0 z-40 w-full transition-all duration-300   bg-white/70 backdrop-blur-xl dark:bg-gray-950/70 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center py-2 h-auto min-h-[5rem]">
             {/* Left: Logo + Name */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-[#0f172a] rounded-xl flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform">
-                <span className="text-white font-black text-xl tracking-tighter">
-                  H
-                </span>
+            <Link href="/" className="flex flex-col items-center justify-center group shrink-0 max-w-[50%]">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-transform group-hover:scale-105">
+                <img src="/logo_mark.png" alt="Logo Mark" className="w-full h-full object-contain" />
               </div>
-              <span className="text-xl font-black tracking-tight text-[#0f172a] dark:text-white hidden sm:block">
+              <span 
+                className="text-lg sm:text-2xl font-bold tracking-tight text-[#0f172a] dark:text-white mt-1 sm:whitespace-nowrap italic text-center leading-none"
+                style={{ fontFamily: '"Edu VIC WA NT Hand", cursive' }}
+              >
                 All African Handcraft
               </span>
             </Link>
 
             <div className="hidden md:flex items-center space-x-8">
-              {["Shop", "Categories", "New Arrivals", "Sale"].map((item) => (
+              {["shop", "categories", "newArrivals", "sale"].map((item) => (
                 <Link
                   key={item}
-                  href={`/${item.toLowerCase().replace(" ", "-")}`}
-                  className="text-[#0f172a]/70 dark:text-gray-400 hover:text-[#0f172a] dark:hover:text-white transition-colors text-sm font-semibold tracking-tight"
+                  href={`/${item === "newArrivals" ? "new-arrivals" : item.toLowerCase()}`}
+                  className="text-[#0f172a]/80 dark:text-gray-300 hover:text-[#0f172a] dark:hover:text-white transition-colors text-[15px] font-bold tracking-wide capitalize"
                 >
-                  {item}
+                  {t.navbar[item as keyof typeof t.navbar]}
                 </Link>
               ))}
             </div>
 
-            <div className="flex items-center gap-5">
-              <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-5">
+              <div className="flex items-center gap-2 sm:gap-4">
                 <button
                   onClick={() => setIsSearchOpen(true)}
                   className="text-[#0f172a] dark:text-gray-200 hover:opacity-60 transition-opacity"
@@ -580,35 +590,8 @@ export default function Navbar() {
                     </span>
                   )}
                 </Link>
-                <button
-                  onClick={() => {
-                    if (!isLoggedIn) {
-                      router.push("/login");
-                    } else if (user?.role === "SUPER_ADMIN") {
-                      router.push("/admin");
-                    } else if (user?.role === "SELLER") {
-                      router.push("/seller");
-                    } else {
-                      router.push("/profile");
-                    }
-                  }}
-                  className="text-[#0f172a] dark:text-gray-200 hover:opacity-60 transition-opacity"
-                >
-                  <User
-                    className={`w-5 h-5 ${isLoggedIn ? "text-green-600" : ""}`}
-                  />
-                </button>
-                <Link
-                  href="/cart"
-                  className="relative text-[#0f172a] dark:text-gray-200 hover:opacity-60 transition-opacity"
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  {cartItems.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-[#0f172a] text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center border border-white font-bold">
-                      {cartItems.length}
-                    </span>
-                  )}
-                </Link>
+
+
                 <button
                   onClick={toggleTheme}
                   className="text-gray-400 hover:text-[#0f172a] transition-colors"
@@ -625,9 +608,10 @@ export default function Navbar() {
               <div className="relative hidden md:block" ref={langDropdownRef}>
                 <button
                   onClick={() => setIsLangOpen(!isLangOpen)}
-                  className="flex items-center gap-1.5 text-[#0f172a] dark:text-gray-200 hover:opacity-70 text-xs font-bold"
+                  className="flex items-center gap-1.5 text-[#0f172a] dark:text-gray-200 hover:opacity-70 text-sm font-bold px-2 py-1"
                 >
-                  <span className="text-sm">{currentLang.flag}</span>
+                  <span className="text-sm">{currentLangObj.flag}</span>
+                  <span className="font-bold">{currentLangObj.shortName}</span>
                   <ChevronDown className="w-3 h-3 text-gray-400" />
                 </button>
                 <AnimatePresence>
@@ -642,7 +626,7 @@ export default function Navbar() {
                         <button
                           key={lang.code}
                           onClick={() => {
-                            setCurrentLang(lang);
+                            dispatch(setLanguage(lang.code));
                             setIsLangOpen(false);
                           }}
                           className="flex items-center gap-2 w-full px-4 py-2.5 text-left hover:bg-[#0f172a] hover:text-white transition-colors text-sm"
@@ -717,14 +701,14 @@ export default function Navbar() {
       </nav>
       <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <div className="flex flex-col space-y-4 py-2">
-          {["Shop", "Categories", "New Arrivals", "Sale"].map((item) => (
+          {["shop", "categories", "newArrivals", "sale"].map((item) => (
             <Link
               key={item}
-              href={`/${item.toLowerCase().replace(" ", "-")}`}
+              href={`/${item === "newArrivals" ? "new-arrivals" : item.toLowerCase()}`}
               onClick={() => setIsMenuOpen(false)}
               className="text-[#0f172a] dark:text-white text-lg font-bold py-2 border-b border-gray-100 dark:border-gray-800"
             >
-              {item}
+              {t.navbar[item as keyof typeof t.navbar]}
             </Link>
           ))}
           {/* Language selector inside bottom sheet */}
@@ -737,11 +721,11 @@ export default function Navbar() {
                 <button
                   key={lang.code}
                   onClick={() => {
-                    setCurrentLang(lang);
+                    dispatch(setLanguage(lang.code));
                     setIsMenuOpen(false);
                   }}
                   className={`flex items-center gap-1 px-4 py-2 rounded-full text-xs font-bold ${
-                    currentLang.code === lang.code
+                    currentLang === lang.code
                       ? "bg-[#0f172a] text-white"
                       : "bg-gray-100 text-gray-700"
                   }`}

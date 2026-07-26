@@ -201,7 +201,7 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td className="p-4 text-gray-600 dark:text-gray-300 capitalize">{product.category}</td>
-                    <td className="p-4 font-bold text-gray-900 dark:text-white">${Number(product.price).toFixed(2)}</td>
+                    <td className="p-4 font-bold text-gray-900 dark:text-white">RWF {Number(product.price).toFixed(2)}</td>
                     <td className="p-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                         product.stockQuantity > 10 ? "bg-green-100 text-green-700" : 
@@ -265,7 +265,7 @@ export default function AdminProductsPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Price ($)</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Price (RWF)</label>
                   <input required type="number" step="0.01" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" />
                 </div>
                 <div>

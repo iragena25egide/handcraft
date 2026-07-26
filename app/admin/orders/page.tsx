@@ -117,7 +117,7 @@ export default function AdminOrdersPage() {
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                     <td className="p-4 font-bold text-gray-900 dark:text-white">
-                      ${Number(order.total).toFixed(2)}
+                      RWF {Number(order.total).toFixed(2)}
                     </td>
                     <td className="p-4">
                       <select
