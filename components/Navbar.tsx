@@ -136,6 +136,7 @@ export default function Navbar() {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -156,6 +157,10 @@ export default function Navbar() {
   );
   const cartShipping = cartItems.length > 0 ? 5000 : 0;
   const cartTotal = cartSubtotal + cartShipping;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -641,7 +646,7 @@ export default function Navbar() {
               </div>
 
               {/* User Dropdown */}
-              {isLoggedIn && user && (
+              {mounted && isLoggedIn && user && (
                 <div className="relative hidden md:block" ref={userDropdownRef}>
                   <button
                     onClick={() => setIsUserOpen(!isUserOpen)}
