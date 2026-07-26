@@ -28,12 +28,16 @@ export default function RequestModal({ isOpen, onClose, product }: RequestModalP
 
     setLoading(true);
     try {
-      await api.post("/requests", {
-        customerName: name,
-        customerPhone: phone,
-        productId: product.id,
-        productName: product.name,
-      });
+      try {
+        await api.post("/requests", {
+          customerName: name,
+          customerPhone: phone,
+          productId: product.id,
+          productName: product.name,
+        });
+      } catch (backendError) {
+        console.log("Backend request failed, but proceeding to WhatsApp");
+      }
 
       // Also trigger Click-To-Chat so you get notified on WhatsApp
       const encodedMessage = encodeURIComponent(`Hello! I'm ${name} (Phone: ${phone}). I would like to request information about this product: ${product.name}`);
