@@ -9,6 +9,8 @@ import { toggleWishlist } from "@/lib/store/slices/wishlistSlice";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import RequestModal from "./RequestModal";
 
 interface ProductCardProps {
   product: Product;
@@ -18,6 +20,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const inWishlist = wishlistItems.some((item) => item.id === product.id);
 
@@ -32,23 +35,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    dispatch(addCartItem(product));
-    toast.success("Added to cart");
-  };
-
-  const handleBuyNow = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    dispatch(addCartItem(product));
-    router.push("/checkout");
-  };
-
-  const price = Number(product.price);
-  const originalPrice = product.originalPrice ? Number(product.originalPrice) : null;
-  const hasDiscount = originalPrice && originalPrice > price;
+  const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
   return (
     <motion.div
@@ -57,7 +44,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       viewport={{ once: true }}
       className="group flex flex-col bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-shadow overflow-hidden"
     >
-      <Link href={`/product/${product.id}`} className="block flex-1 p-4">
+      <Link href={`/product/${generateSlug(product.name)}`} className="block flex-1 p-4">
         {/* Image Container with Imigongo Pattern */}
         <div 
           className="relative aspect-square mb-4 rounded-2xl overflow-hidden bg-white"
@@ -86,25 +73,10 @@ export default function ProductCard({ product }: ProductCardProps) {
               }`}
             />
           </button>
-
-          {/* Bottom Left Quantity Tag */}
-          <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-orange-50 border border-orange-200 text-orange-600 font-bold text-xs rounded-md shadow-sm">
-            1
-          </div>
         </div>
 
         {/* Product Details */}
         <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-black">
-              RWF {price.toFixed(0)}
-            </span>
-            {hasDiscount && (
-              <span className="text-sm font-bold text-red-500 line-through">
-                RWF {originalPrice?.toFixed(0)}
-              </span>
-            )}
-          </div>
           <span className="px-3 py-1 bg-[#fdf5ed] text-[#b36936] text-[10px] font-bold rounded-full truncate max-w-[100px]">
             {product.category}
           </span>
@@ -121,20 +93,22 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Action Buttons */}
       <div className="px-4 pb-4 flex gap-2">
         <button
-          onClick={handleBuyNow}
-          className="flex-1 py-2.5 px-2 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
+          onClick={(e) => {
+            e.preventDefault();
+            setIsModalOpen(true);
+          }}
+          className="flex-1 py-3 px-2 bg-[#0f172a] text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-black transition-colors shadow-lg shadow-[#0f172a]/20"
         >
           <Store className="w-4 h-4" />
-          Buy Now
-        </button>
-        <button
-          onClick={handleAddToCart}
-          className="flex-1 py-2.5 px-2 bg-[#46270e] text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-[#341d0a] transition-colors shadow-lg shadow-[#46270e]/20"
-        >
-          <ShoppingCart className="w-4 h-4" />
-          Add to Cart
+          Request Info
         </button>
       </div>
+
+      <RequestModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        product={product} 
+      />
     </motion.div>
   );
 }

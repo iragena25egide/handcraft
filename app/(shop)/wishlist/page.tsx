@@ -54,10 +54,12 @@ export default function WishlistPage() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {wishlistItems.map((item) => (
+        {wishlistItems.map((item) => {
+          const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+          return (
           <div key={item.id} className="group flex flex-col bg-white border border-gray-100 rounded-[24px] overflow-hidden hover:shadow-xl transition-all">
             <div className="relative aspect-square overflow-hidden bg-gray-50">
-              <Link href={`/product/${item.id}`}>
+              <Link href={`/product/${generateSlug(item.name)}`}>
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </Link>
               <button 
@@ -71,7 +73,7 @@ export default function WishlistPage() {
             <div className="p-5 flex flex-col flex-1 justify-between">
               <div>
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{item.category}</p>
-                <Link href={`/product/${item.id}`}>
+                <Link href={`/product/${generateSlug(item.name)}`}>
                   <h3 className="font-bold text-[#0f172a] text-lg mb-2 truncate hover:text-gray-600 transition-colors">{item.name}</h3>
                 </Link>
                 <p className="text-xl font-black text-[#0f172a] mb-4">RWF {item.price.toLocaleString()}</p>
@@ -89,7 +91,7 @@ export default function WishlistPage() {
               </button>
             </div>
           </div>
-        ))}
+        )})}
       </div>
     </div>
   );
