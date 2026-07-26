@@ -41,15 +41,14 @@ export default function Preloader() {
   return (
     <AnimatePresence>
       {isLoading && (
-        <motion.div
-          initial={{ y: 0 }}
-          exit={{ y: "-100%", transition: { duration: 1, ease: [0.76, 0, 0.24, 1], delay: 0.3 } }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0f172a] shadow-2xl overflow-hidden"
-        >
           <motion.div
-            exit={{ opacity: 0, y: -20, scale: 0.95, filter: "blur(5px)", transition: { duration: 0.4, ease: "easeOut" } }}
-            className="flex flex-col items-center"
+            exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeOut" } }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0f172a] shadow-2xl overflow-hidden"
           >
+            <motion.div
+              exit={{ opacity: 0, filter: "blur(5px)", transition: { duration: 0.4, ease: "easeOut" } }}
+              className="flex flex-col items-center"
+            >
             <motion.div
               initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
               animate={{ scale: 1, opacity: 1, rotate: 0 }}

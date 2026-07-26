@@ -42,7 +42,7 @@ export const products: Product[] = [
     name: "Ishati ya Kitenge y'Abagabo",
     price: 40000,
     category: "imyenda",
-    image: "imgage/boss.jpeg",
+    image: "image/boss.jpeg",
     description:
       "Ishati nziza y'abagabo ikozwe muri Kitenge igezweho kandi yoroshye.",
     artisan: "Kigali Men Wear",
