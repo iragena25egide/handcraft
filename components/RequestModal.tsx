@@ -17,6 +17,7 @@ export default function RequestModal({ isOpen, onClose, product }: RequestModalP
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,10 +40,8 @@ export default function RequestModal({ isOpen, onClose, product }: RequestModalP
       // Open in a new tab to avoid breaking the current site state
       window.open(`https://wa.me/250798555420?text=${encodedMessage}`, "_blank");
 
-      toast.success("Request submitted successfully!");
-      onClose();
-      setName("");
-      setPhone("");
+      toast.success("Request initiated!");
+      setIsSuccess(true);
     } catch (error) {
       toast.error("Failed to submit request. Please try again.");
     } finally {
@@ -78,59 +77,84 @@ export default function RequestModal({ isOpen, onClose, product }: RequestModalP
                 </button>
               </div>
 
-              <div className="flex gap-4 p-4 bg-[#fdf5ed] dark:bg-gray-800/50 rounded-2xl mb-8 border border-[#c89f72]/20">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-16 h-16 object-cover rounded-xl shadow-sm"
-                />
-                <div>
-                  <h3 className="font-bold text-sm text-[#0f172a] dark:text-white line-clamp-1" style={{ fontFamily: 'var(--font-playfair)' }}>
-                    {product.name}
-                  </h3>
-                  <p className="text-xs text-[#c89f72] mt-1">Direct via WhatsApp</p>
+              {isSuccess ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Send className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Request Initiated!</h3>
+                  <p className="text-sm text-gray-600 mb-8 px-4">
+                    A new tab has opened for you to send us a message on WhatsApp. We will process your order once we receive your message.
+                  </p>
+                  <button
+                    onClick={() => {
+                      onClose();
+                      setIsSuccess(false);
+                      setName("");
+                      setPhone("");
+                    }}
+                    className="w-full bg-[#0f172a] text-white py-4 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity"
+                  >
+                    Done
+                  </button>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="flex gap-4 p-4 bg-[#fdf5ed] dark:bg-gray-800/50 rounded-2xl mb-8 border border-[#c89f72]/20">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-16 h-16 object-cover rounded-xl shadow-sm"
+                    />
+                    <div>
+                      <h3 className="font-bold text-sm text-[#0f172a] dark:text-white line-clamp-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                        {product.name}
+                      </h3>
+                      <p className="text-xs text-[#c89f72] mt-1">Direct via WhatsApp</p>
+                    </div>
+                  </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 tracking-wider uppercase">Your Name</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your full name"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-0 focus:border-[#c89f72] text-sm text-[#0f172a] dark:text-white transition-all shadow-sm font-medium"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 tracking-wider uppercase">Phone Number</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="e.g. 0788 123 456"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-0 focus:border-[#c89f72] text-sm text-[#0f172a] dark:text-white transition-all shadow-sm font-medium"
-                    required
-                  />
-                </div>
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 tracking-wider uppercase">Your Name</label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter your full name"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-0 focus:border-[#c89f72] text-sm text-[#0f172a] dark:text-white transition-all shadow-sm font-medium"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2 tracking-wider uppercase">Phone Number</label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="e.g. 0788 123 456"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-xl focus:outline-none focus:ring-0 focus:border-[#c89f72] text-sm text-[#0f172a] dark:text-white transition-all shadow-sm font-medium"
+                        required
+                      />
+                    </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#0f172a] dark:bg-[#c89f72] text-white py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 mt-8 hover:opacity-90 transition-opacity disabled:opacity-70 shadow-lg shadow-[#0f172a]/20"
-                >
-                  {loading ? (
-                    "Preparing..."
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      Send via WhatsApp
-                    </>
-                  )}
-                </button>
-              </form>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-[#0f172a] dark:bg-[#c89f72] text-white py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 mt-8 hover:opacity-90 transition-opacity disabled:opacity-70 shadow-lg shadow-[#0f172a]/20"
+                    >
+                      {loading ? (
+                        "Preparing..."
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          Send via WhatsApp
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
+              )}
             </div>
           </motion.div>
         </>
