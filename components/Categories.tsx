@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 const baseCategories = [
   {
@@ -34,18 +35,12 @@ const baseCategories = [
     slug: "ibyo murugo",
     description: "Ibikoresho byo mu nzu (Home Goods & Pottery)",
     image: "image/akebo.jpeg",
-  },
-  {
-    id: 5,
-    name: "Nibindi",
-    slug: "nibindi",
-    description: "Ibindi bikoresho gakondo (Other Traditional Items)",
-    image: "image/ingoma.jpeg",
-  },
+  }
 ];
 
 export default function CategoryGrid() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [categories, setCategories] = useState(baseCategories.map(c => ({ ...c, count: 0 })));
 
   useEffect(() => {
@@ -54,8 +49,10 @@ export default function CategoryGrid() {
         const response = await api.get("/products");
         const products = response.data || [];
         setCategories(baseCategories.map((cat) => {
-          const count = products.filter((p: any) => p.category === cat.slug).length;
-          return { ...cat, count };
+          const categoryProducts = products.filter((p: any) => p.category === cat.slug);
+          const count = categoryProducts.length;
+          const representativeImage = categoryProducts.length > 0 ? categoryProducts[0].image : cat.image;
+          return { ...cat, count, image: representativeImage };
         }));
       } catch (error) {
         console.error("Failed to fetch products for categories");
@@ -71,59 +68,64 @@ export default function CategoryGrid() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
           <div className="max-w-xl">
             <h2 className="text-2xl md:text-3xl font-bold text-[#0f172a] tracking-tight">
-              Shop by Category
+              {t.categories.title}
             </h2>
             <div className="h-1 w-12 bg-[#0f172a] mt-1.5 mb-3" />
             <p className="text-sm text-gray-500 font-medium">
-              Curated Rwandan craftsmanship for the modern home.
+              {t.categories.subtitle}
             </p>
           </div>
           <button onClick={() => router.push('/shop')} className="text-[#0f172a] font-bold text-xs tracking-widest cursor-pointer flex items-center gap-2 hover:opacity-70 transition-opacity uppercase">
-            View All <ArrowRight className="w-3.5 h-3.5" />
+            {t.categories.all} <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((cat, index) => (
-            <motion.div
-              key={cat.id}
-              onClick={() => router.push(`/shop?category=${cat.slug}`)}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              className="group relative h-[280px] md:h-[320px] rounded-2xl overflow-hidden cursor-pointer shadow-md"
-            >
-              <img
-                src={cat.image}
-                alt={cat.name}
-                className="absolute inset-0 w-full h-full object-cover grayscale-[0.1] group-hover:scale-105 transition-transform duration-700"
-              />
+          {categories.map((cat, index) => {
+            const listKey = cat.slug === 'imyenda' ? 'imyenda' : cat.slug === 'imitako' ? 'imitako' : cat.slug === 'ibyo mubukwe' ? 'ibyoMubukwe' : 'ibyoMurugo';
+            const catTranslations = t.categories.list[listKey as keyof typeof t.categories.list];
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent" />
+            return (
+              <motion.div
+                key={cat.id}
+                onClick={() => router.push(`/shop?category=${cat.slug}`)}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="group relative h-[280px] md:h-[320px] rounded-2xl overflow-hidden cursor-pointer shadow-md"
+              >
+                <img
+                  src={cat.image}
+                  alt={catTranslations.name}
+                  className="absolute inset-0 w-full h-full object-cover grayscale-[0.1] group-hover:scale-105 transition-transform duration-700"
+                />
 
-              <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
-                <div className="transform transition-transform duration-500">
-                  <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-tighter mb-2">
-                    {cat.count} ITEMS
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent" />
 
-                  <h3 className="text-xl font-bold mb-1 tracking-tight">
-                    {cat.name}
-                  </h3>
+                <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
+                  <div className="transform transition-transform duration-500">
+                    <span className="inline-block bg-white/10 backdrop-blur-md border border-white/20 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-tighter mb-2">
+                      {cat.count} {t.categories.items}
+                    </span>
 
-                  <p className="text-[11px] text-gray-300 leading-tight mb-4 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {cat.description}
-                  </p>
+                    <h3 className="text-xl font-bold mb-1 tracking-tight">
+                      {catTranslations.name}
+                    </h3>
 
-                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/90">
-                    Shop Now
-                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    <p className="text-[11px] text-gray-300 leading-tight mb-4 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {catTranslations.desc}
+                    </p>
+
+                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/90">
+                      {t.categories.shopNow}
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 

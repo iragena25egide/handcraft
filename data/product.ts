@@ -1,4 +1,4 @@
-export type CategoryType = "imyenda" | "imitako" | "ibyo mubukwe" | "ibyo murugo" | "nibindi";
+export type CategoryType = "imyenda" | "imitako" | "ibyo mubukwe" | "ibyo murugo";
 
 export interface Product {
   id: number;
@@ -131,7 +131,7 @@ export const products: Product[] = [
     id: 11,
     name: "Ingoma Nyarwanda",
     price: 95000,
-    category: "nibindi",
+    category: "imitako",
     image: "image/ingoma.jpeg",
     description: "Ingoma nziza ikoreshwa mu mbyino n'umuco nyarwanda.",
     artisan: "Cultural Drums Rwanda",
@@ -173,7 +173,7 @@ export const products: Product[] = [
     id: 15,
     name: "Igikoresho cy'Umuziki Inanga",
     price: 120000,
-    category: "nibindi",
+    category: "imitako",
     image: "image/ingoma.jpeg",
     description: "Inanga gakondo y'u Rwanda ikozwe mu giti cyiza kandi iramba.",
     artisan: "Rwanda Music Crafts",

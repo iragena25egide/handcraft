@@ -165,7 +165,6 @@ export default function SellerDashboard() {
                     <option value="imitako">Imitako</option>
                     <option value="ibyo mubukwe">Ibyo mubukwe</option>
                     <option value="ibyo murugo">Ibyo murugo</option>
-                    <option value="nibindi">Nibindi</option>
                   </select>
                 </div>
                 <div>

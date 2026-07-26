@@ -24,7 +24,7 @@ export default function AdminProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    category: "handicraft",
+    category: "imyenda",
     price: "",
     stockQuantity: "",
     artisan: "",
@@ -85,7 +85,7 @@ export default function AdminProductsPage() {
       setEditingProduct(null);
       fetchProducts();
       // Reset form
-      setFormData({ name: "", category: "handicraft", price: "", stockQuantity: "", artisan: "", description: "Handcrafted item", image: "" });
+      setFormData({ name: "", category: "imyenda", price: "", stockQuantity: "", artisan: "", description: "Handcrafted item", image: "" });
       setImageFile(null);
       setImagePreview(null);
     } catch (error) {
@@ -134,7 +134,7 @@ export default function AdminProductsPage() {
         <button
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: "", category: "handicraft", price: "", stockQuantity: "", artisan: "", description: "Handcrafted item", image: "" });
+            setFormData({ name: "", category: "imyenda", price: "", stockQuantity: "", artisan: "", description: "Handcrafted item", image: "" });
             setImageFile(null);
             setImagePreview(null);
             setIsModalOpen(true);
@@ -280,10 +280,10 @@ export default function AdminProductsPage() {
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Category</label>
                 <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                  <option value="handicraft">Handicraft</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="art">Art</option>
-                  <option value="home">Home Decor</option>
+                  <option value="imyenda">Imyenda (Clothing)</option>
+                  <option value="imitako">Imitako (Decorations)</option>
+                  <option value="ibyo mubukwe">Ibyo Mubukwe (Wedding)</option>
+                  <option value="ibyo murugo">Ibyo Murugo (Home Goods)</option>
                 </select>
               </div>
               <div>
