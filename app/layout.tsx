@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import StoreProvider from "@/components/StoreProvider";
 import GlobalSocketProvider from "@/components/GlobalSocketProvider";
 import { Toaster } from "react-hot-toast";
-import Script from "next/script";
 
 const outfit = Montserrat({
   subsets: ["latin"],
@@ -39,14 +38,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Cause:wght@100..900&family=Edu+VIC+WA+NT+Hand:wght@400..700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
-      </head>
-      <body
-        className={`${outfit.variable} ${playfair.variable} font-sans text-sm bg-white dark:bg-gray-900 transition-colors duration-300`}
-      >
-        <Preloader />
-        <Script
-          id="theme-script"
-          strategy="beforeInteractive"
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -65,6 +57,11 @@ export default function RootLayout({
             `,
           }}
         />
+      </head>
+      <body
+        className={`${outfit.variable} ${playfair.variable} font-sans text-sm bg-white dark:bg-gray-900 transition-colors duration-300`}
+      >
+        <Preloader />
         <StoreProvider>
           <GlobalSocketProvider>
             <ThemeProvider>
