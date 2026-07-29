@@ -5,6 +5,7 @@ import ProductCard from "./ProductCard";
 import { api } from "@/lib/api";
 import { type Product } from "@/data/product";
 import { Search, ChevronRight, ChevronLeft } from "lucide-react";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface ProductGridProps {
   category?: string;
@@ -15,6 +16,7 @@ interface ProductGridProps {
 type SortOption = "featured" | "price-low" | "price-high" | "top-rated" | "newest";
 
 export default function ProductGrid({ category, showSidebar = false, initialProducts }: ProductGridProps) {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>(initialProducts || []);
   const [loading, setLoading] = useState(!initialProducts);
 
@@ -67,7 +69,38 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
   const totalPages = Math.max(1, Math.ceil(processedProducts.length / itemsPerPage));
   const paginatedProducts = processedProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  if (loading) return <div className="text-center py-20">Loading products...</div>;
+  if (loading) {
+    return (
+      <section className="py-4 bg-white/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {showSidebar && (
+              <aside className="w-full lg:w-[280px] flex-shrink-0 space-y-6">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="bg-gray-100 rounded-[32px] p-6 border border-gray-100 shadow-sm animate-pulse h-40"></div>
+                ))}
+              </aside>
+            )}
+            <div className="flex-1 w-full min-w-0">
+              <div className="flex justify-between items-center mb-6">
+                <div className="h-8 w-48 bg-gray-200 rounded-full animate-pulse"></div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="bg-white rounded-[2rem] border border-gray-100 p-4 h-[400px] animate-pulse flex flex-col gap-4">
+                    <div className="w-full h-48 bg-gray-200 rounded-[1.5rem]"></div>
+                    <div className="h-6 w-3/4 bg-gray-200 rounded-full mt-2"></div>
+                    <div className="h-4 w-1/2 bg-gray-200 rounded-full"></div>
+                    <div className="h-10 w-full bg-gray-200 rounded-full mt-auto"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const allCategories = Array.from(new Set(products.map(p => (p.category || "").toLowerCase()))).filter(Boolean);
 
@@ -86,9 +119,9 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
         {/* Top Breadcrumb (Only show if sidebar is shown, mimicking Shop page layout) */}
         {showSidebar && (
           <div className="mb-6 flex items-center text-sm text-gray-500 font-medium">
-            <span>Home</span>
+            <span>{t.productGrid.home}</span>
             <span className="mx-2">»</span>
-            <span className="text-black font-bold">Shop</span>
+            <span className="text-black font-bold">{t.productGrid.shop}</span>
           </div>
         )}
 
@@ -100,14 +133,14 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
               
               {/* Filter Options */}
               <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm">
-                <h2 className="text-xl font-bold text-black mb-1">Filter Options</h2>
-                <p className="text-xs text-gray-500 mb-6">Choose your options and apply filters.</p>
+                <h2 className="text-xl font-bold text-black mb-1">{t.productGrid.filterOptions}</h2>
+                <p className="text-xs text-gray-500 mb-6">{t.productGrid.chooseOptions}</p>
                 <div className="flex gap-2">
                   <button className="flex-1 py-2 rounded-full border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors">
-                    Previous Saves
+                    {t.productGrid.previousSaves}
                   </button>
                   <button className="flex-1 py-2 rounded-full bg-[#faeddf] text-[#b56e39] text-xs font-bold hover:bg-[#f3dfcb] transition-colors">
-                    Save Search
+                    {t.productGrid.saveSearch}
                   </button>
                 </div>
               </div>
@@ -115,8 +148,8 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
               {/* Filter By Type (Mock) */}
               <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-sm text-black">Filter By Type</h3>
-                  <span className="text-[#f97316] text-xs font-bold cursor-pointer">Show Less</span>
+                  <h3 className="font-bold text-sm text-black">{t.productGrid.filterByType}</h3>
+                  <span className="text-[#f97316] text-xs font-bold cursor-pointer">{t.productGrid.showLess}</span>
                 </div>
                 <div className="space-y-3">
                   {["All Deals", "Nearby", "Best African Deals", "Seasonal Discount", "Featured", "New Releases", "Trending"].map(type => (
@@ -133,14 +166,14 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
               {/* Filter By Category */}
               <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-sm text-black">Filter By Category</h3>
-                  <span className="text-[#f97316] text-xs font-bold cursor-pointer">See All</span>
+                  <h3 className="font-bold text-sm text-black">{t.productGrid.filterByCategory}</h3>
+                  <span className="text-[#f97316] text-xs font-bold cursor-pointer">{t.productGrid.seeAll}</span>
                 </div>
                 <div className="relative mb-4">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                   <input 
                     type="text" 
-                    placeholder="Search category" 
+                    placeholder={t.productGrid.searchCategory}
                     className="w-full pl-9 pr-4 py-2.5 rounded-full border border-gray-200 text-sm focus:outline-none focus:border-[#46270e]"
                   />
                 </div>
@@ -168,10 +201,10 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
 
               {/* Filter By Price */}
               <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm">
-                <h3 className="font-bold text-sm text-black mb-4">Filter By Price</h3>
+                <h3 className="font-bold text-sm text-black mb-4">{t.productGrid.filterByPrice}</h3>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="flex-1 border border-gray-200 rounded-2xl p-3">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">From</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">{t.productGrid.from}</span>
                     <input 
                       type="number" 
                       value={minPrice}
@@ -180,7 +213,7 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
                     />
                   </div>
                   <div className="flex-1 border border-gray-200 rounded-2xl p-3">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">To</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">{t.productGrid.to}</span>
                     <input 
                       type="number" 
                       value={maxPrice}
@@ -199,8 +232,8 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
 
               {/* More Filters */}
               <div className="bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm flex items-center justify-between cursor-pointer group">
-                <span className="font-bold text-sm text-black group-hover:text-[#46270e] transition-colors">More Filters</span>
-                <span className="text-[#f97316] text-xs font-bold">See All</span>
+                <span className="font-bold text-sm text-black group-hover:text-[#46270e] transition-colors">{t.productGrid.moreFilters}</span>
+                <span className="text-[#f97316] text-xs font-bold">{t.productGrid.seeAll}</span>
               </div>
             </aside>
           )}
@@ -210,20 +243,20 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
             
             {/* Header Area */}
             <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-              <h1 className="text-2xl font-black text-black">Products List</h1>
+              <h1 className="text-2xl font-black text-black">{t.productGrid.productsList}</h1>
               <button onClick={handleClearFilters} className="text-[#f97316] text-sm font-bold mt-2 sm:mt-0 hover:underline">
-                Clear All Filter
+                {t.productGrid.clearAll}
               </button>
             </div>
 
             {/* Horizontal Sort Pills */}
             <div className="flex flex-wrap items-center gap-3 mb-8">
               {[
-                { id: "featured", label: "Featured First" },
-                { id: "price-low", label: "Price: Low to High" },
-                { id: "price-high", label: "Price: High to Low" },
-                { id: "top-rated", label: "Top Rated" },
-                { id: "newest", label: "Newest First" }
+                { id: "featured", label: t.productGrid.sort.featured },
+                { id: "price-low", label: t.productGrid.sort.priceLow },
+                { id: "price-high", label: t.productGrid.sort.priceHigh },
+                { id: "top-rated", label: t.productGrid.sort.topRated },
+                { id: "newest", label: t.productGrid.sort.newest }
               ].map(sort => (
                 <button
                   key={sort.id}
@@ -241,7 +274,7 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
 
             {/* Grid */}
             {paginatedProducts.length === 0 ? (
-              <div className="text-center py-20 text-gray-500">No products found.</div>
+              <div className="text-center py-20 text-gray-500">{t.productGrid.noProducts}</div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
                 {paginatedProducts.map(product => (

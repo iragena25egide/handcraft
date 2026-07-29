@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 const testimonials = [
   {
@@ -31,6 +32,8 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
+  const { t } = useTranslation();
+
   return (
     <section className="py-24 bg-[#fefce8] relative overflow-hidden">
       {/* Decorative Background Elements */}
@@ -46,7 +49,7 @@ export default function Testimonials() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-xs font-black uppercase tracking-widest text-[#0f172a] mb-6 shadow-sm border border-gray-100"
           >
             <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-            Loved by Customers
+            {t.testimonials.badge}
           </motion.div>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -55,7 +58,7 @@ export default function Testimonials() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-black text-[#0f172a] tracking-tight"
           >
-            Don't just take our word for it
+            {t.testimonials.title}
           </motion.h2>
         </div>
 
@@ -80,7 +83,7 @@ export default function Testimonials() {
               </div>
               
               <p className="text-gray-600 mb-8 text-lg leading-relaxed font-medium">
-                "{testimonial.text}"
+                "{t.testimonials.reviews[testimonial.id as 1 | 2 | 3]?.text || testimonial.text}"
               </p>
               
               <div className="flex items-center gap-4">
@@ -89,7 +92,7 @@ export default function Testimonials() {
                 </div>
                 <div>
                   <h4 className="font-bold text-[#0f172a]">{testimonial.name}</h4>
-                  <p className="text-sm font-medium text-gray-400">{testimonial.role}</p>
+                  <p className="text-sm font-medium text-gray-400">{t.testimonials.reviews[testimonial.id as 1 | 2 | 3]?.role || testimonial.role}</p>
                 </div>
               </div>
             </motion.div>

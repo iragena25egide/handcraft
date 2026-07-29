@@ -11,12 +11,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import RequestModal from "./RequestModal";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
@@ -29,9 +31,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.preventDefault();
     dispatch(toggleWishlist(product));
     if (inWishlist) {
-      toast.success("Removed from wishlist");
+      toast.success(t.common.success);
     } else {
-      toast.success("Added to wishlist");
+      toast.success(t.common.success);
     }
   };
 
@@ -100,7 +102,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="flex-1 py-3 px-2 bg-[#0f172a] text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-black transition-colors shadow-lg shadow-[#0f172a]/20"
         >
           <Store className="w-4 h-4" />
-          Request Info
+          {t.productCard.viewDetails}
         </button>
       </div>
 

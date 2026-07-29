@@ -2,19 +2,20 @@
 
 import { FaInstagram, FaFacebook, FaYoutube, FaTwitter } from "react-icons/fa";
 import { ShoppingCart } from "lucide-react";
-
 import { motion } from "framer-motion";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   return (
-    <footer className="bg-[#0f172a] text-[#fefce8] relative pt-24 pb-12 overflow-hidden">
+    <footer className="bg-[#0f172a] text-[#fefce8] relative pt-16 pb-8 overflow-hidden">
       <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] rotate-180">
         <svg
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
-          className="relative block w-full h-[60px] md:h-[100px] opacity-10"
+          className="relative block w-full h-[30px] md:h-[60px] opacity-10"
         >
           <path
             d="M0,120 L0,40 L60,100 L120,40 L180,100 L240,40 L300,100 L360,40 L420,100 L480,40 L540,100 L600,40 L660,100 L720,40 L780,100 L840,40 L900,100 L960,40 L1020,100 L1080,40 L1140,100 L1200,40 L1200,120 Z"
@@ -23,30 +24,29 @@ export default function Footer() {
         </svg>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 pb-16 border-b border-[#fefce8]/10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-8 border-b border-[#fefce8]/10">
           <div className="max-w-md">
             <h3 className="text-2xl md:text-3xl font-bold uppercase tracking-tighter">
               All African Handcrafts
             </h3>
             <p className="text-sm opacity-70 mt-2">
-              Get 15% off your first order, plus early access to new handicraft
-              drops.
+              {t.footer.newsletterDesc}
             </p>
           </div>
           <div className="flex w-full md:w-auto gap-2">
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder={t.footer.placeholder}
               className="bg-transparent border border-[#fefce8]/20 px-6 py-3 rounded-2xl flex-grow md:w-80 outline-none focus:border-[#fefce8] transition-all text-sm"
             />
             <button className="bg-[#fefce8] text-[#0f172a] px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white transition-colors">
-              Subscribe
+              {t.footer.subscribe}
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10">
           <div className="col-span-2 md:col-span-1 space-y-6">
             <div className="col-span-2 md:col-span-1 space-y-6">
               <div className="flex items-center gap-4">
@@ -87,15 +87,22 @@ export default function Footer() {
               </div>
 
               <p className="text-sm opacity-60 leading-relaxed max-w-xs">
-                Premium handicrafts and fashion from the heart of Rwanda. Every
-                piece tells a story of heritage and mastery.
+                {t.footer.description}
               </p>
             </div>
-            <p className="text-sm opacity-60 leading-relaxed max-w-xs">
-              Premium handicrafts and fashion from the heart of Rwanda. Every
-              piece tells a story of heritage and mastery.
-            </p>
-            <div className="flex gap-4 opacity-60">
+            <a 
+              href="https://maps.google.com/maps?vet=10CAAQoqAOahcKEwjoy-nmn_CVAxUAAAAAHQAAAAAQDA..i&rlz=1C5CHFA_enRW1056RW1056&sca_esv=2f53b8b5415a751f&pvq=Cg0vZy8xMXl5ZGI1ZHhqIhsKFWFsbCBhZnJpY2FuIGhhbmRjcmFmdBACGAM&lqi=ChxhbGwgYWZyaWNhbiBoYW5kY3JhZnQgcndhbmRhWh4iHGFsbCBhZnJpY2FuIGhhbmRjcmFmdCByd2FuZGGSARdjb3Jwb3JhdGVfZ2lmdF9zdXBwbGllcg&fvr=1&cs=1&um=1&ie=UTF-8&fb=1&gl=rw&sa=X&ftid=0x19dca599234783df:0x45cdf7cb075f3657"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col gap-1 text-sm opacity-70 hover:opacity-100 transition-opacity max-w-xs cursor-pointer"
+            >
+              <span className="font-bold">All African Handcraft</span>
+              <span>Yyussa City Plaza (Kwa Makuza)</span>
+              <span>KN 48 ST, Kigali, Rwanda</span>
+              <span className="text-xs opacity-70 group-hover:underline mt-1">View on Google Maps</span>
+            </a>
+
+            <div className="flex gap-4 opacity-60 mt-6">
               <FaInstagram className="w-5 h-5 cursor-pointer hover:opacity-100" />
               <FaFacebook className="w-5 h-5 cursor-pointer hover:opacity-100" />
               <FaTwitter className="w-5 h-5 cursor-pointer hover:opacity-100" />
@@ -105,76 +112,76 @@ export default function Footer() {
 
           <div>
             <h4 className="font-black uppercase tracking-widest text-xs mb-6 opacity-40">
-              Shop
+              {t.footer.shop}
             </h4>
             <ul className="space-y-4 text-sm font-medium opacity-70">
               <li className="hover:text-white cursor-pointer transition-colors">
-                Fashion
+                {t.footer.fashion}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Handicraft
+                {t.footer.handicraft}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Bestsellers
+                {t.footer.bestsellers}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                New Arrivals
+                {t.footer.newArrivals}
               </li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-black uppercase tracking-widest text-xs mb-6 opacity-40">
-              Help
+              {t.footer.help}
             </h4>
             <ul className="space-y-4 text-sm font-medium opacity-70">
               <li className="hover:text-white cursor-pointer transition-colors">
-                Shipping & Returns
+                {t.footer.shippingReturns}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Size Guide
+                {t.footer.sizeGuide}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Contact Us
+                {t.footer.contactUs}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Track Order
+                {t.footer.trackOrder}
               </li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-black uppercase tracking-widest text-xs mb-6 opacity-40">
-              About
+              {t.footer.about}
             </h4>
             <ul className="space-y-4 text-sm font-medium opacity-70">
               <li className="hover:text-white cursor-pointer transition-colors">
-                Our Story
+                {t.footer.ourStory}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Sustainability
+                {t.footer.sustainability}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Artisans
+                {t.footer.artisans}
               </li>
               <li className="hover:text-white cursor-pointer transition-colors">
-                Careers
+                {t.footer.careers}
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-[#fefce8]/5 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="pt-6 border-t border-[#fefce8]/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[10px] uppercase font-bold opacity-40 tracking-widest">
-            © {currentYear} All rights reserved. Made in Rwanda.
+            © {currentYear} {t.footer.rights}
           </p>
 
           <div className="flex gap-8 text-[10px] uppercase font-bold opacity-40 tracking-widest">
             <span className="hover:text-white cursor-pointer transition-colors">
-              Privacy
+              {t.footer.privacy}
             </span>
             <span className="hover:text-white cursor-pointer transition-colors">
-              Terms
+              {t.footer.terms}
             </span>
           </div>
 
