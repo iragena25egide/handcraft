@@ -3,6 +3,7 @@ import DashboardLayout from "./layouts/DashboardLayout"
 import Dashboard from "./pages/Dashboard"
 import Products from "./pages/Products"
 import Orders from "./pages/Orders"
+import Requests from "./pages/Requests"
 import Users from "./pages/Users"
 import Reports from "./pages/Reports"
 import Notifications from "./pages/Notifications"
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/requests" element={<Requests />} />
           <Route path="/users" element={<Users />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/notifications" element={<Notifications />} />
