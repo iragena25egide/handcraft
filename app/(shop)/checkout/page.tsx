@@ -15,12 +15,14 @@ import {
 import Link from "next/link";
 import { api } from "@/lib/api";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.items);
   const { isLoggedIn, savedCard } = useAppSelector((state) => state.user);
+  const { t } = useTranslation();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
@@ -70,13 +72,13 @@ export default function CheckoutPage() {
       const response = await api.post("/orders", orderData);
 
       dispatch(clearCart());
-      toast.success("Order placed successfully!");
+      toast.success(t.checkout.orderPlacedSuccess);
 
       router.push(`/checkout/success?orderId=${response.data.id}`);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to process order. Please try again.",
+          t.checkout.orderPlacedError,
       );
       setIsProcessing(false);
     }
@@ -92,12 +94,12 @@ export default function CheckoutPage() {
             className="flex items-center gap-2 text-[#0f172a] hover:opacity-70 transition-opacity"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="font-bold text-sm">Return to Shop</span>
+            <span className="font-bold text-sm">{t.checkout.returnToShop}</span>
           </Link>
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-green-600" />
             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-              Secure Checkout
+              {t.checkout.secureCheckout}
             </span>
           </div>
         </div>
@@ -107,16 +109,16 @@ export default function CheckoutPage() {
         {cartItems.length === 0 ? (
           <div className="text-center py-20">
             <h2 className="text-2xl font-bold text-[#0f172a] mb-4">
-              Your cart is empty
+              {t.checkout.empty}
             </h2>
             <p className="text-gray-500 mb-8">
-              Add some beautiful handcrafted items before checking out.
+              {t.checkout.emptyDesc}
             </p>
             <Link
               href="/"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#0f172a] text-white rounded-xl font-bold text-sm hover:bg-black transition-colors"
             >
-              Continue Shopping
+              {t.cart.continueShopping}
             </Link>
           </div>
         ) : (
@@ -136,14 +138,14 @@ export default function CheckoutPage() {
                       <Truck className="w-5 h-5" />
                     </div>
                     <h2 className="text-xl font-bold text-[#0f172a]">
-                      Shipping Details
+                      {t.checkout.shippingDetails}
                     </h2>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        First Name
+                        {t.checkout.firstName}
                       </label>
                       <input
                         required
@@ -156,7 +158,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        Last Name
+                        {t.checkout.lastName}
                       </label>
                       <input
                         required
@@ -169,7 +171,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="sm:col-span-2 space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        Email Address
+                        {t.checkout.email}
                       </label>
                       <input
                         required
@@ -182,7 +184,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="sm:col-span-2 space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        Phone Number
+                        {t.checkout.phone}
                       </label>
                       <input
                         required
@@ -196,7 +198,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="sm:col-span-2 space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        Street Address
+                        {t.checkout.address}
                       </label>
                       <input
                         required
@@ -209,7 +211,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        City
+                        {t.checkout.city}
                       </label>
                       <input
                         required
@@ -222,7 +224,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        Zip Code
+                        {t.checkout.zipCode}
                       </label>
                       <input
                         required
@@ -243,7 +245,7 @@ export default function CheckoutPage() {
                       <CreditCard className="w-5 h-5" />
                     </div>
                     <h2 className="text-xl font-bold text-[#0f172a]">
-                      Payment Method
+                      {t.checkout.paymentMethod}
                     </h2>
                   </div>
 
@@ -254,10 +256,10 @@ export default function CheckoutPage() {
                           <CreditCard className="w-6 h-6 text-green-600" />
                           <div>
                             <p className="font-bold text-green-800">
-                              Saved Card (ending in {savedCard})
+                              {t.checkout.savedCard} {savedCard})
                             </p>
                             <p className="text-xs text-green-600">
-                              Clicking Pay will use this card
+                              {t.checkout.useThisCard}
                             </p>
                           </div>
                         </div>
@@ -265,7 +267,7 @@ export default function CheckoutPage() {
                     )}
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                        Card Number
+                        {t.checkout.cardNumber}
                       </label>
                       <input
                         required
@@ -280,7 +282,7 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-2 gap-5">
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                          Expiry Date
+                          {t.checkout.expiryDate}
                         </label>
                         <input
                           required
@@ -294,7 +296,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                          CVV
+                          {t.checkout.cvv}
                         </label>
                         <input
                           required
@@ -314,7 +316,7 @@ export default function CheckoutPage() {
                   type="submit"
                   className="w-full py-5 bg-[#0f172a] text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]"
                 >
-                  Pay RWF {cartTotal.toLocaleString()}
+                  {t.checkout.pay} RWF {cartTotal.toLocaleString()}
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </motion.form>
@@ -328,7 +330,7 @@ export default function CheckoutPage() {
                 className="bg-white p-6 sm:p-8 rounded-[32px] shadow-lg shadow-gray-200/50 border border-gray-100 sticky top-24"
               >
                 <h2 className="text-xl font-bold text-[#0f172a] mb-6">
-                  Order Summary
+                  {t.checkout.orderSummary}
                 </h2>
 
                 <div className="space-y-4 mb-8 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -349,7 +351,7 @@ export default function CheckoutPage() {
                           {item.name}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          Qty: {item.quantity}
+                          {t.checkout.qty}: {item.quantity}
                         </p>
                       </div>
                       <p className="font-bold text-[#0f172a]">
@@ -361,20 +363,20 @@ export default function CheckoutPage() {
 
                 <div className="space-y-4 border-t border-gray-100 pt-6">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 font-medium">Subtotal</span>
+                    <span className="text-gray-500 font-medium">{t.checkout.subtotal}</span>
                     <span className="text-[#0f172a] font-bold">
                       RWF {cartSubtotal.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 font-medium">Shipping</span>
+                    <span className="text-gray-500 font-medium">{t.checkout.shipping}</span>
                     <span className="text-[#0f172a] font-bold">
                       RWF {cartShipping.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-4 border-t border-gray-200">
                     <span className="text-lg font-black text-[#0f172a] uppercase tracking-wider">
-                      Total
+                      {t.checkout.total}
                     </span>
                     <span className="text-2xl font-black text-[#0f172a]">
                       RWF {cartTotal.toLocaleString()}

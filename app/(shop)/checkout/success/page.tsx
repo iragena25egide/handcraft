@@ -6,10 +6,12 @@ import Link from "next/link";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const [orderNumber, setOrderNumber] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     const orderId = searchParams.get("orderId");
@@ -64,16 +66,15 @@ function CheckoutSuccessContent() {
         </div>
 
         <h1 className="text-3xl font-black text-[#0f172a] mb-4 tracking-tight">
-          Order Confirmed!
+          {t.checkout.successTitle}
         </h1>
         <p className="text-gray-500 mb-8 leading-relaxed">
-          Thank you for your purchase. We're getting your handcrafted items
-          ready for delivery.
+          {t.checkout.successMessage2}
         </p>
 
         <div className="bg-gray-50 rounded-2xl p-6 mb-10 border border-gray-100">
           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
-            Order Number
+            {t.checkout.orderNumber}
           </p>
           <p className="text-xl font-mono font-bold text-[#0f172a]">
             {orderNumber}
@@ -85,14 +86,14 @@ function CheckoutSuccessContent() {
             href="/profile"
             className="w-full py-4.5 bg-white border-2 border-gray-100 text-[#0f172a] rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-gray-50 transition-all duration-300 group mb-3"
           >
-            Track Order
+            {t.checkout.trackOrder}
           </Link>
           <Link
             href="/"
             className="w-full py-4.5 bg-[#0f172a] text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group"
           >
             <ShoppingBag className="w-4 h-4" />
-            Continue Shopping
+            {t.cart.continueShopping}
           </Link>
         </div>
       </motion.div>

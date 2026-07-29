@@ -6,11 +6,13 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function CartPage() {
   const cartItems = useAppSelector(state => state.cart.items);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const cartSubtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const cartShipping = cartItems.length > 0 ? 5000 : 0;
@@ -22,10 +24,10 @@ export default function CartPage() {
         <div className="w-24 h-24 bg-white shadow-xl shadow-gray-100 rounded-full flex items-center justify-center mb-6 border border-gray-100">
           <ShoppingBag className="w-10 h-10 text-gray-300" />
         </div>
-        <h2 className="text-2xl font-bold text-[#0f172a] mb-4">Your Cart is Empty</h2>
-        <p className="text-gray-500 mb-8 max-w-md">Looks like you haven't added anything to your cart yet. Discover our handcrafted products.</p>
+        <h2 className="text-2xl font-bold text-[#0f172a] mb-4">{t.cart.empty}</h2>
+        <p className="text-gray-500 mb-8 max-w-md">{t.cart.emptyMessage}</p>
         <Link href="/shop" className="px-8 py-4 bg-[#0f172a] text-white rounded-2xl font-bold hover:bg-black transition-colors shadow-lg">
-          Continue Shopping
+          {t.cart.continueShopping}
         </Link>
       </div>
     );
@@ -33,17 +35,17 @@ export default function CartPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 min-h-[80vh]">
-      <h1 className="text-3xl font-bold text-[#0f172a] mb-8">Shopping Cart</h1>
+      <h1 className="text-3xl font-bold text-[#0f172a] mb-8">{t.cart.title}</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-6">
           <div className="flex justify-between items-center pb-4 border-b">
-            <span className="font-semibold text-gray-500">{cartItems.length} Items</span>
+            <span className="font-semibold text-gray-500">{cartItems.length} {t.cart.items}</span>
             <button 
-              onClick={() => { dispatch(clearCart()); toast.success("Cart cleared"); }}
+              onClick={() => { dispatch(clearCart()); toast.success(t.cart.cartCleared); }}
               className="text-red-500 hover:text-red-700 text-sm font-semibold transition-colors uppercase tracking-widest"
             >
-              Clear Cart
+              {t.cart.clearCart}
             </button>
           </div>
           
@@ -88,21 +90,21 @@ export default function CartPage() {
         
         <div className="lg:col-span-1">
           <div className="bg-gray-50 p-8 rounded-[32px] border border-gray-100 space-y-6 sticky top-24">
-            <h2 className="text-xl font-black text-[#0f172a] pb-4 border-b border-gray-200">Order Summary</h2>
+            <h2 className="text-xl font-black text-[#0f172a] pb-4 border-b border-gray-200">{t.cart.orderSummary}</h2>
             
             <div className="space-y-4 text-sm font-medium">
               <div className="flex justify-between">
-                <span className="text-gray-500">Subtotal</span>
+                <span className="text-gray-500">{t.cart.subtotal}</span>
                 <span className="text-[#0f172a] font-bold">RWF {cartSubtotal.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Shipping (Rwanda)</span>
+                <span className="text-gray-500">{t.cart.shipping}</span>
                 <span className="text-[#0f172a] font-bold">RWF {cartShipping.toLocaleString()}</span>
               </div>
             </div>
             
             <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
-              <span className="font-black text-[#0f172a] uppercase tracking-wider text-sm">Total</span>
+              <span className="font-black text-[#0f172a] uppercase tracking-wider text-sm">{t.cart.total}</span>
               <span className="font-black text-2xl text-[#0f172a]">RWF {cartTotal.toLocaleString()}</span>
             </div>
             
@@ -110,7 +112,7 @@ export default function CartPage() {
               onClick={() => router.push("/checkout")}
               className="w-full mt-6 py-4 bg-[#0f172a] text-white rounded-2xl font-black text-xs uppercase tracking-[0.25em] flex justify-center items-center gap-3 shadow-xl hover:bg-black transition-all group"
             >
-              Proceed to Checkout
+              {t.cart.checkout}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
           </div>

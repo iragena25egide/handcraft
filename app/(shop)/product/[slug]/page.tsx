@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { toggleWishlist } from "@/lib/store/slices/wishlistSlice";
 import { motion } from "framer-motion";
 import RequestModal from "@/components/RequestModal";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import {
   ArrowLeft,
   Heart,
@@ -24,6 +25,7 @@ export default function ProductDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -87,13 +89,13 @@ export default function ProductDetailsPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <h1 className="text-2xl font-bold text-[#0f172a] mb-4">
-          Product Not Found
+          {t.productDetails.notFound}
         </h1>
         <button
           onClick={() => router.push("/")}
           className="px-6 py-3 bg-[#0f172a] text-white rounded-xl font-bold text-sm"
         >
-          Return Home
+          {t.productDetails.returnHome}
         </button>
       </div>
     );
@@ -104,9 +106,9 @@ export default function ProductDetailsPage() {
   const handleToggleWishlist = () => {
     dispatch(toggleWishlist(product));
     if (inWishlist) {
-      toast.success("Removed from wishlist");
+      toast.success(t.common.success);
     } else {
-      toast.success("Added to wishlist");
+      toast.success(t.common.success);
     }
   };
 
@@ -120,7 +122,7 @@ export default function ProductDetailsPage() {
             className="flex items-center gap-2 text-gray-500 hover:text-[#0f172a] transition-colors font-bold text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Shop
+            {t.productDetails.backToShop}
           </button>
         </div>
       </div>
@@ -174,7 +176,7 @@ export default function ProductDetailsPage() {
                 </span>
               </div>
               <span className="text-sm font-medium text-gray-400">
-                By <strong className="text-[#0f172a]">{product.artisan}</strong>
+                {t.productDetails.by} <strong className="text-[#0f172a]">{product.artisan}</strong>
               </span>
             </div>
 
@@ -190,7 +192,7 @@ export default function ProductDetailsPage() {
                   className="w-full bg-[#0f172a] text-white py-4 px-8 rounded-2xl font-black text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-[#0f172a]/20 hover:bg-black transition-all duration-300 group active:scale-[0.98]"
                 >
                   <Store className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
-                  Request Info
+                  {t.productDetails.requestInfo}
                 </button>
               </div>
             </div>
@@ -200,25 +202,25 @@ export default function ProductDetailsPage() {
               <div className="flex flex-col items-center text-center gap-2">
                 <Truck className="w-6 h-6 text-[#0f172a]" />
                 <span className="text-xs font-bold text-gray-600">
-                  Free Delivery
+                  {t.productDetails.freeDelivery}
                   <br />
-                  in Kigali
+                  {t.productDetails.inKigali}
                 </span>
               </div>
               <div className="flex flex-col items-center text-center gap-2">
                 <Shield className="w-6 h-6 text-[#0f172a]" />
                 <span className="text-xs font-bold text-gray-600">
-                  Authentic
+                  {t.productDetails.authentic}
                   <br />
-                  Handcrafted
+                  {t.productDetails.handcrafted}
                 </span>
               </div>
               <div className="flex flex-col items-center text-center gap-2">
                 <RotateCcw className="w-6 h-6 text-[#0f172a]" />
                 <span className="text-xs font-bold text-gray-600">
-                  7-Day
+                  {t.productDetails.returns}
                   <br />
-                  Returns
+                  {t.productDetails.returnsText}
                 </span>
               </div>
             </div>
