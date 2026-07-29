@@ -8,12 +8,14 @@ import { motion } from "framer-motion";
 import { Package, CreditCard, LogOut, ArrowRight, User } from "lucide-react";
 import toast from "react-hot-toast";
 import { api } from "@/lib/api";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function ProfilePage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user, isLoggedIn, savedCard } = useAppSelector((state) => state.user);
   const cartItems = useAppSelector((state) => state.cart.items);
+  const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<"orders" | "payment">("orders");
   const [newCard, setNewCard] = useState("");
@@ -36,19 +38,19 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     dispatch(clearSession());
-    toast.success("Logged out successfully");
+    toast.success(t.profile.loggedOut);
     router.push("/");
   };
 
   const handleAddCard = (e: React.FormEvent) => {
     e.preventDefault();
     if (newCard.length < 16) {
-      toast.error("Please enter a valid 16-digit card number");
+      toast.error(t.profile.invalidCard);
       return;
     }
     dispatch(saveCard(newCard));
     setNewCard("");
-    toast.success("Payment method updated");
+    toast.success(t.profile.paymentUpdated);
   };
 
   return (
@@ -68,14 +70,14 @@ export default function ProfilePage() {
               onClick={() => router.push("/")}
               className="w-full py-3 bg-[#fefce8] text-[#0f172a] font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-[#0f172a] hover:text-white transition-all flex items-center justify-center gap-2 mb-2"
             >
-              Continue Shopping
+              {t.cart.continueShopping}
             </button>
             <button
               onClick={handleLogout}
               className="w-full py-3 text-red-500 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-red-50 transition-all flex items-center justify-center gap-2"
             >
               <LogOut className="w-4 h-4" />
-              Sign Out
+              {t.profile.signOut}
             </button>
           </div>
 
@@ -87,7 +89,7 @@ export default function ProfilePage() {
               }`}
             >
               <Package className="w-5 h-5" />
-              Order History
+              {t.profile.orderHistory}
             </button>
             <button
               onClick={() => setActiveTab("payment")}
@@ -96,7 +98,7 @@ export default function ProfilePage() {
               }`}
             >
               <CreditCard className="w-5 h-5" />
-              Payment Methods
+              {t.profile.paymentMethods}
             </button>
           </div>
         </div>
@@ -111,13 +113,13 @@ export default function ProfilePage() {
           >
             {activeTab === "orders" && (
               <div>
-                <h2 className="text-2xl font-black text-[#0f172a] mb-8">Your Orders</h2>
+                <h2 className="text-2xl font-black text-[#0f172a] mb-8">{t.profile.yourOrders}</h2>
                 {orders.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-                    <p className="text-gray-500 font-medium mb-4">You haven't placed any orders yet.</p>
+                    <p className="text-gray-500 font-medium mb-4">{t.profile.noOrders}</p>
                     <button onClick={() => router.push("/")} className="text-[#0f172a] font-bold underline hover:text-blue-600">
-                      Start Shopping
+                      {t.profile.startShopping}
                     </button>
                   </div>
                 ) : (
@@ -126,7 +128,7 @@ export default function ProfilePage() {
                       <div key={order.id} className="border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
                         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-4 pb-4 border-b border-gray-50">
                           <div>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Order {order.id}</p>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{t.profile.order} {order.id}</p>
                             <p className="text-sm font-medium text-[#0f172a]">{new Date(order.createdAt).toLocaleDateString()}</p>
                           </div>
                           <div className="flex items-center gap-4">
@@ -152,7 +154,7 @@ export default function ProfilePage() {
 
             {activeTab === "payment" && (
               <div>
-                <h2 className="text-2xl font-black text-[#0f172a] mb-8">Payment Methods</h2>
+                <h2 className="text-2xl font-black text-[#0f172a] mb-8">{t.profile.paymentMethods}</h2>
                 
                 {savedCard ? (
                   <div className="bg-[#0f172a] p-6 rounded-2xl text-white relative overflow-hidden max-w-sm mb-8 shadow-xl shadow-gray-200">
@@ -164,26 +166,26 @@ export default function ProfilePage() {
                       <button 
                         onClick={() => {
                           dispatch(removeCard());
-                          toast.success("Card removed");
+                          toast.success(t.profile.cardRemoved);
                         }}
                         className="text-xs font-bold text-red-400 hover:text-red-300 transition-colors"
                       >
-                        Remove
+                        {t.profile.remove}
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="bg-gray-50 border border-dashed border-gray-300 p-8 rounded-2xl text-center max-w-sm mb-8">
-                    <p className="text-gray-500 font-medium">No saved payment methods.</p>
+                    <p className="text-gray-500 font-medium">{t.profile.noSavedCards}</p>
                   </div>
                 )}
 
                 <div className="max-w-sm">
-                  <h3 className="font-bold text-[#0f172a] mb-4">Add New Card</h3>
+                  <h3 className="font-bold text-[#0f172a] mb-4">{t.profile.addNewCard}</h3>
                   <form onSubmit={handleAddCard} className="space-y-4">
                     <input
                       type="text"
-                      placeholder="16-digit Card Number"
+                      placeholder={t.profile.cardNumberPlaceholder}
                       value={newCard}
                       onChange={(e) => setNewCard(e.target.value.replace(/\D/g, '').slice(0, 16))}
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0f172a]/20 focus:border-[#0f172a] outline-none transition-all font-mono"
@@ -192,7 +194,7 @@ export default function ProfilePage() {
                       type="submit"
                       className="w-full py-3 bg-[#0f172a] text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-black transition-all"
                     >
-                      Save Card
+                      {t.profile.saveCard}
                     </button>
                   </form>
                 </div>

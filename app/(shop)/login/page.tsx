@@ -9,11 +9,13 @@ import { ArrowLeft, Mail, Lock, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { api } from "@/lib/api";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [isLogin, setIsLogin] = useState(true);
+  const { t } = useTranslation();
   
   const [formData, setFormData] = useState({
     name: "",
@@ -24,7 +26,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
-      toast.error("Please fill in all fields");
+      toast.error(t.auth.fillAllFields);
       return;
     }
 
@@ -36,12 +38,12 @@ export default function LoginPage() {
         });
         const { token, ...user } = response.data;
         dispatch(setSession({ user, token }));
-        toast.success(`Welcome back, ${user.name}!`);
+        toast.success(`${t.auth.welcomeBack}, ${user.name}!`);
       } else {
         const response = await api.post("/users/register", formData);
         const { token, ...user } = response.data;
         dispatch(setSession({ user, token }));
-        toast.success("Account created successfully!");
+        toast.success(t.auth.accountCreated);
       }
       router.push("/profile");
     } catch (error: any) {
@@ -49,7 +51,7 @@ export default function LoginPage() {
       if (data?.errors && Array.isArray(data.errors)) {
         toast.error(data.errors[0]);
       } else {
-        toast.error(data?.message || "Authentication failed");
+        toast.error(data?.message || t.auth.authFailed);
       }
     }
   };
@@ -62,7 +64,7 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#0f172a] transition-colors font-bold text-sm mb-6">
           <ArrowLeft className="w-4 h-4" />
-          Back to Shop
+          {t.auth.backToShop}
         </Link>
         <div className="flex justify-center">
           <div className="w-12 h-12 bg-[#0f172a] rounded-xl flex items-center justify-center shadow-lg">
@@ -70,7 +72,7 @@ export default function LoginPage() {
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-[#0f172a]">
-          {isLogin ? "Sign in to your account" : "Create your account"}
+          {isLogin ? t.auth.signInAccount : t.auth.createAccount}
         </h2>
       </div>
 
@@ -84,7 +86,7 @@ export default function LoginPage() {
             {!isLogin && (
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                  Full Name
+                  {t.auth.fullName}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -105,7 +107,7 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Email Address
+                {t.auth.email}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -125,7 +127,7 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Password
+                {t.auth.password}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -147,7 +149,7 @@ export default function LoginPage() {
               type="submit"
               className="w-full py-4 bg-[#0f172a] text-white rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-black transition-all"
             >
-              {isLogin ? "Sign In" : "Create Account"}
+              {isLogin ? t.auth.signIn : t.auth.register}
             </button>
           </form>
 
@@ -158,7 +160,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  {isLogin ? "New to All African Handcraft?" : "Already have an account?"}
+                  {isLogin ? t.auth.newToApp : t.auth.alreadyHaveAccount}
                 </span>
               </div>
             </div>
@@ -168,7 +170,7 @@ export default function LoginPage() {
                 onClick={() => setIsLogin(!isLogin)}
                 className="font-bold text-[#0f172a] hover:text-black transition-colors"
               >
-                {isLogin ? "Create an account" : "Sign in instead"}
+                {isLogin ? t.auth.createAccount : t.auth.signInInstead}
               </button>
             </div>
           </div>

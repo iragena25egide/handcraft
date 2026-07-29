@@ -5,10 +5,12 @@ import { useSearchParams } from "next/navigation";
 import ProductGrid from "@/components/ProductGrid";
 import { api } from "@/lib/api";
 import { Search, Loader2 } from "lucide-react";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 function SearchResultsContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
+  const { t } = useTranslation();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,17 +47,17 @@ function SearchResultsContent() {
     <main className="min-h-screen pt-12 pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 text-center">
         <h1 className="text-4xl font-bold text-[#0f172a] mb-4">
-          Search Results
+          {t.search.title}
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto text-lg flex items-center justify-center gap-2">
           <Search className="w-5 h-5 text-gray-400" />
           {query ? (
             <>
-              Showing results for{" "}
+              {t.search.showingResultsFor}{" "}
               <strong className="text-[#0f172a]">"{query}"</strong>
             </>
           ) : (
-            "Enter a search term to find products."
+            t.search.enterSearchTerm
           )}
         </p>
       </div>
@@ -64,7 +66,7 @@ function SearchResultsContent() {
         <div className="flex flex-col items-center justify-center py-32">
           <Loader2 className="w-10 h-10 text-[#0f172a] animate-spin mb-4" />
           <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">
-            Searching...
+            {t.search.searching}
           </p>
         </div>
       ) : products.length === 0 && query ? (
@@ -73,10 +75,10 @@ function SearchResultsContent() {
             <Search className="w-10 h-10 text-gray-300" />
           </div>
           <h2 className="text-xl font-bold text-[#0f172a] mb-2">
-            No items found
+            {t.search.noItemsFound}
           </h2>
           <p className="text-gray-500">
-            We couldn't find anything matching "{query}". Try another term.
+            {t.search.noMatch} "{query}". {t.search.tryAnother}
           </p>
         </div>
       ) : (
