@@ -40,8 +40,8 @@
   }
 
   body {
-    background-color: #F0F2FF;
-    color: #1A1A2E;
+    background-color: #F8FAFC;
+    color: #0F172A;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
@@ -72,13 +72,13 @@
 
 .admin-input {
   width: 100%;
-  background: #F3F4FF;
-  border: 1.5px solid #E2E4F6;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
   border-radius: 10px;
-  padding: 10px 14px;
+  padding: 11px 14px;
   font-size: 14px;
   font-weight: 500;
-  color: #1A1A2E;
+  color: #0F172A;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   outline: none;
   font-family: 'Inter', sans-serif;
@@ -86,57 +86,56 @@
 }
 
 .admin-input:focus {
-  border-color: #6C5CE7;
+  border-color: #0F172A;
   background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.12);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
 }
 
 .admin-input::placeholder {
-  color: #AAADCC;
+  color: #94A3B8;
   font-weight: 400;
 }
 
 .admin-textarea {
   width: 100%;
-  background: #F3F4FF;
-  border: 1.5px solid #E2E4F6;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
   border-radius: 10px;
-  padding: 10px 14px;
+  padding: 11px 14px;
   font-size: 14px;
   font-weight: 500;
-  color: #1A1A2E;
+  color: #0F172A;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   outline: none;
-  resize: none;
-  min-height: 90px;
   font-family: 'Inter', sans-serif;
-  line-height: 1.6;
+  line-height: 1.5;
+  resize: vertical;
 }
 
 .admin-textarea:focus {
-  border-color: #6C5CE7;
+  border-color: #0F172A;
   background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.12);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
 }
 
 .admin-textarea::placeholder {
-  color: #AAADCC;
+  color: #94A3B8;
   font-weight: 400;
 }
 
 .admin-select {
   width: 100%;
-  background: #F3F4FF;
-  border: 1.5px solid #E2E4F6;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
   border-radius: 10px;
-  padding: 10px 36px 10px 14px;
+  padding: 11px 36px 11px 14px;
   font-size: 14px;
   font-weight: 500;
-  color: #1A1A2E;
+  color: #0F172A;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   outline: none;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236C5CE7' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 13px center;
   cursor: pointer;
@@ -144,9 +143,9 @@
 }
 
 .admin-select:focus {
-  border-color: #6C5CE7;
+  border-color: #0F172A;
   background-color: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.12);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
 }
 
 /* Field label */
@@ -204,9 +203,9 @@
 
 .admin-table-wrap {
   background: #FFFFFF;
-  border-radius: 20px;
-  border: 1px solid rgba(108, 92, 231, 0.08);
-  box-shadow: 0 2px 20px rgba(108, 92, 231, 0.04);
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -214,23 +213,23 @@
 .admin-table-head th {
   font-size: 11px !important;
   font-weight: 700 !important;
-  color: #8B8FA8 !important;
+  color: #64748B !important;
   letter-spacing: 0.08em !important;
   text-transform: uppercase !important;
-  padding: 16px 20px !important;
-  background: #F8F9FF !important;
-  border-bottom: 1px solid #EEEEFF !important;
+  padding: 14px 20px !important;
+  background: #F8FAFC !important;
+  border-bottom: 1px solid #E2E8F0 !important;
 }
 
 .admin-table-row td {
   padding: 14px 20px !important;
   font-size: 14px !important;
-  color: #3D3D5C !important;
-  border-bottom: 1px solid #F4F4FF !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #F1F5F9 !important;
 }
 
 .admin-table-row:hover td {
-  background: #FAFAFF !important;
+  background: #F8FAFC !important;
 }
 
 .admin-table-row:last-child td {

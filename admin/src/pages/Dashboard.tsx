@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react"
 import { Package, ShoppingCart, Users, DollarSign, TrendingUp, ArrowUpRight } from "lucide-react"
-import { apiFetch, BACKEND_URL } from "../lib/api"
-import { io } from "socket.io-client"
-import { toast } from "sonner"
+import { apiFetch } from "../lib/api"
 
 export default function Dashboard() {
   const [role, setRole] = useState<string>("")
@@ -48,18 +46,6 @@ export default function Dashboard() {
     }
 
     fetchStats()
-
-    const token = localStorage.getItem("admin_token")
-    if (token) {
-      const socket = io(BACKEND_URL, { auth: { token } })
-      socket.on("active_staff", (data: { message: string }) => {
-        toast.info(data.message, {
-          duration: 5000, position: "top-right",
-          style: { background: "#1A1A2E", color: "white", border: "1px solid rgba(108,92,231,0.4)" }
-        })
-      })
-      return () => { socket.disconnect() }
-    }
   }, [])
 
   const statCards = [

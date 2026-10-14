@@ -49,12 +49,6 @@ export default function DashboardLayout() {
       auth: { token },
     })
     socket.on("connect", () => { socket.emit("authenticate", token) })
-    socket.on("active_staff", (data: { message: string }) => {
-      toast.info(data.message, {
-        position: "top-right", duration: 5000,
-        style: { background: "#1A1A2E", color: "white", border: "1px solid rgba(108,92,231,0.4)" }
-      })
-    })
     socket.on("notification", (data: { title: string; message: string }) => {
       toast.success(data.title, {
         description: data.message,
@@ -100,7 +94,7 @@ export default function DashboardLayout() {
   const roleLabel = user?.role === "SUPER_ADMIN" ? "Super Admin" : user?.role === "SELLER" ? "Seller" : "User"
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F0F2FF", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#F8FAFC", fontFamily: "'Inter', sans-serif" }}>
       <AppSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <div className="admin-main-content" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
@@ -108,7 +102,7 @@ export default function DashboardLayout() {
         <header className="admin-top-nav" style={{
           height: 68,
           background: "#FFFFFF",
-          borderBottom: "1px solid rgba(1A,1A,2E,0.08)",
+          borderBottom: "1px solid #E2E8F0",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "0 32px",
           position: "sticky", top: 0, zIndex: 40,

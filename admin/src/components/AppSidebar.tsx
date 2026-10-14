@@ -88,11 +88,12 @@ export function AppSidebar({
         onClick={onClose}
       />
       <aside
-        className={`admin-sidebar imigongo-bg ${isOpen ? "open" : ""}`}
+        className={`admin-sidebar ${isOpen ? "open" : ""}`}
         style={{
           width: 260,
           minHeight: "100vh",
-          borderRight: "1px solid rgba(26,26,46,0.08)",
+          background: "#FFFFFF",
+          borderRight: "1px solid #E2E8F0",
           display: "flex",
           flexDirection: "column",
           flexShrink: 0,
@@ -179,23 +180,21 @@ export function AppSidebar({
                       display: "flex",
                       alignItems: "center",
                       gap: 12,
-                      padding: "11px 14px",
-                      borderRadius: 14,
-                      background: isActive ? "#F3F4FF" : "transparent",
-                      border: isActive
-                        ? "1px solid #E2E4F6"
-                        : "1px solid transparent",
+                      padding: "10px 14px",
+                      borderRadius: 12,
+                      background: isActive ? "#0F172A" : "transparent",
+                      border: isActive ? "1px solid #0F172A" : "1px solid transparent",
                       cursor: "pointer",
                       transition: "all 0.18s ease",
                     }}
                   >
                     <div
                       style={{
-                        width: 36,
-                        height: 36,
+                        width: 34,
+                        height: 34,
                         borderRadius: 10,
                         flexShrink: 0,
-                        background: isActive ? "#1A1A2E" : "transparent",
+                        background: isActive ? "rgba(255,255,255,0.16)" : "#F1F5F9",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -206,7 +205,7 @@ export function AppSidebar({
                         style={{
                           width: 16,
                           height: 16,
-                          color: isActive ? "#fff" : "#AAADCC",
+                          color: isActive ? "#FFFFFF" : "#64748B",
                         }}
                       />
                     </div>
@@ -215,7 +214,7 @@ export function AppSidebar({
                         style={{
                           fontSize: 13,
                           fontWeight: isActive ? 700 : 600,
-                          color: isActive ? "#1A1A2E" : "#5A5B7A",
+                          color: isActive ? "#FFFFFF" : "#334155",
                           lineHeight: 1.2,
                           transition: "color 0.18s ease",
                         }}
@@ -225,8 +224,8 @@ export function AppSidebar({
                       <p
                         style={{
                           fontSize: 11,
-                          color: isActive ? "#5A5B7A" : "#8B8FA8",
-                          marginTop: 1,
+                          color: isActive ? "rgba(255,255,255,0.65)" : "#94A3B8",
+                          marginTop: 2,
                         }}
                       >
                         {item.desc}
@@ -239,7 +238,7 @@ export function AppSidebar({
                           width: 6,
                           height: 6,
                           borderRadius: "50%",
-                          background: "#1A1A2E",
+                          background: "#38BDF8",
                         }}
                       />
                     )}

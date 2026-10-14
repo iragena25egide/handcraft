@@ -80,15 +80,20 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Product Details */}
         <div className="flex items-center justify-between mb-2">
-          <span className="px-3 py-1 bg-[#fdf5ed] text-[#b36936] text-[10px] font-bold rounded-full truncate max-w-[100px]">
+          <span className="px-3 py-1 bg-[#fdf5ed] text-[#b36936] text-[10px] font-bold rounded-full truncate max-w-[110px]">
             {product.category}
           </span>
+          {product.price && (
+            <span className="text-xs font-bold text-gray-900 tracking-tight">
+              RWF {Number(product.price).toLocaleString()}
+            </span>
+          )}
         </div>
 
-        <h3 className="text-sm font-bold text-black mb-1 line-clamp-1">
+        <h3 className="text-[15px] font-bold text-gray-900 group-hover:text-[#b36936] transition-colors line-clamp-1 font-serif tracking-tight mb-1">
           {product.name}
         </h3>
-        <p className="text-xs text-gray-400 line-clamp-1">
+        <p className="text-xs text-gray-500 line-clamp-1">
           {product.description || `Handcrafted ${product.category} by ${product.artisan}`}
         </p>
       </Link>
