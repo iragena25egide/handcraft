@@ -1,5 +1,11 @@
-export const BACKEND_URL = import.meta.env.VITE_API_URL || "https://handcraft-backend-0znu.onrender.com";
-const API_BASE_URL = `${BACKEND_URL}/api`;
+export const BACKEND_URL = import.meta.env.VITE_API_URL || "http://194.164.72.181:5000";
+
+const getBaseUrl = () => {
+  if (typeof window !== "undefined" && window.location.protocol === "https:" && BACKEND_URL.startsWith("http://")) {
+    return "/api";
+  }
+  return `${BACKEND_URL}/api`;
+};
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("admin_token");
@@ -17,7 +23,8 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const baseUrl = getBaseUrl();
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers,
   });
