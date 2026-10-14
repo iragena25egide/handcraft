@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { removeItem, incrementItem, decrementItem, clearCart } from "@/lib/store/slices/cartSlice";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
@@ -7,16 +8,31 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/lib/hooks/useTranslation";
+import { getImageUrl } from "@/lib/api";
 
 export default function CartPage() {
   const cartItems = useAppSelector(state => state.cart.items);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { t } = useTranslation();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const cartSubtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const cartShipping = cartItems.length > 0 ? 5000 : 0;
   const cartTotal = cartSubtotal + cartShipping;
+
+  if (!mounted) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 min-h-[80vh] flex flex-col items-center justify-center">
+        <div className="w-10 h-10 border-4 border-gray-200 border-t-[#0f172a] rounded-full animate-spin mb-4" />
+        <p className="text-gray-400 text-sm font-medium">Loading cart…</p>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -52,12 +68,12 @@ export default function CartPage() {
           <div className="space-y-6">
             {cartItems.map((item) => (
               <div key={item.id} className="flex gap-6 p-4 bg-white border rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                <img src={item.image} alt={item.name} className="w-24 h-24 object-cover rounded-xl bg-gray-50 border border-gray-100" />
+                <img src={getImageUrl(item.image)} alt={item.name} className="w-24 h-24 object-cover rounded-xl bg-gray-50 border border-gray-100" />
                 
                 <div className="flex-1 flex flex-col justify-between">
                   <div className="flex justify-between">
                     <div>
-                      <h3 className="font-bold text-[#0f172a] text-lg">{item.name}</h3>
+                      <h3 className="font-bold text-[#0f172a] font-serif text-lg">{item.name}</h3>
                       <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{item.category}</p>
                     </div>
                     <button 

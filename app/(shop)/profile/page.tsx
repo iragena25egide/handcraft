@@ -17,11 +17,17 @@ export default function ProfilePage() {
   const cartItems = useAppSelector((state) => state.cart.items);
   const { t } = useTranslation();
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [activeTab, setActiveTab] = useState<"orders" | "payment">("orders");
   const [newCard, setNewCard] = useState("");
   const [orders, setOrders] = useState<any[]>([]);
 
   useEffect(() => {
+    if (!mounted) return;
     if (!isLoggedIn) {
       router.push("/login");
       return;
@@ -32,9 +38,9 @@ export default function ProfilePage() {
         .then(res => setOrders(res.data))
         .catch(err => console.error("Failed to load orders", err));
     }
-  }, [isLoggedIn, router, user]);
+  }, [mounted, isLoggedIn, router, user]);
 
-  if (!isLoggedIn || !user) return null;
+  if (!mounted || !isLoggedIn || !user) return null;
 
   const handleLogout = () => {
     dispatch(clearSession());

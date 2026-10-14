@@ -24,6 +24,11 @@ export default function CheckoutPage() {
   const { isLoggedIn, savedCard } = useAppSelector((state) => state.user);
   const { t } = useTranslation();
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -106,7 +111,12 @@ export default function CheckoutPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {cartItems.length === 0 ? (
+        {!mounted ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-[#0f172a] rounded-full animate-spin mb-4" />
+            <p className="text-gray-400 text-sm font-medium">Preparing checkout…</p>
+          </div>
+        ) : cartItems.length === 0 ? (
           <div className="text-center py-20">
             <h2 className="text-2xl font-bold text-[#0f172a] mb-4">
               {t.checkout.empty}

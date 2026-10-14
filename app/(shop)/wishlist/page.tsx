@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { removeWishlistItem, clearWishlist } from "@/lib/store/slices/wishlistSlice";
 import { addItem as addCartItem } from "@/lib/store/slices/cartSlice";
@@ -7,11 +8,26 @@ import { Trash2, Heart, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/lib/hooks/useTranslation";
+import { getImageUrl } from "@/lib/api";
 
 export default function WishlistPage() {
   const wishlistItems = useAppSelector(state => state.wishlist.items);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 min-h-[80vh] flex flex-col items-center justify-center">
+        <div className="w-10 h-10 border-4 border-gray-200 border-t-[#0f172a] rounded-full animate-spin mb-4" />
+        <p className="text-gray-400 text-sm font-medium">Loading wishlist…</p>
+      </div>
+    );
+  }
 
   if (wishlistItems.length === 0) {
     return (
@@ -62,7 +78,7 @@ export default function WishlistPage() {
           <div key={item.id} className="group flex flex-col bg-white border border-gray-100 rounded-[24px] overflow-hidden hover:shadow-xl transition-all">
             <div className="relative aspect-square overflow-hidden bg-gray-50">
               <Link href={`/product/${generateSlug(item.name)}`}>
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={getImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </Link>
               <button 
                 onClick={() => dispatch(removeWishlistItem(item.id))}
@@ -76,7 +92,7 @@ export default function WishlistPage() {
               <div>
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{item.category}</p>
                 <Link href={`/product/${generateSlug(item.name)}`}>
-                  <h3 className="font-bold text-[#0f172a] text-lg mb-2 truncate hover:text-gray-600 transition-colors">{item.name}</h3>
+                  <h3 className="font-bold text-[#0f172a] font-serif text-lg mb-2 truncate hover:text-[#b36936] transition-colors">{item.name}</h3>
                 </Link>
                 <p className="text-xl font-black text-[#0f172a] mb-4">RWF {item.price.toLocaleString()}</p>
               </div>
