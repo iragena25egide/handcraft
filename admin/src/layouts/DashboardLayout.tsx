@@ -45,22 +45,32 @@ export default function DashboardLayout() {
       }
     }
 
-    const socket: Socket = io(BACKEND_URL, {
-      auth: { token },
-    })
-    socket.on("connect", () => { socket.emit("authenticate", token) })
-    socket.on("notification", (data: { title: string; message: string }) => {
-      toast.success(data.title, {
-        description: data.message,
-        position: "top-right", duration: 6000,
-        style: { background: "#FFFFFF", color: "#1A1A2E", border: "1px solid #E2E4F6" }
+    let socket: Socket | null = null;
+    try {
+      socket = io(BACKEND_URL, {
+        auth: { token },
+        reconnectionAttempts: 3,
+        timeout: 5000,
+      });
+      socket.on("connect", () => { socket?.emit("authenticate", token) })
+      socket.on("connect_error", () => {
+        // Silently catch connection errors when deployed over HTTPS/proxy
       })
-      const parsedUser = JSON.parse(localStorage.getItem("admin_user") || "{}")
-      if (parsedUser.role === "SUPER_ADMIN" || parsedUser.role === "SELLER") {
-        fetchNotifications()
-      }
-    })
-    return () => { socket.disconnect() }
+      socket.on("notification", (data: { title: string; message: string }) => {
+        toast.success(data.title, {
+          description: data.message,
+          position: "top-right", duration: 6000,
+          style: { background: "#FFFFFF", color: "#1A1A2E", border: "1px solid #E2E4F6" }
+        })
+        const parsedUser = JSON.parse(localStorage.getItem("admin_user") || "{}")
+        if (parsedUser.role === "SUPER_ADMIN" || parsedUser.role === "SELLER") {
+          fetchNotifications()
+        }
+      })
+    } catch (e) {
+      console.warn("Socket initialization skipped:", e)
+    }
+    return () => { socket?.disconnect() }
   }, [navigate])
 
   const fetchNotifications = async () => {

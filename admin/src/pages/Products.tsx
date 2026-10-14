@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiFetch, BACKEND_URL } from "@/lib/api";
+import { apiFetch, getImageUrl } from "@/lib/api";
 import {
   Trash2,
   Edit,
@@ -21,14 +21,6 @@ const emptyForm = {
   stockQuantity: 0,
   category: "",
   sellerId: "",
-};
-
-const getImageUrl = (src: string) => {
-  if (!src)
-    return "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&q=80";
-  return src.startsWith("http") || src.startsWith("blob:")
-    ? src
-    : `${BACKEND_URL}${src}`;
 };
 
 const Field = ({

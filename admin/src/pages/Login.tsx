@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Sparkles, ShoppingBag } from "lucide-react";
-import { BACKEND_URL } from "../lib/api";
+import { getBaseUrl } from "../lib/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -32,7 +32,8 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch(`${BACKEND_URL}/api/users/login`, {
+      const baseUrl = getBaseUrl();
+      const response = await fetch(`${baseUrl}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

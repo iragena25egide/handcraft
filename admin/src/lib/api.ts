@@ -1,10 +1,38 @@
 export const BACKEND_URL = import.meta.env.VITE_API_URL || "http://194.164.72.181:5000";
 
-const getBaseUrl = () => {
+export const getBaseUrl = () => {
   if (typeof window !== "undefined" && window.location.protocol === "https:" && BACKEND_URL.startsWith("http://")) {
     return "/api";
   }
   return `${BACKEND_URL}/api`;
+};
+
+export const getImageUrl = (src?: string | null) => {
+  if (!src) {
+    return "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&q=80";
+  }
+  const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+  if (src.startsWith("http") || src.startsWith("blob:") || src.startsWith("data:")) {
+    if (isHttps && src.startsWith("http://194.164.72.181:5000/uploads/")) {
+      return src.replace("http://194.164.72.181:5000/uploads/", "/uploads/");
+    }
+    return src;
+  }
+  if (src.startsWith("/image/") || src.startsWith("image/")) {
+    return src.startsWith("/") ? src : `/${src}`;
+  }
+  if (src.startsWith("/uploads/") || src.startsWith("uploads/")) {
+    const cleanPath = src.startsWith("/") ? src : `/${src}`;
+    if (isHttps) {
+      return cleanPath;
+    }
+    return `${BACKEND_URL}${cleanPath}`;
+  }
+  const cleanSrc = src.startsWith("/") ? src : `/${src}`;
+  if (isHttps) {
+    return `/uploads${cleanSrc}`;
+  }
+  return `${BACKEND_URL}${cleanSrc}`;
 };
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiFetch, BACKEND_URL } from "../lib/api";
+import { apiFetch, getBaseUrl } from "../lib/api";
 import {
   Table,
   TableBody,
@@ -38,7 +38,7 @@ export default function Reports() {
   const handleDownloadPDF = () => {
     const token = localStorage.getItem("admin_token");
     if (token) {
-      fetch(`${BACKEND_URL}/api/reports/pdf`, {
+      fetch(`${getBaseUrl()}/reports/pdf`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -37,9 +37,10 @@ export const getImageUrl = (src?: string | null) => {
   if (!src) {
     return "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&q=80";
   }
+  const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
   if (src.startsWith("http") || src.startsWith("blob:") || src.startsWith("data:")) {
     // If loaded over HTTPS but backend returns raw HTTP URL, rewrite through proxy
-    if (typeof window !== "undefined" && window.location.protocol === "https:" && src.startsWith("http://194.164.72.181:5000/uploads/")) {
+    if (isHttps && src.startsWith("http://194.164.72.181:5000/uploads/")) {
       return src.replace("http://194.164.72.181:5000/uploads/", "/uploads/");
     }
     return src;
@@ -49,10 +50,14 @@ export const getImageUrl = (src?: string | null) => {
   }
   if (src.startsWith("/uploads/") || src.startsWith("uploads/")) {
     const cleanPath = src.startsWith("/") ? src : `/${src}`;
-    if (typeof window !== "undefined" && window.location.protocol === "https:") {
+    if (isHttps) {
       return cleanPath;
     }
     return `${BACKEND_URL}${cleanPath}`;
   }
-  return `${BACKEND_URL}${src.startsWith("/") ? "" : "/"}${src}`;
+  const cleanSrc = src.startsWith("/") ? src : `/${src}`;
+  if (isHttps) {
+    return `/uploads${cleanSrc}`;
+  }
+  return `${BACKEND_URL}${cleanSrc}`;
 };
