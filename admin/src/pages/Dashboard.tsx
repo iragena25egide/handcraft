@@ -34,8 +34,12 @@ export default function Dashboard() {
           apiFetch("/orders"),
         ])
 
-        const revenue = orders.reduce((acc: number, order: any) => acc + Number(order.total), 0)
-        setStats({ users: users.length, products: products.length, orders: orders.length, revenue })
+        const usersList = Array.isArray(users) ? users : []
+        const productsList = Array.isArray(products) ? products : []
+        const ordersList = Array.isArray(orders) ? orders : []
+
+        const revenue = ordersList.reduce((acc: number, order: any) => acc + (Number(order.total) || 0), 0)
+        setStats({ users: usersList.length, products: productsList.length, orders: ordersList.length, revenue })
       } catch (error) {
         console.error("Failed to load dashboard stats", error)
       } finally {

@@ -18,7 +18,7 @@ export default function Users() {
   const fetchUsers = async () => {
     try {
       const data = await apiFetch("/users")
-      setUsers(data)
+      setUsers(Array.isArray(data) ? data : [])
     } catch {
       toast.error("Failed to fetch users")
     } finally {

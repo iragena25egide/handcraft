@@ -248,7 +248,7 @@ export default function Products() {
   const fetchSellers = async () => {
     try {
       const data = await apiFetch("/users");
-      setSellers(data.filter((u: any) => u.role === "SELLER"));
+      setSellers(Array.isArray(data) ? data.filter((u: any) => u.role === "SELLER") : []);
     } catch {
       console.error("Error fetching sellers");
     }
@@ -264,7 +264,7 @@ export default function Products() {
           url = `/products/seller/${user.id}?status=${filterStatus}`;
       }
       const data = await apiFetch(url);
-      setProducts(data);
+      setProducts(Array.isArray(data) ? data : []);
     } catch {
       toast.error("Failed to load products");
     } finally {

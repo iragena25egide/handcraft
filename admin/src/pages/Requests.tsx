@@ -20,7 +20,7 @@ export default function Requests() {
   const fetchRequests = async () => {
     try {
       const data = await apiFetch("/requests")
-      setRequests(data)
+      setRequests(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("Error fetching requests:", error)
     } finally {

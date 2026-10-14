@@ -11,6 +11,22 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    const token = localStorage.getItem("admin_token");
+    const userData = localStorage.getItem("admin_user");
+    if (token && userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.role === "SUPER_ADMIN" || user.role === "SELLER") {
+          navigate("/", { replace: true });
+        }
+      } catch {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+      }
+    }
+  }, [navigate]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -23,9 +39,14 @@ export default function Login() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Login failed");
+
+      if (data.role !== "SUPER_ADMIN" && data.role !== "SELLER") {
+        throw new Error("Access denied. Only Admins and Sellers can access this portal.");
+      }
+
       localStorage.setItem("admin_token", data.token);
       localStorage.setItem("admin_user", JSON.stringify(data));
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (err: any) {
       setError(err.message);
     } finally {

@@ -26,8 +26,8 @@ export default function Reports() {
         apiFetch("/reports/sales"),
         apiFetch("/reports/low-stock"),
       ]);
-      setSales(salesData);
-      setLowStock(stockData);
+      setSales(salesData && typeof salesData === "object" ? salesData : { totalOrders: 0, totalRevenue: 0 });
+      setLowStock(Array.isArray(stockData) ? stockData : []);
     } catch (error) {
       console.error("Error fetching reports:", error);
     } finally {

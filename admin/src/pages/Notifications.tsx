@@ -20,7 +20,7 @@ export default function Notifications() {
   const fetchNotifications = async () => {
     try {
       const data = await apiFetch("/notifications")
-      setNotifications(data)
+      setNotifications(Array.isArray(data) ? data : [])
     } catch (e) {
       console.error(e)
     }

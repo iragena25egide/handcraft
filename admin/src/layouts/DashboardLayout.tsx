@@ -4,7 +4,7 @@ import { AppSidebar } from "@/components/AppSidebar"
 import { LogOut, Bell, ChevronDown, Check } from "lucide-react"
 import { io, Socket } from "socket.io-client"
 import { toast } from "sonner"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, BACKEND_URL } from "@/lib/api"
 
 const PAGE_TITLES: Record<string, string> = {
   "/": "Dashboard",
@@ -33,14 +33,21 @@ export default function DashboardLayout() {
       return
     }
     if (userData) {
-      const parsedUser = JSON.parse(userData)
-      setUser(parsedUser)
-      if (parsedUser.role === "SUPER_ADMIN" || parsedUser.role === "SELLER") {
-        fetchNotifications()
+      try {
+        const parsedUser = JSON.parse(userData)
+        setUser(parsedUser)
+        if (parsedUser.role === "SUPER_ADMIN" || parsedUser.role === "SELLER") {
+          fetchNotifications()
+        }
+      } catch {
+        navigate("/login")
+        return
       }
     }
 
-    const socket: Socket = io("http://localhost:5000")
+    const socket: Socket = io(BACKEND_URL, {
+      auth: { token },
+    })
     socket.on("connect", () => { socket.emit("authenticate", token) })
     socket.on("active_staff", (data: { message: string }) => {
       toast.info(data.message, {
@@ -65,7 +72,7 @@ export default function DashboardLayout() {
   const fetchNotifications = async () => {
     try {
       const data = await apiFetch("/notifications")
-      setNotifications(data)
+      setNotifications(Array.isArray(data) ? data : [])
     } catch (e) {
       console.error("Failed to fetch notifications", e)
     }

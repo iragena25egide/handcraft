@@ -1,11 +1,12 @@
 import { Router, Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { ProductRequest } from "../entity/ProductRequest";
+import { verifyToken, isSeller } from "../middleware/auth";
 
 const router = Router();
 
-// GET all requests
-router.get("/", async (req: Request, res: Response) => {
+// GET all requests (Admin and Seller only)
+router.get("/", verifyToken, isSeller, async (req: Request, res: Response) => {
   try {
     const requestRepo = AppDataSource.getRepository(ProductRequest);
     const requests = await requestRepo.find({
@@ -13,11 +14,11 @@ router.get("/", async (req: Request, res: Response) => {
     });
     res.json(requests);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch requests" });
+    res.status(500).json({ message: "Failed to fetch requests", error });
   }
 });
 
-// POST new request
+// POST new request (Public for customer inquiries)
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { customerName, customerPhone, customerEmail, productId, productName } = req.body;
@@ -32,19 +33,19 @@ router.post("/", async (req: Request, res: Response) => {
       customerName,
       customerPhone,
       customerEmail,
-      productId,
+      productId: productId ? Number(productId) : undefined,
       productName,
     });
     
     const savedRequest = await requestRepo.save(newRequest);
     res.status(201).json(savedRequest);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create request" });
+    res.status(500).json({ message: "Failed to create request", error });
   }
 });
 
-// PATCH update status
-router.patch("/:id/status", async (req: Request, res: Response) => {
+// PATCH update status (Admin and Seller only)
+router.patch("/:id/status", verifyToken, isSeller, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -65,7 +66,7 @@ router.patch("/:id/status", async (req: Request, res: Response) => {
     
     res.json(productReq);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update request status" });
+    res.status(500).json({ message: "Failed to update request status", error });
   }
 });
 

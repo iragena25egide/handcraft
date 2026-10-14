@@ -23,7 +23,7 @@ export default function Trash() {
   const fetchTrashedProducts = async () => {
     try {
       const data = await apiFetch("/products/trash")
-      setProducts(data)
+      setProducts(Array.isArray(data) ? data : [])
     } catch (error) {
       console.error("Error fetching trashed products:", error)
       toast.error("Failed to fetch trash bin")
