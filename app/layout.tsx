@@ -25,6 +25,15 @@ export const metadata: Metadata = {
   title: "All African Handcraft | Made in Rwanda Fashion & Handicrafts",
   description:
     "Discover authentic Rwandan fashion and handicrafts. Support local artisans with our curated collection of Made in Rwanda products.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/logo_mark.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/logo_mark.png" },
+    ],
+  },
 };
 
 import Preloader from "@/components/Preloader";
