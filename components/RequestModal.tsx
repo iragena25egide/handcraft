@@ -113,7 +113,7 @@ export default function RequestModal({ isOpen, onClose, product }: RequestModalP
                       className="w-16 h-16 object-cover rounded-xl shadow-sm"
                     />
                     <div>
-                      <h3 className="font-bold text-sm text-[#0f172a] dark:text-white line-clamp-1" style={{ fontFamily: 'var(--font-playfair)' }}>
+                      <h3 className="font-bold text-sm text-[#0f172a] dark:text-white line-clamp-1">
                         {product.name}
                       </h3>
                       <p className="text-xs text-[#c89f72] mt-1">{t.requestModal.directViaWhatsapp}</p>

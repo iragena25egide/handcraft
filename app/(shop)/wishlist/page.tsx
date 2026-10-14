@@ -92,7 +92,7 @@ export default function WishlistPage() {
               <div>
                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">{item.category}</p>
                 <Link href={`/product/${generateSlug(item.name)}`}>
-                  <h3 className="font-bold text-[#0f172a] font-serif text-lg mb-2 truncate hover:text-[#b36936] transition-colors">{item.name}</h3>
+                  <h3 className="font-bold text-[#0f172a] text-lg mb-2 truncate hover:text-[#b36936] transition-colors">{item.name}</h3>
                 </Link>
                 <p className="text-xl font-black text-[#0f172a] mb-4">RWF {item.price.toLocaleString()}</p>
               </div>

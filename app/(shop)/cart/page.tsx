@@ -73,7 +73,7 @@ export default function CartPage() {
                 <div className="flex-1 flex flex-col justify-between">
                   <div className="flex justify-between">
                     <div>
-                      <h3 className="font-bold text-[#0f172a] font-serif text-lg">{item.name}</h3>
+                      <h3 className="font-bold text-[#0f172a] text-lg">{item.name}</h3>
                       <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{item.category}</p>
                     </div>
                     <button 

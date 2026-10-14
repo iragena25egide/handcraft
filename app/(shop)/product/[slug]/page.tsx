@@ -164,7 +164,7 @@ export default function ProductDetailsPage() {
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-[#0f172a] tracking-tight mt-4 mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#0f172a] tracking-tight mt-4 mb-4">
               {product.name}
             </h1>
 
