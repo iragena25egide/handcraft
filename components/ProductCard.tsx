@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import RequestModal from "./RequestModal";
 import { useTranslation } from "@/lib/hooks/useTranslation";
+import { getImageUrl } from "@/lib/api";
 
 interface ProductCardProps {
   product: Product;
@@ -52,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="relative aspect-square mb-4 rounded-2xl overflow-hidden bg-white"
         >
           <img
-            src={product.image}
+            src={getImageUrl(product.image)}
             alt={product.name}
             className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500 relative z-10"
           />

@@ -31,7 +31,7 @@ export default function SellerDashboard() {
     if (user?.id) {
       try {
         const res = await api.get(`/products/seller/${user.id}?status=${filterStatus}`);
-        setMyProducts(res.data);
+        setMyProducts(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Failed to load products");
       }

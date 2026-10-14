@@ -5,14 +5,14 @@ import ProductGrid from "@/components/ProductGrid";
 import { api } from "@/lib/api";
 
 export default function SalePage() {
-  const [saleProducts, setSaleProducts] = useState([]);
+  const [saleProducts, setSaleProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSaleProducts = async () => {
       try {
         const response = await api.get("/products?filter=sale");
-        setSaleProducts(response.data);
+        setSaleProducts(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("Failed to fetch sale products", error);
       } finally {

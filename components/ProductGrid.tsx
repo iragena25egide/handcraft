@@ -34,7 +34,7 @@ export default function ProductGrid({ category, showSidebar = false, initialProd
       const fetchProducts = async () => {
         try {
           const response = await api.get("/products");
-          setProducts(response.data);
+          setProducts(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
           console.error("Failed to fetch products", error);
         } finally {

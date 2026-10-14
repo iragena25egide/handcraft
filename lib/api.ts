@@ -20,3 +20,16 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+export const getImageUrl = (src?: string | null) => {
+  if (!src) {
+    return "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?auto=format&fit=crop&q=80";
+  }
+  if (src.startsWith("http") || src.startsWith("blob:") || src.startsWith("data:")) {
+    return src;
+  }
+  if (src.startsWith("/image/") || src.startsWith("image/")) {
+    return src.startsWith("/") ? src : `/${src}`;
+  }
+  return `${BACKEND_URL}${src.startsWith("/") ? "" : "/"}${src}`;
+};

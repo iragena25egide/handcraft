@@ -5,14 +5,14 @@ import ProductGrid from "@/components/ProductGrid";
 import { api } from "@/lib/api";
 
 export default function NewArrivalsPage() {
-  const [newProducts, setNewProducts] = useState([]);
+  const [newProducts, setNewProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNewProducts = async () => {
       try {
         const response = await api.get("/products?filter=new");
-        setNewProducts(response.data);
+        setNewProducts(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("Failed to fetch new arrivals", error);
       } finally {

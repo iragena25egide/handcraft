@@ -12,7 +12,7 @@ function SearchResultsContent() {
   const query = searchParams.get("q") || "";
   const { t } = useTranslation();
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function SearchResultsContent() {
       try {
         const response = await api.get("/products");
 
-        const allProducts = response.data;
+        const allProducts = Array.isArray(response.data) ? response.data : [];
         const filtered = allProducts.filter(
           (p: any) =>
             p.name.toLowerCase().includes(query.toLowerCase()) ||

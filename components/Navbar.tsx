@@ -28,6 +28,7 @@ import {
   clearCart,
 } from "@/lib/store/slices/cartSlice";
 import { clearSession } from "@/lib/store/slices/userSlice";
+import { getImageUrl } from "@/lib/api";
 import { setLanguage } from "@/lib/store/slices/languageSlice";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { api } from "@/lib/api";
@@ -504,7 +505,7 @@ export default function Navbar() {
                 >
                   <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-50">
                     <img
-                      src={product.image}
+                      src={getImageUrl(product.image)}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />

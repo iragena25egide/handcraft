@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { api, getImageUrl } from "@/lib/api";
 import { type Product } from "@/data/product";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { toggleWishlist } from "@/lib/store/slices/wishlistSlice";
@@ -38,7 +38,7 @@ export default function ProductDetailsPage() {
     const fetchProduct = async () => {
       try {
         const response = await api.get(`/products`);
-        const allProducts: Product[] = response.data;
+        const allProducts: Product[] = Array.isArray(response.data) ? response.data : [];
         const generateSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const foundProduct = allProducts.find(p => generateSlug(p.name) === slug);
         
@@ -137,7 +137,7 @@ export default function ProductDetailsPage() {
               className="aspect-square bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 relative group"
             >
               <img
-                src={product.image}
+                src={getImageUrl(product.image)}
                 alt={product.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send } from "lucide-react";
 import { Product } from "@/data/product";
-import { api } from "@/lib/api";
+import { api, getImageUrl } from "@/lib/api";
 import toast from "react-hot-toast";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 
@@ -108,7 +108,7 @@ export default function RequestModal({ isOpen, onClose, product }: RequestModalP
                 <>
                   <div className="flex gap-4 p-4 bg-[#fdf5ed] dark:bg-gray-800/50 rounded-2xl mb-8 border border-[#c89f72]/20">
                     <img
-                      src={product.image}
+                      src={getImageUrl(product.image)}
                       alt={product.name}
                       className="w-16 h-16 object-cover rounded-xl shadow-sm"
                     />

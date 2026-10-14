@@ -39,7 +39,7 @@ export default function AdminProductsPage() {
   const fetchProducts = async () => {
     try {
       const response = await api.get("/products");
-      setProducts(response.data);
+      setProducts(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       toast.error("Failed to load products");
     } finally {
