@@ -38,11 +38,60 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const languages = [
-  { code: "en", name: "English", shortName: "Eng", flag: "🇬🇧" },
-  { code: "rw", name: "Kinyarwanda", shortName: "Kiny", flag: "🇷🇼" },
+  { code: "en", name: "English", shortName: "EN", flag: "🇬🇧" },
+  { code: "rw", name: "Kinyarwanda", shortName: "RW", flag: "🇷🇼" },
 ];
 
+function LanguageToggle({ id = "navbar" }: { id?: string }) {
+  const dispatch = useAppDispatch();
+  const { currentLang } = useTranslation();
 
+  return (
+    <div className="relative inline-flex items-center p-1 rounded-full border border-[#0f172a]/25 dark:border-white/20 bg-white/90 dark:bg-slate-900/90 select-none shadow-xs">
+      {/* English Pill */}
+      <button
+        type="button"
+        onClick={() => dispatch(setLanguage("en"))}
+        className={`relative z-10 flex items-center justify-center gap-2 px-3.5 py-1.5 text-xs sm:text-[13px] font-black tracking-wide rounded-full transition-colors duration-200 cursor-pointer ${
+          currentLang === "en"
+            ? "text-white"
+            : "text-[#0f172a]/80 dark:text-slate-300 hover:text-[#0f172a]"
+        }`}
+      >
+        <span className="text-sm leading-none">🇬🇧</span>
+        <span className="leading-none">EN</span>
+        {currentLang === "en" && (
+          <motion.div
+            layoutId={`activeLangPill-${id}`}
+            className="absolute inset-0 bg-[#0f172a] dark:bg-slate-700 rounded-full -z-10 shadow-sm"
+            transition={{ type: "spring", stiffness: 500, damping: 35 }}
+          />
+        )}
+      </button>
+
+      {/* Kinyarwanda Pill */}
+      <button
+        type="button"
+        onClick={() => dispatch(setLanguage("rw"))}
+        className={`relative z-10 flex items-center justify-center gap-2 px-3.5 py-1.5 text-xs sm:text-[13px] font-black tracking-wide rounded-full transition-colors duration-200 cursor-pointer ${
+          currentLang === "rw"
+            ? "text-white"
+            : "text-[#0f172a]/80 dark:text-slate-300 hover:text-[#0f172a]"
+        }`}
+      >
+        <span className="text-sm leading-none">🇷🇼</span>
+        <span className="leading-none">RW</span>
+        {currentLang === "rw" && (
+          <motion.div
+            layoutId={`activeLangPill-${id}`}
+            className="absolute inset-0 bg-[#0f172a] dark:bg-slate-700 rounded-full -z-10 shadow-sm"
+            transition={{ type: "spring", stiffness: 500, damping: 35 }}
+          />
+        )}
+      </button>
+    </div>
+  );
+}
 
 // Drawer component (Unchanged)
 function Drawer({
@@ -134,11 +183,9 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
-  const langDropdownRef = useRef<HTMLDivElement>(null);
   const userDropdownRef = useRef<HTMLDivElement>(null);
 
   const { theme, toggleTheme } = useTheme();
@@ -150,7 +197,6 @@ export default function Navbar() {
   const { isLoggedIn, user } = useAppSelector((state) => state.user);
 
   const { t, currentLang } = useTranslation();
-  const currentLangObj = languages.find((l) => l.code === currentLang) || languages[0];
 
   const cartSubtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -165,12 +211,6 @@ export default function Navbar() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        langDropdownRef.current &&
-        !langDropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsLangOpen(false);
-      }
       if (
         userDropdownRef.current &&
         !userDropdownRef.current.contains(event.target as Node)
@@ -548,8 +588,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main Navbar – Enhanced Glass Effect */}
-      <nav className="sticky top-0 z-40 w-full transition-all duration-300   bg-white/70 backdrop-blur-xl dark:bg-gray-950/70 ">
+      {/* Main Navbar – Crisp Bright White with Clean Border */}
+      <nav className="sticky top-0 z-40 w-full transition-all duration-300 bg-white/95 backdrop-blur-xl dark:bg-gray-950/95 border-b border-slate-200/80 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-2 h-auto min-h-[5rem]">
             {/* Left: Logo + Name */}
@@ -610,40 +650,9 @@ export default function Navbar() {
                 </button>
               </div>
 
-              {/* Language Selector */}
-              <div className="relative hidden md:block" ref={langDropdownRef}>
-                <button
-                  onClick={() => setIsLangOpen(!isLangOpen)}
-                  className="flex items-center gap-1.5 text-[#0f172a] dark:text-gray-200 hover:opacity-70 text-sm font-bold px-2 py-1"
-                >
-                  <span className="text-sm">{currentLangObj.flag}</span>
-                  <span className="font-bold">{currentLangObj.shortName}</span>
-                  <ChevronDown className="w-3 h-3 text-gray-400" />
-                </button>
-                <AnimatePresence>
-                  {isLangOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-36 bg-white/90 backdrop-blur-xl dark:bg-gray-800/90 rounded-lg shadow-xl z-50 border border-gray-100 dark:border-gray-700 overflow-hidden"
-                    >
-                      {languages.map((lang) => (
-                        <button
-                          key={lang.code}
-                          onClick={() => {
-                            dispatch(setLanguage(lang.code));
-                            setIsLangOpen(false);
-                          }}
-                          className="flex items-center gap-2 w-full px-4 py-2.5 text-left hover:bg-[#0f172a] hover:text-white transition-colors text-sm"
-                        >
-                          <span className="text-sm">{lang.flag}</span>
-                          <span className="font-medium">{lang.name}</span>
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+              {/* Language Switch Toggle */}
+              <div className="hidden sm:flex items-center">
+                <LanguageToggle id="navbar" />
               </div>
 
               {/* User Dropdown */}
@@ -718,28 +727,12 @@ export default function Navbar() {
             </Link>
           ))}
           {/* Language selector inside bottom sheet */}
-          <div className="pt-2">
+          <div className="pt-3">
             <p className="text-xs text-gray-500 mb-2 uppercase font-bold tracking-widest">
               Language
             </p>
-            <div className="flex gap-3">
-              {languages.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => {
-                    dispatch(setLanguage(lang.code));
-                    setIsMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-1 px-4 py-2 rounded-full text-xs font-bold ${
-                    currentLang === lang.code
-                      ? "bg-[#0f172a] text-white"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  <span>{lang.flag}</span>
-                  <span>{lang.name}</span>
-                </button>
-              ))}
+            <div className="pt-1">
+              <LanguageToggle id="mobile" />
             </div>
           </div>
         </div>
