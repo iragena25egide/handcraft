@@ -7,14 +7,14 @@ import { motion } from "framer-motion";
 
 export default function Home() {
   return (
-    <main className="bg-white">
+    <main className="bg-[#F8FAFC] dark:bg-gray-900">
       <Hero />
 
-      <section id="fashion" className=" bg-white">
+      <section id="fashion" className="bg-white dark:bg-gray-900 border-b border-slate-100 dark:border-gray-800">
         <CategoryGrid />
       </section>
 
-      <section id="handicraft" className=" bg-gray-50">
+      <section id="handicraft" className="bg-[#F8FAFC] dark:bg-gray-900/50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

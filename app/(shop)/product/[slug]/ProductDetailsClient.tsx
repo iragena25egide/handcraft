@@ -114,7 +114,7 @@ export default function ProductDetailsClient() {
   return (
     <div className="min-h-screen bg-white">
       {/* Breadcrumb / Top Bar */}
-      <div className="border-b border-gray-100 bg-gray-50">
+      <div className="border-b border-slate-200/80 bg-[#F8FAFC] dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center">
           <button
             onClick={() => router.back()}
@@ -133,7 +133,7 @@ export default function ProductDetailsClient() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="aspect-square bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 relative group"
+              className="aspect-square bg-[#F8FAFC] rounded-3xl overflow-hidden border border-slate-200/80 relative group"
             >
               <img
                 src={getImageUrl(product.image)}
@@ -197,7 +197,7 @@ export default function ProductDetailsClient() {
             </div>
 
             {/* Guarantees */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 bg-gray-50 rounded-[32px] p-6 border border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 bg-[#F8FAFC] dark:bg-gray-800 rounded-[32px] p-6 border border-slate-200/80 dark:border-gray-700">
               <div className="flex flex-col items-center text-center gap-2">
                 <Truck className="w-6 h-6 text-[#0f172a]" />
                 <span className="text-xs font-bold text-gray-600">

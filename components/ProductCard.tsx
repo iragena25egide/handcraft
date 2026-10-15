@@ -45,7 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group flex flex-col bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-shadow overflow-hidden"
+      className="group flex flex-col bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all overflow-hidden"
     >
       <Link href={`/product/${generateSlug(product.name)}`} className="block flex-1 p-4">
         {/* Image Container with Imigongo Pattern */}

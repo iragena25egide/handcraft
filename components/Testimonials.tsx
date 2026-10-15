@@ -35,7 +35,7 @@ export default function Testimonials() {
   const { t } = useTranslation();
 
   return (
-    <section className="py-24 bg-[#fefce8] relative overflow-hidden">
+    <section className="py-24 bg-[#F8FAFC] dark:bg-gray-900 border-t border-slate-100 dark:border-gray-800 relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-[#fbbf24] opacity-5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0f172a] opacity-5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />

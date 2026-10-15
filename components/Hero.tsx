@@ -9,7 +9,7 @@ export default function Hero() {
   const { t } = useTranslation();
 
   return (
-    <section className="relative w-full min-h-[85vh] flex flex-col justify-center overflow-hidden bg-[#faf9f6]">
+    <section className="relative w-full min-h-[85vh] flex flex-col justify-center overflow-hidden bg-white dark:bg-gray-900 border-b border-slate-100 dark:border-gray-800">
       {/* Wave Background SVG */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0">
         <svg
