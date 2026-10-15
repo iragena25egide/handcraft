@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Sparkles, ShoppingBag } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { getBaseUrl } from "../lib/api";
 
 export default function Login() {
@@ -42,7 +42,9 @@ export default function Login() {
       if (!response.ok) throw new Error(data.message || "Login failed");
 
       if (data.role !== "SUPER_ADMIN" && data.role !== "SELLER") {
-        throw new Error("Access denied. Only Admins and Sellers can access this portal.");
+        throw new Error(
+          "Access denied. Only Admins and Sellers can access this portal.",
+        );
       }
 
       localStorage.setItem("admin_token", data.token);
@@ -55,11 +57,6 @@ export default function Login() {
     }
   };
 
-  const handleFillDemo = () => {
-    setEmail("admin@handicraft.co.rw");
-    setPassword("Admin@h2026");
-  };
-
   return (
     <div
       style={{
@@ -70,20 +67,21 @@ export default function Login() {
         background: "#FFFFFF",
       }}
     >
-      {/* ─── LEFT: SHOP SHOWCASE IMAGE & BRANDING (DESKTOP) ─── */}
+      {/* ─── LEFT: IMAGE, LOGO, NAME & SMALL TEXT ONLY ─── */}
       <div
         className="hidden lg:flex"
         style={{
           width: "50%",
           position: "relative",
           flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "56px 48px",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          padding: "64px 56px",
           overflow: "hidden",
           backgroundColor: "#0F172A",
         }}
       >
-        {/* Background Shop Image */}
+        {/* Background Shop Image with Increased Opacity */}
         <div
           style={{
             position: "absolute",
@@ -91,162 +89,74 @@ export default function Login() {
             backgroundImage: `url('/image/art.jpeg')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            opacity: 0.38,
-            transform: "scale(1.04)",
-            transition: "transform 10s ease",
+            opacity: 0.85,
+            transform: "scale(1.02)",
           }}
         />
 
-        {/* Gradient Overlay */}
+        {/* Soft Contrast Overlay for Clear Text Readability */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(160deg, rgba(15,23,42,0.92) 0%, rgba(15,23,42,0.75) 50%, rgba(15,23,42,0.95) 100%)",
+              "linear-gradient(180deg, rgba(15,23,42,0.65) 0%, rgba(15,23,42,0.3) 50%, rgba(15,23,42,0.85) 100%)",
           }}
         />
 
-        {/* Top Header */}
-        <div style={{ position: "relative", zIndex: 10 }}>
+        {/* Left Content: Logo + Brand Name + Small Text */}
+        <div style={{ position: "relative", zIndex: 10, maxWidth: 420 }}>
           <div
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "6px 14px",
-              background: "rgba(255,255,255,0.1)",
-              backdropFilter: "blur(10px)",
-              borderRadius: 999,
-              border: "1px solid rgba(255,255,255,0.15)",
-              color: "#FFFFFF",
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: "0.04em",
+              width: 72,
+              height: 72,
               marginBottom: 20,
+              filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))",
             }}
           >
-            <span>🇷🇼</span>
-            <span>Made in Rwanda Artisanal Crafts</span>
+            <img
+              src="/logo_mark.png"
+              alt="Logo"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                filter: "invert(1) brightness(2)",
+              }}
+            />
           </div>
 
-          <h2
+          <h1
             style={{
               color: "#FFFFFF",
-              fontSize: 32,
-              fontWeight: 900,
-              letterSpacing: "-0.6px",
+              fontSize: 36,
+              fontWeight: 800,
+              letterSpacing: "-0.5px",
               lineHeight: 1.2,
+              fontFamily: '"Edu VIC WA NT Hand", cursive',
+              textShadow: "0 2px 10px rgba(0,0,0,0.5)",
             }}
           >
             All African Handcraft
-          </h2>
+          </h1>
+
           <p
             style={{
-              color: "#94A3B8",
+              color: "#F8FAFC",
               fontSize: 15,
-              marginTop: 8,
-              lineHeight: 1.5,
-              maxWidth: 440,
+              marginTop: 12,
+              lineHeight: 1.6,
+              fontWeight: 500,
+              opacity: 0.92,
+              textShadow: "0 1px 6px rgba(0,0,0,0.6)",
             }}
           >
-            Artisan & Executive Commerce Management Portal. Connecting authentic Rwandan cultural heritage with global collectors.
+            Made in Rwanda fashion and authentic cultural handicrafts.
           </p>
-        </div>
-
-        {/* Middle Feature Highlights */}
-        <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", gap: 16 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 14,
-              padding: "16px 20px",
-              background: "rgba(255,255,255,0.06)",
-              backdropFilter: "blur(12px)",
-              borderRadius: 16,
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 10,
-                background: "rgba(56, 189, 248, 0.2)",
-                color: "#38BDF8",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <ShoppingBag style={{ width: 18, height: 18 }} />
-            </div>
-            <div>
-              <p style={{ color: "#FFFFFF", fontSize: 14, fontWeight: 700 }}>Curated Artisan Inventory</p>
-              <p style={{ color: "#94A3B8", fontSize: 13, marginTop: 2 }}>
-                Real-time tracking of Agaseke, Imigongo art, Kitenge fashion, and traditional crafts.
-              </p>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 14,
-              padding: "16px 20px",
-              background: "rgba(255,255,255,0.06)",
-              backdropFilter: "blur(12px)",
-              borderRadius: 16,
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 10,
-                background: "rgba(16, 185, 129, 0.2)",
-                color: "#10B981",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <ShieldCheck style={{ width: 18, height: 18 }} />
-            </div>
-            <div>
-              <p style={{ color: "#FFFFFF", fontSize: 14, fontWeight: 700 }}>Executive Order Fulfillment</p>
-              <p style={{ color: "#94A3B8", fontSize: 13, marginTop: 2 }}>
-                Secure order management, customer inquiries, and multi-channel fulfillment workflow.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Footer */}
-        <div style={{ position: "relative", zIndex: 10 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              borderTop: "1px solid rgba(255,255,255,0.1)",
-              paddingTop: 24,
-            }}
-          >
-            <p style={{ color: "#64748B", fontSize: 13 }}>
-              Kigali, Rwanda • Worldwide Logistics
-            </p>
-            <span style={{ color: "#94A3B8", fontSize: 12, fontWeight: 600 }}>v2.4 Enterprise</span>
-          </div>
         </div>
       </div>
 
-      {/* ─── RIGHT: LOGIN FORM ─── */}
+      {/* ─── RIGHT: CLEAN LOGIN FORM ─── */}
       <div
         style={{
           flex: 1,
@@ -262,7 +172,7 @@ export default function Login() {
         <div
           style={{
             width: "100%",
-            maxWidth: 440,
+            maxWidth: 420,
             background: "#FFFFFF",
             border: "1px solid #E2E8F0",
             borderRadius: 24,
@@ -270,41 +180,22 @@ export default function Login() {
             boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
           }}
         >
-          {/* Form Header */}
+          {/* Form Header without AI badge */}
           <div style={{ marginBottom: 32 }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "4px 10px",
-                background: "#F1F5F9",
-                borderRadius: 8,
-                fontSize: 11,
-                fontWeight: 700,
-                color: "#475569",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: 14,
-              }}
-            >
-              <Sparkles style={{ width: 13, height: 13, color: "#0F172A" }} />
-              <span>Admin & Seller Portal</span>
-            </div>
-            <h1
+            <h2
               style={{
                 color: "#0F172A",
                 fontSize: 26,
                 fontWeight: 800,
                 letterSpacing: "-0.5px",
                 lineHeight: 1.2,
-                marginBottom: 6,
+                marginBottom: 8,
               }}
             >
               Sign In
-            </h1>
+            </h2>
             <p style={{ color: "#64748B", fontSize: 14 }}>
-              Enter your credentials to access the shop dashboard.
+              Enter your credentials to access your dashboard.
             </p>
           </div>
 
@@ -328,7 +219,10 @@ export default function Login() {
           )}
 
           {/* Form */}
-          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <form
+            onSubmit={handleLogin}
+            style={{ display: "flex", flexDirection: "column", gap: 20 }}
+          >
             {/* Email Field */}
             <div>
               <label
@@ -361,7 +255,7 @@ export default function Login() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@handicraft.co.rw"
+                  placeholder="name@example.com"
                   className="admin-input"
                   style={{ paddingLeft: 42 }}
                 />
@@ -370,19 +264,19 @@ export default function Login() {
 
             {/* Password Field */}
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <label
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: "#64748B",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Password
-                </label>
-              </div>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: "#64748B",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  marginBottom: 8,
+                }}
+              >
+                Password
+              </label>
               <div style={{ position: "relative" }}>
                 <Lock
                   style={{
@@ -419,40 +313,13 @@ export default function Login() {
                     padding: 0,
                   }}
                 >
-                  {showPassword ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
+                  {showPassword ? (
+                    <EyeOff style={{ width: 16, height: 16 }} />
+                  ) : (
+                    <Eye style={{ width: 16, height: 16 }} />
+                  )}
                 </button>
               </div>
-            </div>
-
-            {/* Quick autofill helper */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "8px 12px",
-                background: "#F8FAFC",
-                borderRadius: 10,
-                border: "1px dashed #CBD5E1",
-              }}
-            >
-              <span style={{ fontSize: 12, color: "#64748B" }}>Default Admin: <strong>admin@handicraft.co.rw</strong></span>
-              <button
-                type="button"
-                onClick={handleFillDemo}
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "#0F172A",
-                  background: "#E2E8F0",
-                  padding: "4px 8px",
-                  borderRadius: 6,
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
-                Autofill
-              </button>
             </div>
 
             {/* Submit Button */}
@@ -460,7 +327,7 @@ export default function Login() {
               type="submit"
               disabled={loading}
               style={{
-                marginTop: 4,
+                marginTop: 6,
                 background: loading ? "#94A3B8" : "#0F172A",
                 color: "#FFFFFF",
                 border: "none",
@@ -480,14 +347,14 @@ export default function Login() {
                 "Signing In…"
               ) : (
                 <>
-                  <span>Sign In to Portal</span>
+                  <span>Sign In</span>
                   <ArrowRight style={{ width: 16, height: 16 }} />
                 </>
               )}
             </button>
           </form>
 
-          {/* Footer note */}
+          {/* Clean Footer note */}
           <div style={{ marginTop: 28, textAlign: "center" }}>
             <p style={{ color: "#94A3B8", fontSize: 12 }}>
               © 2026 All African Handcraft Ltd. All rights reserved.
